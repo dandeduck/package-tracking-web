@@ -1,8 +1,0 @@
-{%extends 'base.html' %}
-
-{% block main_block %}
-    <h2> {{package_group.partner.name}} </h2>
-    {% for package in packages %}
-        <p> {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a> </p>
-    {% endfor %}
-{% endblock %}

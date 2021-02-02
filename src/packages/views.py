@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import Order
 from .models import Partner
 from .models import Package
+from .restrictions import allowed_partner_users
 
 
 def order_view(request):
@@ -24,6 +25,9 @@ def package_view(request):
 
 def partner_view(request):
     requested_partner = Partner.objects.get(name=request.GET.get('p'))
+    if request.user not in allowed_partner_users(requested_partner):
+        return render(request, 'errors/access_restricted.html', {})
+    
     orders = list(Order.objects.filter(partner=requested_partner))
     orders.sort()
     package_amounts = []
