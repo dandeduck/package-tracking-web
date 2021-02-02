@@ -1,0 +1,10 @@
+{%extends 'base.html' %}
+
+{% block main_block %}
+    <h2>Access to this page is restricted!</h2>
+    {% if request.user == AnonymousUser%}
+        <h3>Please login <a href="/accounts/login/">here</a></h3>
+    {% else %}
+        <h3>Sorry, but you do not have permission to access this page</h3>
+    {% endif %}
+{% endblock %}

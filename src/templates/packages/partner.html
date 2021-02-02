@@ -1,0 +1,8 @@
+{%extends 'base.html' %}
+
+{% block main_block %}
+    <h2> {{order.partner.name}} </h2>
+    {% for order, amount in order_amounts %}
+        <p> {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages</a> </p>
+    {% endfor %}
+{% endblock %}
