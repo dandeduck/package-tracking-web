@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
 from .models import Order
 from .models import Partner
 from .models import Package
+from util import is_member
 
 
 def order_view(request):
@@ -42,5 +42,8 @@ def partner_view(request):
     return render(request, "packages/partner.html", context)
 
 
-def is_member(request, group_name):
-    return request.user.groups.filter(name=group_name).exists()
+def staff_view(request):
+    if not is_member(request, list('staff')):
+        return render(request, 'errors/access_restricted.html', {})
+
+    return render(request, 'packages/staff.html')
