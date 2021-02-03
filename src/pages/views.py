@@ -4,7 +4,6 @@ from util import is_staff, has_group, first_group_name
 
 def home_view(request):
     if has_group(request):
-        print(request.user.groups.all())
         if is_staff(request):
             return redirect('/staff/')
         return redirect('/partner/?p='+first_group_name(request))
