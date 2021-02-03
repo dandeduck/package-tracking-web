@@ -12,7 +12,7 @@
             {%if request.user.is_anonymous%}
                 <li> <a href="/accounts/login/">Login</a> </li>
             {%else%}
-                <li> Logged in as {{request.user}}, <a href="/accounts/logout/">logout?</a> </li>
+                <li class="logged_in"> <a href="/accounts/logout/">Logged in as <em>{{request.user}}</em>, logout?</a> </li>
             {%endif%}
             <li> <a href="/">Home</a> </li>
             <li> <a href="/about/">About</a> </li>
