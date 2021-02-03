@@ -4,15 +4,12 @@ from util import is_member, has_group, first_group_name
 
 def home_view(request):
     if has_group(request):
-        if is_staff(request):
+        print(request.user.groups.all())
+        if is_member(request, 'staff'):
             return redirect('/staff/')
         return redirect('/partner/?p='+first_group_name(request))
 
     return render(request, 'pages/home.html', {})
-
-
-def is_staff(request):
-    is_member(request, list('staff'))
 
 
 def about_view(request):

@@ -43,7 +43,7 @@ def partner_view(request):
 
 
 def staff_view(request):
-    if not is_member(request, list('staff')):
+    if not is_member(request, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
 
     return render(request, 'packages/staff.html')
