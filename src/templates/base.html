@@ -9,103 +9,103 @@
 <body>
     <style>
         * {
-    box-sizing: border-box;
-}
+        box-sizing: border-box;
+    }
 
-html {
-    font-size: 62.5%;
-}
+    html {
+        font-size: 62.5%;
+    }
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    display: flex;
-    justify-items: center;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-.navbar--top {
-    height: 10vh;
-    min-width: 100%;
-    position: absolute;
-}
-
-.navbar--top ul {
-    display: flex;
-    list-style: none;
-    position: relative;
-    margin: 2rem 0 0 0;
-}
-
-.navbar--top li {
-    margin: 0 0 0 50px;
-}
-
-.navbar--top li:first-child {
-    position: absolute;
-    right: 10rem;
-}
-
-.navbar--top a {
-    position: relative;
-    text-decoration: none;
-    text-transform: uppercase;
-    display: inline-block;
-    font-weight: 600;
-    letter-spacing: .2em;
-    font-size: 1.6rem;
-    color: #333;
-}
-
-.navbar--top a:after {
-    background: none repeat scroll 0 0 transparent;
-    bottom: -0.3rem;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: absolute;
-    background: #333;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-}
-
-a:hover:after {
-    width: 100%;
-    left: 0;
-  }
-
-main {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -40%);
-}
-
-.copyright {
-    position: absolute;
-    top: 95%;
-    left: 50%;
-    transform: translate(-50%, -95%);
-}
-
-@media screen and (max-width: 60rem) {
-    .navbar--top ul {
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        justify-items: center;
+        min-height: 100vh;
         flex-direction: column;
     }
-    .navbar--top li:first-child {
-        right: 0;
-        position: static;
+
+    .navbar--top {
+        height: 10vh;
+        min-width: 100%;
+        position: absolute;
     }
+
+    .navbar--top ul {
+        display: flex;
+        list-style: none;
+        position: relative;
+        margin: 2rem 0 0 0;
+    }
+
     .navbar--top li {
-        margin: 1rem 0 0 0;
+        margin: 0 0 0 50px;
     }
+
+    .navbar--top li:first-child {
+        position: absolute;
+        right: 10rem;
+    }
+
     .navbar--top a {
-        font-size: 1.2rem;
+        position: relative;
+        text-decoration: none;
+        text-transform: uppercase;
+        display: inline-block;
+        font-weight: 600;
+        letter-spacing: .2em;
+        font-size: 1.6rem;
+        color: #333;
     }
-}
+
+    .navbar--top a:after {
+        background: none repeat scroll 0 0 transparent;
+        bottom: -0.3rem;
+        content: "";
+        display: block;
+        height: 2px;
+        left: 50%;
+        position: absolute;
+        background: #333;
+        transition: width 0.3s ease 0s, left 0.3s ease 0s;
+        width: 0;
+    }
+
+    a:hover:after {
+        width: 100%;
+        left: 0;
+      }
+
+    main {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -40%);
+    }
+
+    .copyright {
+        position: absolute;
+        top: 95%;
+        left: 50%;
+        transform: translate(-50%, -95%);
+    }
+
+    @media screen and (max-width: 60rem) {
+        .navbar--top ul {
+            flex-direction: column;
+        }
+        .navbar--top li:first-child {
+            right: 0;
+            position: static;
+        }
+        .navbar--top li {
+            margin: 1rem 0 0 0;
+        }
+        .navbar--top a {
+            font-size: 1.2rem;
+        }
+    }
     </style>
     <nav class="navbar--top">
         <ul>

@@ -8,3 +8,7 @@ def has_group(request):
 
 def first_group_name(request):
     return list(request.user.groups.all())[0].name
+
+
+def is_staff(request):
+    return is_member(request, 'staff')

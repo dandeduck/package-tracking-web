@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Order
 from .models import Partner
 from .models import Package
-from util import is_member
+from util import is_member, is_staff
 
 
 def order_view(request):
@@ -26,7 +26,7 @@ def package_view(request):
 def partner_view(request):
     requested_partner = Partner.objects.get(name=request.GET.get('p'))
 
-    if not is_member(request, requested_partner.name):
+    if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
     orders = list(Order.objects.filter(partner=requested_partner))
@@ -46,4 +46,8 @@ def staff_view(request):
     if not is_member(request, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
 
-    return render(request, 'packages/staff.html')
+    context = {
+        'partners': Partner.objects.all()
+    }
+
+    return render(request, 'packages/staff.html', context)
