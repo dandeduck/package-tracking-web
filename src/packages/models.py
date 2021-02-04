@@ -56,7 +56,7 @@ class Order(models.Model):
         return Package.WAIT
 
     def __str__(self):
-        return str(self.partner) + " " + str(self.collection_date)
+        return str(self.partner) + ' ' + str(self.collection_date) + ' ' + str(self.driver)
 
     def __lt__(self, other):
         return self.collection_date > other.collection_date
