@@ -19,10 +19,21 @@ class Partner(models.Model):
         return str(self) == str(other)
 
 
+class Driver(models.Model):
+    name = models.CharField(max_length=32, unique=True, default='None')
+
+    def __str__(self):
+        return self.name
+
+
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     collection_date = models.DateField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+
+    def related_packages(self):
+        return list(Package.objects.filter(order=self))
 
     def __str__(self):
         return str(self.partner) + " " + str(self.collection_date)
@@ -63,9 +74,9 @@ class Package(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Awaiting Delivery')
-    description = models.CharField(max_length=128, default='')
     destination = models.ForeignKey(Address, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
 
     def __str__(self):
         return str(self.destination) + " " + str(self.status)

@@ -10,7 +10,7 @@ def order_view(request):
     order = Order.objects.get(id=order_id)
     context = {
         'order': order,
-        'packages': Package.objects.filter(order=order)
+        'packages': order.related_packages()
     }
 
     return render(request, "packages/order.html", context)
@@ -34,7 +34,7 @@ def partner_view(request):
     package_amounts = []
 
     for order in orders:
-        package_amounts.append(len(list(Package.objects.filter(order=order))))
+        package_amounts.append(len(order.related_packages()))
 
     order_amounts = [(orders[i], package_amounts[i]) for i in range(0, len(orders))]
     context = {'order_amounts': order_amounts}
