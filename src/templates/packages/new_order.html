@@ -1,5 +1,30 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-
+    <ul>
+        {%for package in packages%}
+            <li>
+                {{package.origin}} {{package.destination}} {% include "financials/calc_rate.html" %} {{package.status}}
+            </li>
+        {%endfor%}
+    </ul>
+    <div class="creation">
+        <form method="POST" name="create" action="partner/new-order/?p={{partner.name}}&order={{order.id}}"> {% csrf_token %}
+            <div class="creation--left">
+                <input type="text" name="origin_street" value="{{partner.address.street_name}}"/>
+                <input type="number" name="origin_street_number" value="{{partner.address.street_number}}"/>
+            </div>
+            <div class="creation--right">
+                <select name="rate" class="rate__select sle">
+                    {%for rate in rates%}
+                        <option>{{rate}}</option>
+                    {%endfor%}
+                </select>
+                <input type="tel" name="phone"/>
+            </div>
+            <div class="creation--bottom">
+                <input type="submit" value="add" class="create__button btn"/>
+            </div>
+        </form>
+    </div>
 {% endblock %}

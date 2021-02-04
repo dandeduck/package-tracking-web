@@ -8,7 +8,7 @@
     </form>
     {% for package in packages %}
         <li>
-            {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a>
+            {{package.origin}} {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a>
             {%if is_staff %}
                 <a href="javascript:submitform({{forloop.counter}})">update</a>
                 <form name="{{forloop.counter}}" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}

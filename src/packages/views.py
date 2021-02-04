@@ -99,6 +99,7 @@ def partner_new_order(request):
     context = {
         'packages': order.related_packages(),
         'order': order,
+        'partner': partner,
         'rates': partner.rates.split(','),
         'cities': City.objects.all()
     }
