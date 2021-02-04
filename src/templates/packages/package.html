@@ -1,7 +1,9 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <li>{{package.destination}}</li>
-    <li>{{package.status}}</li>
-
+    <ul>
+        <li>{{package.destination}}</li>
+        <li>{{package.status}}</li>
+        <li>{{package.phone_number}}</li>
+    </ul>
 {% endblock %}
