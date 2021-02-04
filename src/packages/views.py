@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Order
+from .models import Order, City, Address
 from .models import Partner
 from .models import Package
 from .models import Driver
@@ -42,9 +42,10 @@ def partner_view(request):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
-        assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
-        order = Order.objects.filter(id=request.POST.get('order'))
-        order.update(driver=assigned_driver)
+        if request.POST.get('driver'):
+            assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
+            order = Order.objects.filter(id=request.POST.get('order'))
+            order.update(driver=assigned_driver)
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
@@ -64,6 +65,58 @@ def partner_view(request):
     }
 
     return render(request, "packages/partner.html", context)
+
+
+def partner_new_order(request):
+    partner = Partner.objects.filter(request.GET.get('p'))
+    order = Order.objects.filter(request.GET.get('order'))
+
+    if not is_member(request, partner.name) and not is_staff(request):
+        return render(request, 'errors/access_restricted.html', {})
+
+    if request.POST:
+        origin_city = request.POST.get('origin_city')
+        origin_area = request.POST.get('origin_area')
+        origin_street = request.POST.get('origin_street')
+        origin_street_number = request.POST.get('origin_street_number')
+        origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
+
+        destination_city = request.POST.get('destination_city')
+        destination_area = request.POST.get('destination_area')
+        destination_street = request.POST.get('destination_street')
+        destination_street_number = request.POST.get('destination_street_number')
+        destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
+
+        rate = float(request.POST.get('rate'))
+        phone_number = request.POST.get('phone_number')
+
+        Package.objects.craete(origin=origin_address, destination=destination_address, order=order.get(), rate=rate, phone_number=phone_number)
+
+    context = {
+        'packages': order.related_packages(),
+        'order': order,
+        'rates': partner.rates.split(','),
+        'cities': City.objects.all()
+    }
+
+    return render(request, 'packages/new_order.html', context)
+
+
+def get_address(city_name, area, street, street_number):
+    city = get_city(city_name, area)
+    address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
+
+    if not address.exists():
+        return Address.objects.create(city=city, street_name=street, street_number=street_number)
+    return address
+
+
+def get_city(name, area):
+    city = City.objects.filter(name=name)
+
+    if not city.exists():
+        return City.objects.create(name=name, area=area)
+    return city
 
 
 def staff_view(request):

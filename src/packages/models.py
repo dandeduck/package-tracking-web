@@ -1,6 +1,7 @@
 import uuid as uuid
 from django.db import models
 
+
 class City(models.Model):
     AREA_CHOICES = [
         ('SOUTH', 'Southern'),
@@ -96,7 +97,8 @@ class Package(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default=WAIT)
-    destination = models.ForeignKey(Address, on_delete=models.CASCADE)
+    origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='origin')
+    destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     phone_number = models.CharField(max_length=32)
