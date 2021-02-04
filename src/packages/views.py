@@ -15,7 +15,6 @@ def order_view(request):
         package = order.related_packages().filter(id=package_id)
         package.update(status=package.get().next_status())
 
-    print(is_staff(request))
     context = {
         'order': order,
         'packages': order.related_packages(),

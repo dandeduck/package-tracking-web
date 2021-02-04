@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.urls import path, include
 from packages.views import partner_view, package_view, order_view, staff_view, set_order_driver_view
-from pages.views import home_view, about_view, contact_view
+from pages.views import home_view, about_view, contact_view, login_view, logout_view
 
 urlpatterns = [
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('login/', login_view),
+    path('logout/', logout_view),
     path('admin/', admin.site.urls),
 
     path('', home_view),
