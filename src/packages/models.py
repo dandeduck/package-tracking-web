@@ -4,6 +4,13 @@ from django.db import models
 
 class Partner(models.Model):
     name = models.CharField(max_length=64, unique=True, primary_key=True)
+    rates = models.CharField(max_length=32, default='0')
+
+    def get_rates(self):
+        return [int(rate) for rate in str(self.rates).split(',')]
+
+    def related_orders(self):
+        return list(Order.objects.filter(partner=self))
 
     def __str__(self):
         return self.name
@@ -24,10 +31,24 @@ class Order(models.Model):
         return self.collection_date > other.collection_date
 
 
+class City(models.Model):
+    AREA_CHOICES = [
+        ('SOUTH', 'South'),
+        ('CENTER', 'Center'),
+        ('NORTH', 'North')
+    ]
+
+    name = models.CharField(max_length=32, unique=True, primary_key=True)
+    area = models.CharField(max_length=6, choices=AREA_CHOICES, default='CENTER')
+
+    def __str__(self):
+        return self.name
+
+
 class Address(models.Model):
     street_name = models.CharField(max_length=32)
     street_number = models.PositiveSmallIntegerField()
-    city = models.CharField(max_length=32)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)

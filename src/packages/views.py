@@ -29,7 +29,7 @@ def partner_view(request):
     if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
-    orders = list(Order.objects.filter(partner=requested_partner))
+    orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
 
