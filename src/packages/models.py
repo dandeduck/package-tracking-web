@@ -35,6 +35,9 @@ class Order(models.Model):
     def related_packages(self):
         return list(Package.objects.filter(order=self))
 
+    def has_driver(self):
+        return self.driver.name != 'None'
+
     def __str__(self):
         return str(self.partner) + " " + str(self.collection_date)
 

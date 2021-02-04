@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Order
 from .models import Partner
 from .models import Package
+from .models import Driver
 from util import is_member, is_staff
 
 
@@ -37,7 +38,11 @@ def partner_view(request):
         package_amounts.append(len(order.related_packages()))
 
     order_amounts = [(orders[i], package_amounts[i]) for i in range(0, len(orders))]
-    context = {'order_amounts': order_amounts}
+    context = {
+        'order_amounts': order_amounts,
+        'partner': requested_partner.name,
+        'is_staff': is_staff(request)
+    }
 
     return render(request, "packages/partner.html", context)
 
@@ -51,3 +56,29 @@ def staff_view(request):
     }
 
     return render(request, 'packages/staff.html', context)
+
+
+def set_order_driver_view(request):
+    if not is_member(request, 'staff'):
+        return render(request, 'errors/access_restricted.html', {})
+
+    if not request.POST:
+        requested_partner = Partner.objects.get(name=request.GET.get('p'))
+        order = Order.objects.get(id=request.GET.get('o'))
+
+
+        context = {
+            'drivers': Driver.objects.exclude(name='None'),
+            'partner': requested_partner.name,
+            'order': order.id
+        }
+
+    else:
+        requested_partner = Partner.objects.get(name=request.GET.get('p'))
+        order = Order.objects.filter(id=request.GET.get('o'))
+        assigned_driver = Driver.objects.get(name=request.GET.get('d'))
+
+        order.update(driver=assigned_driver)
+
+        return redirect('/partner/?p='+requested_partner.name)
+    return render(request, 'packages/assign_order_driver.html', context)
