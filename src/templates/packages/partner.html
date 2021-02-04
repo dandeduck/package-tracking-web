@@ -7,7 +7,7 @@
             {%if is_staff %}
             |
                 {%if order.has_driver %}
-                    {{order.driver}} <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> reassign </a>
+                    {{order.driver}} <a href="/partner/driver/?p={{partner}}&order={{order.id}}"> reassign </a>
                 {%else%}
                     <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> assign a driver</a>
                 {%endif%}

@@ -1,5 +1,28 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect, render_to_response
+from django.template import RequestContext
 from util import is_staff, has_group, first_group_name
+
+
+def logout_view(request):
+    logout(request)
+
+    return redirect('/')
+
+
+def login_view(request):
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('/')
+        else:
+            return render(request, 'pages/login.html', {'username': username, 'fail': True})
+    return render(request, 'pages/login.html', {})
 
 
 def home_view(request):
