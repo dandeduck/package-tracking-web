@@ -40,3 +40,8 @@ def about_view(request):
 
 def contact_view(request):
     return render(request, 'pages/contact.html', {})
+
+
+def notify_view(request):
+    # send email and stuff
+    return redirect('/')

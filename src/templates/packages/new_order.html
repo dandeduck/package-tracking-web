@@ -42,7 +42,8 @@
                 </select>
             </div>
             <div class="creation--right">
-                <select name="rate" class="rate__select slr" form="create">
+                <label for="rates">Package price</label>
+                <select name="rate" class="rate__select slr" form="create" id="rates">
                     {%for rate in rates%}
                         <option>{{rate}}</option>
                     {%endfor%}
@@ -54,4 +55,5 @@
             </div>
         </form>
     </div>
+    <a href="/notify/?p={{partner}}">SAVE</a>
 {% endblock %}

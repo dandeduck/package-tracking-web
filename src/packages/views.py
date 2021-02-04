@@ -48,7 +48,7 @@ def partner_view(request):
             order.update(driver=assigned_driver)
         else:
             new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
-            return redirect('/partner/new-order/?p='+requested_partner.name+'&order='+new_order_id)
+            return redirect('/partner/order/?p='+requested_partner.name+'&order='+new_order_id)
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
@@ -71,7 +71,7 @@ def partner_view(request):
     return render(request, "packages/partner.html", context)
 
 
-def partner_new_order(request):
+def partner_order(request):
     partner = Partner.objects.get(name=request.GET.get('p'))
     order = Order.objects.get(id=request.GET.get('order'))
 

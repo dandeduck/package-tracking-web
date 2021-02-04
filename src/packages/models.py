@@ -17,7 +17,7 @@ class City(models.Model):
     area = models.CharField(max_length=16, choices=AREA_CHOICES)
 
     def __str__(self):
-        return str(self.name)+' '+str(self.area)
+        return self.name
 
 
 class Address(models.Model):
@@ -26,7 +26,7 @@ class Address(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)
+        return str(self.city) + ", " + str(self.street_name) + " " + str(self.street_number)
 
 
 class Partner(models.Model):
