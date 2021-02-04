@@ -16,6 +16,10 @@ body {
     flex-direction: column;
 }
 
+.btn {
+    display: block;
+}
+
 .navbar--top {
     height: 10vh;
     min-width: 100%;
@@ -27,6 +31,7 @@ body {
     list-style: none;
     position: relative;
     margin: 2rem 0 0 0;
+    align-items: center;
 }
 
 .navbar--top li {
@@ -81,6 +86,72 @@ main {
     transform: translate(-50%, -95%);
 }
 
+.logged_in--small a {
+    font-size: 1rem;
+}
+
+.logged_in--small p {
+    display: inline;
+    margin: 0 0.6rem 0 0 ;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+}
+
+.login__form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.12);
+    padding: 4rem;
+    border-radius: 0.3rem;
+}
+
+.login__form--top {
+    display: flex;
+    flex-direction: column;
+}
+
+.login__form--top input {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.2rem;
+    margin: .5rem 0;
+    padding: 0.5rem;
+    border-radius: 0.2rem;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all .4s cubic-bezier(.25, .8, .25, 1);
+}
+
+.login__form--top input:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
+}
+
+.login__form--bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+.login__form--bottom input {
+    padding: 0 0 0 .7rem;
+    font-size: 1rem;
+    margin: 1rem 0 0 0;
+    max-width: 40%;
+    height: 2rem;
+    color: #191919;
+    border: none;
+    border-radius: 0.3rem;
+    letter-spacing: 0.05rem;
+    font-weight: 400;
+    background-color: #BAD58B;
+    text-align: left;
+    transition: all .4s cubic-bezier(.25, .8, .25, 1);
+}
+
+.login__form--bottom input:hover {
+    box-shadow: 0 14px 16px rgba(0, 0, 0, .12), 0 10px 10px rgba(0, 0, 0, .10);
+    background-color: #AFC884;
+}
+
 @media screen and (max-width: 60rem) {
     .navbar--top ul {
         flex-direction: column;
@@ -93,6 +164,9 @@ main {
         margin: 1rem 0 0 0;
     }
     .navbar--top a {
-        font-size: 1.2rem;
+        font-size: 1rem;
+    }
+    .logged_in--small a{
+        font-size: 0.8rem;
     }
 }
