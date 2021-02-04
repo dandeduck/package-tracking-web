@@ -33,13 +33,15 @@ def partner_view(request):
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
+    order_statuses = []
 
     for order in orders:
         package_amounts.append(len(order.related_packages()))
+        order_statuses.append(order.overall_package_status())
 
-    order_amounts = [(orders[i], package_amounts[i]) for i in range(0, len(orders))]
+    order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
     context = {
-        'order_amounts': order_amounts,
+        'order_amount_status': order_amount_status,
         'partner': requested_partner.name,
         'is_staff': is_staff(request)
     }

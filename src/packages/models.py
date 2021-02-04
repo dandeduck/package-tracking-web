@@ -38,6 +38,23 @@ class Order(models.Model):
     def has_driver(self):
         return self.driver.name != 'None'
 
+    def overall_package_status(self):
+        packages = self.related_packages()
+        status_sum = 0
+        amount = len(packages)
+
+        for package in packages:
+            status_sum += int(package)
+
+        print('sum: ' + str(status_sum) + ' amount: ' + str(amount))
+
+        if status_sum < amount * 3:
+            if status_sum > amount:
+                return Package.ON_ROUTE
+            else:
+                return Package.DELIVERED
+        return Package.WAIT
+
     def __str__(self):
         return str(self.partner) + " " + str(self.collection_date)
 
@@ -47,9 +64,9 @@ class Order(models.Model):
 
 class City(models.Model):
     AREA_CHOICES = [
-        ('SOUTH', 'South'),
-        ('CENTER', 'Center'),
-        ('NORTH', 'North')
+        ('SOUTH', 'Southern'),
+        ('CENTER', 'Central'),
+        ('NORTH', 'Northern')
     ]
 
     name = models.CharField(max_length=32, unique=True, primary_key=True)
@@ -69,14 +86,18 @@ class Address(models.Model):
 
 
 class Package(models.Model):
+    WAIT = 'Awaiting delivery'
+    ON_ROUTE = 'On route to destination'
+    DELIVERED = 'Delivered'
+
     STATUS_CHOICES = [
-        ('Awaiting Delivery', 'Awaiting Delivery'),
-        ('Currently On Route', 'Currently On Route'),
-        ('Delivered', 'Delivered'),
+        (WAIT, WAIT),
+        (ON_ROUTE, ON_ROUTE),
+        (DELIVERED, DELIVERED),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Awaiting Delivery')
+    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default=WAIT)
     destination = models.ForeignKey(Address, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
@@ -87,12 +108,13 @@ class Package(models.Model):
     def __int__(self):
         status = self.status
 
-        if status == 'Awaiting Delivery':
+        if status == self.WAIT:
             return 3
-        elif status == 'Currently On Route':
+        elif status == self.ON_ROUTE:
             return 2
-        else:
+        elif status == self.DELIVERED:
             return 1
+        return 4
 
     def __lt__(self, other):
         return int(self) > int(other)

@@ -1,13 +1,13 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    {% for order, amount in order_amounts %}
-        <p> {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages</a>
+    {% for order, amount, status in order_amount_status %}
+        <p> {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages </a> -> {{status}}
             {%if is_staff %}
                 {%if order.has_driver %}
                     {{order.driver}} <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> reassign </a>
                 {%else%}
-                    <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> set driver</a>
+                    <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> assign a driver</a>
                 {%endif%}
             {%endif%}</p>
     {% endfor %}
