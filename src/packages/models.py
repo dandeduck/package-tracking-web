@@ -54,7 +54,7 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     collection_date = models.DateField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, default=Driver.objects.get(name='None'))
 
     def related_packages(self):
         return Package.objects.filter(order=self)

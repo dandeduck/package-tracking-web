@@ -46,6 +46,9 @@ def partner_view(request):
             assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
             order = Order.objects.filter(id=request.POST.get('order'))
             order.update(driver=assigned_driver)
+        else:
+            new_order_id = str(Order.objects.create(partner=requested_partner).id)
+            return redirect('/partner/new-order/?p='+requested_partner.name+'&order='+new_order_id)
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
@@ -62,14 +65,15 @@ def partner_view(request):
         'order_amount_status_drivers': order_amount_status_drivers,
         'drivers': list(Driver.objects.all()),
         'is_staff': is_staff(request),
+        'partner': requested_partner
     }
 
     return render(request, "packages/partner.html", context)
 
 
 def partner_new_order(request):
-    partner = Partner.objects.filter(request.GET.get('p'))
-    order = Order.objects.filter(request.GET.get('order'))
+    partner = Partner.objects.get(name=request.GET.get('p'))
+    order = Order.objects.get(id=request.GET.get('order'))
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -90,7 +94,7 @@ def partner_new_order(request):
         rate = float(request.POST.get('rate'))
         phone_number = request.POST.get('phone_number')
 
-        Package.objects.craete(origin=origin_address, destination=destination_address, order=order.get(), rate=rate, phone_number=phone_number)
+        Package.objects.craete(origin=origin_address, destination=destination_address, order=order, rate=rate, phone_number=phone_number)
 
     context = {
         'packages': order.related_packages(),

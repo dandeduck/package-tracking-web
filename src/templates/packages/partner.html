@@ -24,6 +24,15 @@
                 </form>
             {%endif%}
         </li>
-    {% endfor %}
+        {% endfor %}
     </ul>
+    <form name="new-order" action="/partner/?p={{partner}}" method="POST"> {% csrf_token %}
+        <a href="javascript:submitform('new-order')">+ new order</a>
+    </form>
+    <script type="text/javascript">
+        function submitform(count)
+        {
+            document.forms[count].submit();
+        }
+    </script>
 {% endblock %}
