@@ -1,16 +1,27 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    {% for order, amount, status in order_amount_status %}
+    {% for order, amount, status, driver in order_amount_status_drivers %}
         <p>
             {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages </a> -> {{status}}
             {%if is_staff %}
             |
-                {%if order.has_driver %}
-                    {{order.driver}} <a href="/partner/driver/?p={{partner}}&order={{order.id}}"> reassign </a>
-                {%else%}
-                    <a href="/partner/driver/?p={{partner}}&o={{order.id}}"> assign a driver</a>
-                {%endif%}
+                <form name="drivers" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="order" value="{{order.id}}" />
+                    <select name="driver" onchange="this.form.submit()">
+                        {%for inner_driver in drivers%}
+                            {%if inner_driver == driver %}
+                                <option>{{driver}}</option>
+                            {%endif%}
+                        {%endfor%}
+                        {%for other_driver in drivers%}
+                            {%if other_driver != driver %}
+                                <option>{{other_driver}}</option>
+                            {%endif%}
+                        {%endfor%}
+                    </select>
+                </form>
             {%endif%}
         </p>
     {% endfor %}

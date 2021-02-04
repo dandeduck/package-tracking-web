@@ -1,10 +1,33 @@
 import uuid as uuid
 from django.db import models
 
+class City(models.Model):
+    AREA_CHOICES = [
+        ('SOUTH', 'Southern'),
+        ('CENTER', 'Central'),
+        ('NORTH', 'Northern')
+    ]
+
+    name = models.CharField(max_length=32, unique=True, primary_key=True)
+    area = models.CharField(max_length=6, choices=AREA_CHOICES, default='CENTER')
+
+    def __str__(self):
+        return self.name
+
+
+class Address(models.Model):
+    street_name = models.CharField(max_length=32)
+    street_number = models.PositiveSmallIntegerField()
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)
+
 
 class Partner(models.Model):
     name = models.CharField(max_length=64, unique=True, primary_key=True)
     rates = models.CharField(max_length=32, default='0')
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
     def get_rates(self):
         return [int(rate) for rate in str(self.rates).split(',')]
@@ -60,29 +83,6 @@ class Order(models.Model):
         return self.collection_date > other.collection_date
 
 
-class City(models.Model):
-    AREA_CHOICES = [
-        ('SOUTH', 'Southern'),
-        ('CENTER', 'Central'),
-        ('NORTH', 'Northern')
-    ]
-
-    name = models.CharField(max_length=32, unique=True, primary_key=True)
-    area = models.CharField(max_length=6, choices=AREA_CHOICES, default='CENTER')
-
-    def __str__(self):
-        return self.name
-
-
-class Address(models.Model):
-    street_name = models.CharField(max_length=32)
-    street_number = models.PositiveSmallIntegerField()
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)
-
-
 class Package(models.Model):
     WAIT = 'Awaiting delivery'
     ON_ROUTE = 'On route to destination'
@@ -99,6 +99,7 @@ class Package(models.Model):
     destination = models.ForeignKey(Address, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    phone_number = models.CharField(max_length=32)
 
     def next_status(self):
         status = self.status

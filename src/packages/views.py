@@ -37,20 +37,26 @@ def partner_view(request):
     if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
+    if request.POST:
+        assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
+        order = Order.objects.filter(id=request.POST.get('order'))
+        order.update(driver=assigned_driver)
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
     order_statuses = []
+    drivers = []
 
     for order in orders:
         package_amounts.append(len(order.related_packages()))
         order_statuses.append(order.overall_package_status())
+        drivers.append(order.driver)
 
-    order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
+    order_amount_status_drivers = [(orders[i], package_amounts[i], order_statuses[i], drivers[i]) for i in range(0, len(orders))]
     context = {
-        'order_amount_status': order_amount_status,
-        'partner': requested_partner.name,
-        'is_staff': is_staff(request)
+        'order_amount_status_drivers': order_amount_status_drivers,
+        'drivers': list(Driver.objects.all()),
+        'is_staff': is_staff(request),
     }
 
     return render(request, "packages/partner.html", context)
@@ -65,24 +71,3 @@ def staff_view(request):
     }
 
     return render(request, 'packages/staff.html', context)
-
-
-def set_order_driver_view(request):
-    if not is_member(request, 'staff'):
-        return render(request, 'errors/access_restricted.html', {})
-    requested_partner = Partner.objects.get(name=request.GET.get('p'))
-    order = Order.objects.filter(id=request.GET.get('order'))
-
-    if request.POST:
-        assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
-        order.update(driver=assigned_driver)
-
-        return redirect('/partner/?p=' + requested_partner.name)
-
-    context = {
-        'drivers': Driver.objects.exclude(name='None'),
-        'partner': requested_partner.name,
-        'order': order.get().id
-    }
-
-    return render(request, 'packages/assign_order_driver.html', context)
