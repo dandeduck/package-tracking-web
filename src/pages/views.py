@@ -11,8 +11,6 @@ def logout_view(request):
 
 
 def login_view(request):
-    username = ''
-
     if request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -21,9 +19,10 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect('/home/')
-
-    return render_to_response('pages/login.html', {'username': username})
+                return redirect('/')
+        else:
+            return render(request, 'pages/login.html', {'username': username, 'fail': True})
+    return render(request, 'pages/login.html', {})
 
 
 def home_view(request):

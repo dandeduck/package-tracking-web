@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
 {% block main_block %}
+    {%if fail%}
+        <p> Your password and username don't match any active user</p>
+    {%endif%}
 
+    <form method='POST' action='/login/' class="login__form">
+        {% csrf_token %}
+      <div class="login__form--top">
+          <input type="text" placeholder="Username" name="username" value="{{username}}"/>
+          <input type="password" placeholder="Password" name="password" />
+      </div>
+      <div class="login__form--bottom">
+          <input type="submit" value="login" class="login__button btn" />
+      </div>
+    </form>
 {% endblock %}
