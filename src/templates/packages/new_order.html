@@ -9,25 +9,45 @@
         {%endfor%}
     </ul>
     <div class="creation">
-        <form method="POST" name="create" action="partner/new-order/?p={{partner.name}}&order={{order.id}}"> {% csrf_token %}
+        <form method="POST" name="create" action="./?p={{partner.name}}&order={{order.id}}" id="create"> {% csrf_token %}
             <div class="creation--left">
-                <input type="text" name="origin_street" value="{{partner.address.street_name}}"/>
-                <input type="number" name="origin_street_number" value="{{partner.address.street_number}}"/>
-                <input type="text" list="cities" value="{{partner.address.city.name}}"/>
-                <datalist id="cities">
-                    {%for city in cities%}
-                        <option>{{city}}</option>
+                <label>origin</label>
+                <input type="text" placeholder="Street" name="origin_street" value="{{partner.address.street_name}}"/>
+                <input type="number" placeholder="House Number" name="origin_street_number" value="{{partner.address.street_number}}"/>
+                <input type="text" placeholder="City" name="origin_city" list="cities" value="{{partner.address.city.name}}"/>
+                {% include "packages/parts/list_cities.html" %}
+                <select name="origin_area" class="area__select sla1" form="create">
+                    {%for db, human in cities.0.AREA_CHOICES%}
+                        {%if db == partner.address.city.area%}
+                            <option>{{human}}</option>
+                        {%endif%}
                     {%endfor%}
-                </datalist>
-                {% include "packages/parts/list_areas.html" %}
+                    {%for db, human in cities.0.AREA_CHOICES%}
+                        {%if db != partner.address.city.area%}
+                            <option>{{human}}</option>
+                        {%endif%}
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="creation--center">
+                <label>destination</label>
+                <input type="text" placeholder="Street" name="destination_street"/>
+                <input type="number" placeholder="House Number" name="destination_street_number"/>
+                <input type="text" placeholder="City" name="destination_city" list="cities"/>
+                {% include "packages/parts/list_cities.html" %}
+                <select name="destination_area" class="area__select sla2" form="create">
+                    {%for db, human in cities.0.AREA_CHOICES%}
+                        <option>{{human}}</option>
+                    {%endfor%}
+                </select>
             </div>
             <div class="creation--right">
-                <select name="rate" class="rate__select slr">
+                <select name="rate" class="rate__select slr" form="create">
                     {%for rate in rates%}
                         <option>{{rate}}</option>
                     {%endfor%}
                 </select>
-                <input type="tel" name="phone"/>
+                <input type="tel" placeholder="0587978897" name="phone_number"/>
             </div>
             <div class="creation--bottom">
                 <input type="submit" value="add" class="create__button btn"/>

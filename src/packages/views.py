@@ -47,7 +47,7 @@ def partner_view(request):
             order = Order.objects.filter(id=request.POST.get('order'))
             order.update(driver=assigned_driver)
         else:
-            new_order_id = str(Order.objects.create(partner=requested_partner).id)
+            new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
             return redirect('/partner/new-order/?p='+requested_partner.name+'&order='+new_order_id)
     orders = requested_partner.related_orders()
     orders.sort()
@@ -94,7 +94,7 @@ def partner_new_order(request):
         rate = float(request.POST.get('rate'))
         phone_number = request.POST.get('phone_number')
 
-        Package.objects.craete(origin=origin_address, destination=destination_address, order=order, rate=rate, phone_number=phone_number)
+        Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate, phone_number=phone_number)
 
     context = {
         'packages': order.related_packages(),
@@ -111,9 +111,9 @@ def get_address(city_name, area, street, street_number):
     city = get_city(city_name, area)
     address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
 
-    if not address.exists():
+    if not address:
         return Address.objects.create(city=city, street_name=street, street_number=street_number)
-    return address
+    return address.get()
 
 
 def get_city(name, area):
@@ -121,7 +121,7 @@ def get_city(name, area):
 
     if not city.exists():
         return City.objects.create(name=name, area=area)
-    return city
+    return city.get()
 
 
 def staff_view(request):

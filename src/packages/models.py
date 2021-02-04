@@ -3,21 +3,21 @@ from django.db import models
 
 
 class City(models.Model):
-    NORTH = 'NORTH'
-    CENTER = 'CENTER'
-    SOUTH = 'SOUTH'
+    CENTER = 'Central'
+    NORTH = 'Northern'
+    SOUTH = 'Southern'
 
     AREA_CHOICES = [
-        (NORTH, 'Northern'),
         (CENTER, 'Central'),
+        (NORTH, 'Northern'),
         (SOUTH, 'Southern')
     ]
 
     name = models.CharField(max_length=32, unique=True, primary_key=True)
-    area = models.CharField(max_length=6, choices=AREA_CHOICES, default=CENTER)
+    area = models.CharField(max_length=16, choices=AREA_CHOICES)
 
     def __str__(self):
-        return self.name
+        return str(self.name)+' '+str(self.area)
 
 
 class Address(models.Model):
@@ -48,7 +48,8 @@ class Partner(models.Model):
 
 
 class Driver(models.Model):
-    name = models.CharField(max_length=32, unique=True, default='None')
+    NO_DRIVER = 'Missing'
+    name = models.CharField(max_length=32, unique=True, default=NO_DRIVER)
 
     def __str__(self):
         return self.name
@@ -58,13 +59,13 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     collection_date = models.DateField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, default=Driver.objects.get(name='None'))
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
 
     def related_packages(self):
         return Package.objects.filter(order=self)
 
     def has_driver(self):
-        return self.driver.name != 'None'
+        return self.driver.name != Driver.NO_DRIVER
 
     def overall_package_status(self):
         packages = self.related_packages()
@@ -105,7 +106,7 @@ class Package(models.Model):
     destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
-    phone_number = models.CharField(max_length=32)
+    phone_number = models.CharField(max_length=32, blank=True)
 
     def next_status(self):
         status = self.status
