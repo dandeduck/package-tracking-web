@@ -1,8 +1,21 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <h2> {{package_group.partner.name}} </h2>
+    <h2> {{order.collection_date}} </h2>
     {% for package in packages %}
-        <p> {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a> </p>
+        <li>
+            {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a>
+            {%if is_staff %}
+                <a href="javascript:submitform({{forloop.counter0}})">update</a>
+                <form name="{{forloop.counter}}" action="/order/?id={{order.id}}&p={{package.id}}" method="POST"> {% csrf_token %}</form>
+            {%endif%}
+        </li>
     {% endfor %}
+
+    <script type="text/javascript">
+        function submitform(count)
+        {
+            document.forms[count].submit();
+        }
+    </script>
 {% endblock %}

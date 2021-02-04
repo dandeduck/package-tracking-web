@@ -33,7 +33,7 @@ class Order(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
 
     def related_packages(self):
-        return list(Package.objects.filter(order=self))
+        return Package.objects.filter(order=self)
 
     def has_driver(self):
         return self.driver.name != 'None'
@@ -45,8 +45,6 @@ class Order(models.Model):
 
         for package in packages:
             status_sum += int(package)
-
-        print('sum: ' + str(status_sum) + ' amount: ' + str(amount))
 
         if status_sum < amount * 3:
             if status_sum > amount:
@@ -101,6 +99,15 @@ class Package(models.Model):
     destination = models.ForeignKey(Address, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+
+    def next_status(self):
+        status = self.status
+
+        if status == self.WAIT:
+            return self.ON_ROUTE
+        elif status == self.ON_ROUTE:
+            return self.DELIVERED
+        return self.DELIVERED
 
     def __str__(self):
         return str(self.destination) + " " + str(self.status)

@@ -9,9 +9,17 @@ from util import is_member, is_staff
 def order_view(request):
     order_id = request.GET.get('id')
     order = Order.objects.get(id=order_id)
+
+    if request.POST:
+        package_id = request.GET.get('p')
+        package = order.related_packages().filter(id=package_id)
+        package.update(status=package.get().next_status())
+
+    print(is_staff(request))
     context = {
         'order': order,
-        'packages': order.related_packages()
+        'packages': order.related_packages(),
+        'is_staff': is_staff(request)
     }
 
     return render(request, "packages/order.html", context)
@@ -63,24 +71,19 @@ def staff_view(request):
 def set_order_driver_view(request):
     if not is_member(request, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
+    requested_partner = Partner.objects.get(name=request.GET.get('p'))
+    order = Order.objects.filter(id=request.GET.get('o'))
 
-    if not request.POST:
-        requested_partner = Partner.objects.get(name=request.GET.get('p'))
-        order = Order.objects.get(id=request.GET.get('o'))
-
-
-        context = {
-            'drivers': Driver.objects.exclude(name='None'),
-            'partner': requested_partner.name,
-            'order': order.id
-        }
-
-    else:
-        requested_partner = Partner.objects.get(name=request.GET.get('p'))
-        order = Order.objects.filter(id=request.GET.get('o'))
+    if request.POST:
         assigned_driver = Driver.objects.get(name=request.GET.get('d'))
-
         order.update(driver=assigned_driver)
 
-        return redirect('/partner/?p='+requested_partner.name)
+        return redirect('/partner/?p=' + requested_partner.name)
+
+    context = {
+        'drivers': Driver.objects.exclude(name='None'),
+        'partner': requested_partner.name,
+        'order': order.get().id
+    }
+
     return render(request, 'packages/assign_order_driver.html', context)
