@@ -110,6 +110,9 @@ class Package(models.Model):
             return self.DELIVERED
         return self.DELIVERED
 
+    def as_query(self):
+        return Package.objects.filter(id=self.id)
+
     def __str__(self):
         return str(self.destination) + " " + str(self.status)
 

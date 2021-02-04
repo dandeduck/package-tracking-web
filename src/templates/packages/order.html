@@ -2,11 +2,15 @@
 
 {% block main_block %}
     <h2> {{order.collection_date}} </h2>
+    <form name="update-all" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}
+        <a href="javascript:submitform('update-all')">update all</a>
+        <input type="hidden" name="package" value="all" />
+    </form>
     {% for package in packages %}
         <li>
             {{package.destination}} {{package.status}} <a href="/package/?id={{package.id}}">track here</a>
             {%if is_staff %}
-                <a href="javascript:submitform({{forloop.counter0}})">update</a>
+                <a href="javascript:submitform({{forloop.counter}})">update</a>
                 <form name="{{forloop.counter}}" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}
                     <input type="hidden" name="package" value="{{package.id}}" />
                 </form>

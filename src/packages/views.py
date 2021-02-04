@@ -11,9 +11,13 @@ def order_view(request):
     order = Order.objects.get(id=order_id)
 
     if request.POST:
-        package_id = request.POST.get('package')
-        package = order.related_packages().filter(id=package_id)
-        package.update(status=package.get().next_status())
+        if request.POST.get('package') == 'all':
+            for inner in order.related_packages():
+                inner.as_query().update(status=inner.next_status())
+        else:
+            package_id = request.POST.get('package')
+            package = order.related_packages().filter(id=package_id)
+            package.update(status=package.get().next_status())
 
     context = {
         'order': order,

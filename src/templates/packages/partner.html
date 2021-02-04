@@ -1,14 +1,14 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    {% for order, amount, status, driver in order_amount_status_drivers %}
-        <p>
+    <ul>
+        {% for order, amount, status, driver in order_amount_status_drivers %}
+        <li>
             {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages </a> -> {{status}}
             {%if is_staff %}
-            |
                 <form name="drivers" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="order" value="{{order.id}}" />
+                    <input type="hidden" name="order" value="{{order.id}}"/>
                     <select name="driver" onchange="this.form.submit()">
                         {%for inner_driver in drivers%}
                             {%if inner_driver == driver %}
@@ -23,6 +23,7 @@
                     </select>
                 </form>
             {%endif%}
-        </p>
+        </li>
     {% endfor %}
+    </ul>
 {% endblock %}
