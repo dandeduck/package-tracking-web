@@ -2,9 +2,37 @@ import uuid as uuid
 from django.db import models
 
 
+class City(models.Model):
+    CENTER = 'Central'
+    NORTH = 'Northern'
+    SOUTH = 'Southern'
+
+    AREA_CHOICES = [
+        (CENTER, 'Central'),
+        (NORTH, 'Northern'),
+        (SOUTH, 'Southern')
+    ]
+
+    name = models.CharField(max_length=32, unique=True, primary_key=True)
+    area = models.CharField(max_length=16, choices=AREA_CHOICES)
+
+    def __str__(self):
+        return str(self.name)+' '+str(self.area)
+
+
+class Address(models.Model):
+    street_name = models.CharField(max_length=32)
+    street_number = models.PositiveSmallIntegerField()
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)
+
+
 class Partner(models.Model):
     name = models.CharField(max_length=64, unique=True, primary_key=True)
     rates = models.CharField(max_length=32, default='0')
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
     def get_rates(self):
         return [int(rate) for rate in str(self.rates).split(',')]
@@ -20,7 +48,8 @@ class Partner(models.Model):
 
 
 class Driver(models.Model):
-    name = models.CharField(max_length=32, unique=True, default='None')
+    NO_DRIVER = 'Missing'
+    name = models.CharField(max_length=32, unique=True, default=NO_DRIVER)
 
     def __str__(self):
         return self.name
@@ -36,7 +65,7 @@ class Order(models.Model):
         return Package.objects.filter(order=self)
 
     def has_driver(self):
-        return self.driver.name != 'None'
+        return self.driver.name != Driver.NO_DRIVER
 
     def overall_package_status(self):
         packages = self.related_packages()
@@ -60,29 +89,6 @@ class Order(models.Model):
         return self.collection_date > other.collection_date
 
 
-class City(models.Model):
-    AREA_CHOICES = [
-        ('SOUTH', 'Southern'),
-        ('CENTER', 'Central'),
-        ('NORTH', 'Northern')
-    ]
-
-    name = models.CharField(max_length=32, unique=True, primary_key=True)
-    area = models.CharField(max_length=6, choices=AREA_CHOICES, default='CENTER')
-
-    def __str__(self):
-        return self.name
-
-
-class Address(models.Model):
-    street_name = models.CharField(max_length=32)
-    street_number = models.PositiveSmallIntegerField()
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.city) + " " + str(self.street_name) + " " + str(self.street_number)
-
-
 class Package(models.Model):
     WAIT = 'Awaiting delivery'
     ON_ROUTE = 'On route to destination'
@@ -96,9 +102,11 @@ class Package(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default=WAIT)
-    destination = models.ForeignKey(Address, on_delete=models.CASCADE)
+    origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='origin')
+    destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    phone_number = models.CharField(max_length=32, blank=True)
 
     def next_status(self):
         status = self.status
@@ -108,6 +116,9 @@ class Package(models.Model):
         elif status == self.ON_ROUTE:
             return self.DELIVERED
         return self.DELIVERED
+
+    def as_query(self):
+        return Package.objects.filter(id=self.id)
 
     def __str__(self):
         return str(self.destination) + " " + str(self.status)
