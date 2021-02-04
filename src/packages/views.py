@@ -11,11 +11,10 @@ def order_view(request):
     order = Order.objects.get(id=order_id)
 
     if request.POST:
-        package_id = request.GET.get('p')
+        package_id = request.POST.get('package')
         package = order.related_packages().filter(id=package_id)
         package.update(status=package.get().next_status())
 
-    print(is_staff(request))
     context = {
         'order': order,
         'packages': order.related_packages(),
@@ -72,10 +71,10 @@ def set_order_driver_view(request):
     if not is_member(request, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
     requested_partner = Partner.objects.get(name=request.GET.get('p'))
-    order = Order.objects.filter(id=request.GET.get('o'))
+    order = Order.objects.filter(id=request.GET.get('order'))
 
     if request.POST:
-        assigned_driver = Driver.objects.get(name=request.GET.get('d'))
+        assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
         order.update(driver=assigned_driver)
 
         return redirect('/partner/?p=' + requested_partner.name)

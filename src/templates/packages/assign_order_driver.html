@@ -3,7 +3,9 @@
 {% block main_block %}
         {%for driver in drivers%}
             <li><a href="javascript:submitform({{forloop.counter0}})">{{driver}}</a></li>
-            <form name="{{forloop.counter}}" action="/partner/driver/?p={{partner}}&o={{order}}&d={{driver}}" method="POST"> {% csrf_token %}</form>
+            <form name="{{forloop.counter}}" action="/partner/driver/?p={{partner}}&order={{order}}" method="POST"> {% csrf_token %}
+                <input type="hidden" name="driver" value="{{driver}}" />
+            </form>
         {%endfor%}
         <script type="text/javascript">
         function submitform(count)
