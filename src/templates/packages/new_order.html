@@ -13,9 +13,16 @@
             <div class="creation--left">
                 <input type="text" name="origin_street" value="{{partner.address.street_name}}"/>
                 <input type="number" name="origin_street_number" value="{{partner.address.street_number}}"/>
+                <input type="text" list="cities" value="{{partner.address.city.name}}"/>
+                <datalist id="cities">
+                    {%for city in cities%}
+                        <option>{{city}}</option>
+                    {%endfor%}
+                </datalist>
+                {% include "packages/parts/list_areas.html" %}
             </div>
             <div class="creation--right">
-                <select name="rate" class="rate__select sle">
+                <select name="rate" class="rate__select slr">
                     {%for rate in rates%}
                         <option>{{rate}}</option>
                     {%endfor%}

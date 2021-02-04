@@ -1,0 +1,12 @@
+<select name="area" class="area__select sla">
+    {%for db, human in cities.0.AREA_CHOICES%}
+        {%if db == partner.address.city.area%}
+            <option>{{human}}</option>
+        {%endif%}
+    {%endfor%}
+    {%for db, human in cities.0.AREA_CHOICES%}
+        {%if db != partner.address.city.area%}
+            <option>{{human}}</option>
+        {%endif%}
+    {%endfor%}
+</select>

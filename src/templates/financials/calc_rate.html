@@ -1,4 +1,4 @@
-{%if package.city.area == "CENTER" %}
+{%if package.city.area == package.city.CENTER %}
     {{package.rate}}
 {%else%}
     {{package.rate|add:"10"}}

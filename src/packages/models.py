@@ -3,14 +3,18 @@ from django.db import models
 
 
 class City(models.Model):
+    NORTH = 'NORTH'
+    CENTER = 'CENTER'
+    SOUTH = 'SOUTH'
+
     AREA_CHOICES = [
-        ('SOUTH', 'Southern'),
-        ('CENTER', 'Central'),
-        ('NORTH', 'Northern')
+        (NORTH, 'Northern'),
+        (CENTER, 'Central'),
+        (SOUTH, 'Southern')
     ]
 
     name = models.CharField(max_length=32, unique=True, primary_key=True)
-    area = models.CharField(max_length=6, choices=AREA_CHOICES, default='CENTER')
+    area = models.CharField(max_length=6, choices=AREA_CHOICES, default=CENTER)
 
     def __str__(self):
         return self.name
