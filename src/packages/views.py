@@ -122,7 +122,7 @@ def get_city(name, area):
     return city.get()
 
 
-def package_edit_view(request, partner, package):
+def package_edit_view(request, partner, order, package):
     partner = Partner.objects.get(name=partner)
     package = Package.objects.filter(id=package)
 
@@ -131,6 +131,7 @@ def package_edit_view(request, partner, package):
 
     context = {
         'package': package.get(),
+        'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
         'cities': City.objects.all()

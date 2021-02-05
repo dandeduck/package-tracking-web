@@ -29,7 +29,7 @@ def home_view(request):
     if has_group(request):
         if is_staff(request):
             return redirect('/staff/')
-        return redirect('/partner/?p='+first_group_name(request))
+        return redirect('/partners/'+first_group_name(request))
 
     return render(request, 'pages/home.html', {})
 

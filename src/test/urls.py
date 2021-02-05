@@ -16,7 +16,7 @@ urlpatterns = [
 
     path('partners/<str:partner>/', partner_view),
     path('partners/<str:partner>/<str:order>/', partner_order_view),
-    path('partners/<str:partner>/<str:package>/', package_edit_view),
+    path('partners/<str:partner>/<str:order>/<str:package>/', package_edit_view),
     path('packages/<str:package_id>/', package_view),
     path('orders/<str:order_id>/', order_view),
     path('staff/', staff_view)

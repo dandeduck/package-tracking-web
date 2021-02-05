@@ -5,7 +5,7 @@
     <ul>
         {%for package in packages%}
             <li>
-                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partner/{{partner.name}}/{{package.id}}/"> edit </a>
+                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/"> edit </a>
             </li>
         {%endfor%}
     </ul>
@@ -58,7 +58,7 @@
             </div>
         </form>
     </div>
-    <a href="/notify/?p={{partner}}&next=/partner/?p={{partner}}">SAVE</a>
+    <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
     <script type="text/javascript">
         function toggle_creation()
         {
