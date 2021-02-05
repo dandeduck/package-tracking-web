@@ -4,7 +4,7 @@
     <ul>
         {%for package in packages%}
             <li>
-                {{package.origin}} {{package.destination}} {% include "financials/calc_rate.html" %} {{package.status}}
+                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partner/order/package/?p={{partner.name}}&package={{package.id}}"> edit </a>
             </li>
         {%endfor%}
     </ul>
@@ -45,7 +45,7 @@
                 <label for="rates">Package price</label>
                 <select name="rate" class="rate__select slr" form="create" id="rates">
                     {%for rate in rates%}
-                        <option>{{rate}}</option>
+                        <option>{{rate|floatformat}}</option>
                     {%endfor%}
                 </select>
                 <input type="tel" placeholder="0587978897" name="phone_number"/>

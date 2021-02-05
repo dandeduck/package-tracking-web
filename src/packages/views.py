@@ -71,7 +71,7 @@ def partner_view(request):
     return render(request, "packages/partner.html", context)
 
 
-def partner_order(request):
+def partner_order_view(request):
     partner = Partner.objects.get(name=request.GET.get('p'))
     order = Order.objects.get(id=request.GET.get('order'))
 
@@ -104,7 +104,7 @@ def partner_order(request):
         'cities': City.objects.all()
     }
 
-    return render(request, 'packages/new_order.html', context)
+    return render(request, 'packages/order_edit.html', context)
 
 
 def get_address(city_name, area, street, street_number):
@@ -122,6 +122,43 @@ def get_city(name, area):
     if not city.exists():
         return City.objects.create(name=name, area=area)
     return city.get()
+
+
+def package_edit_view(request):
+    partner = Partner.objects.get(name=request.GET.get('p'))
+    package = Package.objects.filter(id=request.GET.get('package'))
+
+    if not is_member(request, partner.name) and not is_staff(request):
+        return render(request, 'errors/access_restricted.html', {})
+
+    context = {
+        'package': package.get(),
+        'partner': partner,
+        'rates': partner.rates.split(','),
+        'cities': City.objects.all()
+    }
+
+    if request.POST:
+        origin_city = request.POST.get('origin_city')
+        origin_area = request.POST.get('origin_area')
+        origin_street = request.POST.get('origin_street')
+        origin_street_number = request.POST.get('origin_street_number')
+        origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
+
+        destination_city = request.POST.get('destination_city')
+        destination_area = request.POST.get('destination_area')
+        destination_street = request.POST.get('destination_street')
+        destination_street_number = request.POST.get('destination_street_number')
+        destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
+
+        rate = float(request.POST.get('rate'))
+        phone_number = request.POST.get('phone_number')
+
+        package.update(origin=origin_address, destination=destination_address, rate=rate, phone_number=phone_number)
+
+        return redirect('/notify/?p='+partner.name)
+
+    return render(request, 'packages/package_edit.html', context)
 
 
 def staff_view(request):
