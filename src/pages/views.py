@@ -47,3 +47,9 @@ def notify_view(request):
     redirect_url = request.GET.get('next').replace('==', '&')
     print(redirect_url)
     return redirect(redirect_url)
+
+
+def financial_view(request):
+    context = {}
+    return render('pages/financial.html', request, context)
+
