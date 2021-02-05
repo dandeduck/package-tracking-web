@@ -38,7 +38,7 @@ class Partner(models.Model):
         return [int(rate) for rate in str(self.rates).split(',')]
 
     def related_orders(self):
-        return list(Order.objects.filter(partner=self))
+        return Order.objects.filter(partner=self)
 
     def __str__(self):
         return self.name

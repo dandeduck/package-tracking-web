@@ -1,12 +1,20 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <div onload="javascript:reveal_search()">
+    <script>
+        window.onload = function() {
+            reveal_search();
+        }
+    </script>
+    <div>
         {% include "packages/parts/search.html" %}
         <ul>
-            {%for order in orders%}
-                <li><a href="/partners/{{partner}}/{{order.id}}/">Order {{order.collection_date.date}}</a> {{order.status}}</li>
+            {%for order, package in order_packages%}
+                <li><a href="/partners/{{partner}}/{{order.id}}/">Order {{order.collection_date.date}}</a> {{package.status}} {{package.destination}}</li>
             {%endfor%}
+            {%if not order_packages%}
+                <li>No results</li>
+            {%endif%}
         </ul>
     </div>
 {% endblock %}

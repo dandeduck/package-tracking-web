@@ -29,16 +29,19 @@ def partner_search(request, partner):
         packages = packages.filter(destination__city__name__icontains=city_query)
 
     orders = []
-    for package in packages:
+    related_packages = []
+    for package in packages.order_by('-order__collection_date'):
         order = package.order
         if order not in orders:
             orders.append(order)
+            related_packages.append(package)
 
+    order_packages = [(orders[i], packages[i]) for i in range(0, len(orders))]
     context = {
         'partner': partner,
         'cities': City.objects.all(),
         'streets': Address.objects.values_list('street_name', flat=True),
-        'orders': orders,
+        'order_packages': order_packages,
         'names': Package.objects.values_list('full_name', flat=True),
     }
     return render(request, 'packages/partner_search.html', context)
@@ -85,8 +88,7 @@ def partner_view(request, partner):
         else:
             new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
             return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
-    orders = requested_partner.related_orders()
-    orders.sort()
+    orders = requested_partner.related_orders().order_by('-collection_date')
     package_amounts = []
     order_statuses = []
     drivers = []
