@@ -12,7 +12,7 @@
 
     <button onclick="javascript:toggle_creation()" id="show_creation">add</button>
     <div class="creation" id="creation" style="display: none;">
-        <form method="POST" name="create" action="./?p={{partner.name}}&order={{order.id}}" id="create"> {% csrf_token %}
+        <form method="POST" name="create" id="create"> {% csrf_token %}
             <div class="creation--left">
                 <label>origin</label>
                 <input type="text" placeholder="Street" name="origin_street" value="{{partner.address.street_name}}"/>
@@ -35,7 +35,7 @@
             <div class="creation--center">
                 <label>destination</label>
                 <input type="text" placeholder="Street" name="destination_street"/>
-                <input type="number" placeholder="House Number" name="destination_street_number"/>
+                <input type="number" placeholder="House Number" value="0" name="destination_street_number"/>
                 <input type="text" placeholder="City" name="destination_city" list="cities"/>
                 {% include "packages/parts/list_cities.html" %}
                 <select name="destination_area" class="area__select sla2" form="create">
@@ -54,26 +54,33 @@
                 <input type="tel" placeholder="0587978897" name="phone_number"/>
             </div>
             <div class="creation--bottom">
-                <input type="button" onclick="javascript:toggle_creation()" value="add" class="create__button btn"/>
+                <button onclick="javascript:toggle_creation()">add</button>
             </div>
         </form>
+        <button class="creation--bottom" onclick="javascript:hide_form()">cancel</button>
     </div>
     <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
     <script type="text/javascript">
-        function toggle_creation()
-        {
+        function toggle_creation() {
             var creation = document.getElementById("creation");
             var show_creation = document.getElementById("show_creation");
 
             if(show_creation.style.display === "none") {
-                document.forms[0].submit()
-                show_creation.style.display = "block"
-                creation.style.display = "none"
+                document.forms[0].submit();
+                hide_form();
             }
             else {
-                show_creation.style.display = "none"
-                creation.style.display = "block"
+                show_creation.style.display = "none";
+                creation.style.display = "block";
             }
+        }
+
+        function hide_form() {
+            var creation = document.getElementById("creation");
+            var show_creation = document.getElementById("show_creation");
+
+            show_creation.style.display = "block";
+            creation.style.display = "none";
         }
     </script>
 {% endblock %}
