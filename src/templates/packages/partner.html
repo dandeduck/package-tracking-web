@@ -8,7 +8,7 @@
         <li>
             {{order.collection_date.date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
             {%if is_staff %}
-                <form name="drivers" method="POST">
+                <form name="drivers" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="order" value="{{order.id}}"/>
                     <select name="driver" onchange="this.form.submit()">
@@ -29,7 +29,7 @@
         </li>
         {% endfor %}
     </ul>
-    <form name="new-order" action="/partners/{{partner}}/" method="POST"> {% csrf_token %}
+    <form name="new-order" action="/partners/{{partner}}/" method="post"> {% csrf_token %}
         <a href="javascript:submitform('new-order')">+ new order</a>
     </form>
     <script type="text/javascript">

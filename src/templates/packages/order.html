@@ -2,7 +2,7 @@
 
 {% block main_block %}
     <h2> Order {{order.collection_date.date}} </h2>
-    <form name="update-all" method="POST"> {% csrf_token %}
+    <form name="update-all" method="post"> {% csrf_token %}
         <a href="javascript:submitform('update-all')">update all</a>
         <input type="hidden" name="package" value="all" />
     </form>
@@ -11,7 +11,7 @@
             from {{package.origin.city}} to {{package.destination}} {{package.status}} <a href="/packages/{{package.id}}/">tracking</a>
             {%if is_staff %}
                 <a href="javascript:submitform({{forloop.counter}})">update</a>
-                <form name="{{forloop.counter}}" method="POST"> {% csrf_token %}
+                <form name="{{forloop.counter}}" method="post"> {% csrf_token %}
                     <input type="hidden" name="package" value="{{package.id}}" />
                 </form>
             {%endif%}

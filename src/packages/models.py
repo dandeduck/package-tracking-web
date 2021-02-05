@@ -60,6 +60,7 @@ class Order(models.Model):
     collection_date = models.DateTimeField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    notes = models.TextField(blank=True)
 
     def related_packages(self):
         return Package.objects.filter(order=self)
