@@ -1,6 +1,7 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
+    <h2> All orders </h2>
     <ul>
         {% for order, amount, status, driver in order_amount_status_drivers %}
         <li>

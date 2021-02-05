@@ -1,6 +1,7 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
+    <h2> Order {{order.collection_date}} </h2>
     <ul>
         {%for package in packages%}
             <li>

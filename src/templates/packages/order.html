@@ -1,7 +1,7 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <h2> {{order.collection_date}} </h2>
+    <h2> Order {{order.collection_date}} </h2>
     <form name="update-all" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}
         <a href="javascript:submitform('update-all')">update all</a>
         <input type="hidden" name="package" value="all" />
