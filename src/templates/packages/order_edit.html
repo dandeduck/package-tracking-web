@@ -57,22 +57,28 @@
                 <button onclick="javascript:toggle_creation()">add</button>
             </div>
         </form>
-        <button class="creation--bottom" onclick="javascript:hide_form()">cancel</button>
+        <div class="creation--bottom">
+            <button onclick="javascript:hide_form()">cancel</button>
+        </div>
     </div>
     <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
     <script type="text/javascript">
         function toggle_creation() {
-            var creation = document.getElementById("creation");
-            var show_creation = document.getElementById("show_creation");
-
             if(show_creation.style.display === "none") {
                 document.forms[0].submit();
                 hide_form();
             }
             else {
-                show_creation.style.display = "none";
-                creation.style.display = "block";
+                show_form();
             }
+        }
+
+        function show_form() {
+            var creation = document.getElementById("creation");
+            var show_creation = document.getElementById("show_creation");
+
+            show_creation.style.display = "none";
+            creation.style.display = "block";
         }
 
         function hide_form() {
