@@ -156,7 +156,7 @@ def package_edit_view(request):
 
         package.update(origin=origin_address, destination=destination_address, rate=rate, phone_number=phone_number)
 
-        return redirect('/notify/?p='+partner.name)
+        return redirect('/notify/?p='+partner.name+'&next=/partner/order/?p='+partner.name+'==order='+str(package.get().order.id))
 
     return render(request, 'packages/package_edit.html', context)
 

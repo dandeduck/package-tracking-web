@@ -44,4 +44,6 @@ def contact_view(request):
 
 def notify_view(request):
     # send email and stuff
-    return redirect('/')
+    redirect_url = request.GET.get('next').replace('==', '&')
+    print(redirect_url)
+    return redirect(redirect_url)
