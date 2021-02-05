@@ -1,0 +1,12 @@
+{%extends 'base.html' %}
+
+{% block main_block %}
+    <div onload="javascript:reveal_search()">
+        {% include "packages/parts/search.html" %}
+        <ul>
+            {%for order in orders%}
+                <li><a href="/partners/{{partner}}/{{order.id}}/">Order {{order.collection_date.date}}</a> {{order.status}}</li>
+            {%endfor%}
+        </ul>
+    </div>
+{% endblock %}

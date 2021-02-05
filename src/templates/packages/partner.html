@@ -2,6 +2,7 @@
 
 {% block main_block %}
     <h2> All orders </h2>
+    {% include "packages/parts/search.html" %}
     <ul>
         {% for order, amount, status, driver in order_amount_status_drivers %}
         <li>
@@ -32,8 +33,7 @@
         <a href="javascript:submitform('new-order')">+ new order</a>
     </form>
     <script type="text/javascript">
-        function submitform(count)
-        {
+        function submitform(count) {
             document.forms[count].submit();
         }
     </script>

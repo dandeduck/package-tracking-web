@@ -1,0 +1,31 @@
+<button onclick="javascipt:reveal_search()" id="search_reveal">search</button>
+<div class="search" id="search" style="display: none;">
+    <p>Destination:</p>
+    <form method="get" action="/search/{{partner}}/">
+        <input type="text" placeholder="City" name="city" list="cities"/>
+        <input type="text" placeholder="Street" name="street_name" list="streets"/>
+        <input type="number" placeholder="0" name="street_number"/>
+        <input type="text" placeholder="Full name" name="name" list="names"/>
+        <input type="submit" value="search">
+    </form>
+</div>
+
+<datalist id="cities">
+    {%include "packages/parts/list_options.html" with list=cities%}
+</datalist>
+<datalist id="streets">
+    {%include "packages/parts/list_options.html" with list=streets%}
+</datalist>
+<datalist id="names">
+    {%include "packages/parts/list_options.html" with list=names%}
+</datalist>
+
+<script type="text/javascript">
+    function reveal_search() {
+        var reveal_button = document.getElementById('search_reveal');
+        var search = document.getElementById('search');
+
+        reveal_button.style.display = 'none';
+        search.style.display = 'block';
+    }
+</script>

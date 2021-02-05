@@ -62,18 +62,17 @@
         </div>
     </div>
     <div class="nav--bottom">
-        <a href="/partners/{{partner.name}}/">BACK</a>
+        <a href="/partners/{{partner.name}}/">ALL ORDERS</a>
         <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
     </div>
     <datalist id="cities">
-        {%for city in cities%}
-            <option>{{city}}</option>
-        {%endfor%}
+        {%include "packages/parts/list_options.html" with list=cities%}
+    </datalist>
+    <datalist id="streets">
+        {%include "packages/parts/list_options.html" with list=streets%}
     </datalist>
     <datalist id="names">
-        {%for name in names%}
-            <option>{{name}}</option>
-        {%endfor%}
+        {%include "packages/parts/list_options.html" with list=names%}
     </datalist>
     <script type="text/javascript">
         function toggle_creation() {

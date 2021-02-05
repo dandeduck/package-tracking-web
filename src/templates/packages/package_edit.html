@@ -23,7 +23,7 @@
             </div>
             <div class="creation--center">
                 <label>destination</label>
-                <input type="text" placeholder="Street" name="destination_street" value="{{package.destination.street_name}}"/>
+                <input type="text" placeholder="Street" name="destination_street" value="{{package.destination.street_name}}" list="streets"/>
                 <input type="number" placeholder="House Number" name="destination_street_number" value="{{package.destination.street_number}}"/>
                 <input type="text" placeholder="City" name="destination_city" list="cities" value="{{package.destination.city.name}}"/>
                 <select name="destination_area" class="area__select sla2" form="create">
@@ -53,7 +53,7 @@
                         {%endif%}
                     {%endfor%}
                 </select>
-                <input type="text" placeholder="Full name" name="full_name" value="{{package.consumer.full_name}}"/>
+                <input type="text" placeholder="Full name" name="full_name" value="{{package.consumer.full_name}}" list="names"/>
                 <input type="tel" placeholder="Cell number" name="phone_number" value="{{package.consumer.phone_number}}"/>
             </div>
             <div class="creation--bottom">
@@ -65,13 +65,12 @@
         </div>
     </div>
     <datalist id="cities">
-        {%for city in cities%}
-            <option>{{city}}</option>
-        {%endfor%}
+        {%include "packages/parts/list_options.html" with list=cities%}
+    </datalist>
+    <datalist id="streets">
+        {%include "packages/parts/list_options.html" with list=streets%}
     </datalist>
     <datalist id="names">
-        {%for name in names%}
-            <option>{{name}}</option>
-        {%endfor%}
+        {%include "packages/parts/list_options.html" with list=names%}
     </datalist>
 {% endblock %}

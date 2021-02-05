@@ -6,6 +6,44 @@ from .models import Driver
 from util import is_member, is_staff
 
 
+def partner_search(request, partner):
+    partner = Partner.objects.filter(name=partner).get()
+
+    name_query = request.GET.get('name')
+    street_name_query = request.GET.get('street_name')
+    street_number_query = request.GET.get('street_number')
+    city_query = request.GET.get('city')
+    number_query = request.GET.get('number')
+
+    packages = Package.objects.filter(order__partner__name=partner.name)
+
+    if name_query:
+        packages = packages.filter(full_name__icontains=name_query)
+    if number_query:
+        packages = packages.filter(phone_number__icontains=number_query)
+    if street_name_query:
+        packages = packages.filter(destination__street_name__icontains=street_name_query)
+    if street_number_query:
+        packages = packages.filter(destination__street_number__contains=street_number_query)
+    if city_query:
+        packages = packages.filter(destination__city__name__icontains=city_query)
+
+    orders = []
+    for package in packages:
+        order = package.order
+        if order not in orders:
+            orders.append(order)
+
+    context = {
+        'partner': partner,
+        'cities': City.objects.all(),
+        'streets': Address.objects.values_list('street_name', flat=True),
+        'orders': orders,
+        'names': Package.objects.values_list('full_name', flat=True),
+    }
+    return render(request, 'packages/partner_search.html', context)
+
+
 def order_view(request, order_id):
     order = Order.objects.get(id=order_id)
 
@@ -102,6 +140,7 @@ def partner_order_view(request, partner, order):
         'partner': partner,
         'rates': partner.rates.split(','),
         'cities': City.objects.all(),
+        'streets': Address.objects.values_list('street_name', flat=True),
         'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
     }
 
@@ -120,7 +159,8 @@ def package_edit_view(request, partner, order, package):
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'cities': City.objects.all()
+        'cities': City.objects.all(),
+        'streets': Address.objects.values_list('street_name', flat=True)
     }
 
     if request.POST:
@@ -169,7 +209,7 @@ def get_address(city_name, area, street, street_number):
 
 
 def get_city(name, area):
-    city = City.objects.filter(name=name)
+    city = City.objects.filter(name__iexact=name)
 
     if not city.exists():
         return City.objects.create(name=name, area=area)
