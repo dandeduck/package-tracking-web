@@ -51,5 +51,5 @@ def notify_view(request):
 
 def financial_view(request):
     context = {}
-    return render('pages/financial.html', request, context)
+    return render(request, 'pages/financials.html', context)
 

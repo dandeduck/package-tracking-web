@@ -8,7 +8,6 @@
                 <input type="text" placeholder="Street" name="origin_street" value="{{package.origin.street_name}}"/>
                 <input type="number" placeholder="House Number" name="origin_street_number" value="{{package.origin.street_number}}"/>
                 <input type="text" placeholder="City" name="origin_city" list="cities" value="{{package.origin.city.name}}"/>
-                {% include "packages/parts/list_cities.html" %}
                 <select name="origin_area" class="area__select sla1" form="create">
                     {%for db, human in cities.0.AREA_CHOICES%}
                         {%if db == package.origin.city.area%}
@@ -27,7 +26,6 @@
                 <input type="text" placeholder="Street" name="destination_street" value="{{package.destination.street_name}}"/>
                 <input type="number" placeholder="House Number" name="destination_street_number" value="{{package.destination.street_number}}"/>
                 <input type="text" placeholder="City" name="destination_city" list="cities" value="{{package.destination.city.name}}"/>
-                {% include "packages/parts/list_cities.html" %}
                 <select name="destination_area" class="area__select sla2" form="create">
                     {%for db, human in cities.0.AREA_CHOICES%}
                         {%if db == package.destination.city.area%}
@@ -55,7 +53,8 @@
                         {%endif%}
                     {%endfor%}
                 </select>
-                <input type="tel" placeholder="0587978897" name="phone_number"/>
+                <input type="text" placeholder="Full name" name="full_name" value="{{package.consumer.full_name}}"/>
+                <input type="tel" placeholder="Cell number" name="phone_number" value="{{package.consumer.phone_number}}"/>
             </div>
             <div class="creation--bottom">
                 <input type="submit" value="save" />
@@ -65,4 +64,14 @@
             <button onclick="location.href = '/partners/{{partner}}/{{package.order.id}}/';">cancel</button>
         </div>
     </div>
+    <datalist id="cities">
+        {%for city in cities%}
+            <option>{{city}}</option>
+        {%endfor%}
+    </datalist>
+    <datalist id="names">
+        {%for name in names%}
+            <option>{{name}}</option>
+        {%endfor%}
+    </datalist>
 {% endblock %}

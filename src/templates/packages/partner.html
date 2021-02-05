@@ -5,7 +5,7 @@
     <ul>
         {% for order, amount, status, driver in order_amount_status_drivers %}
         <li>
-            {{order.collection_date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
+            {{order.collection_date.date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
             {%if is_staff %}
                 <form name="drivers" method="POST">
                     {% csrf_token %}

@@ -11,7 +11,7 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('about/', about_view),
     path('contact/', contact_view),
-    path('financial/', financial_view),
+    path('financials/', financial_view),
     path('notify/', notify_view),
 
     path('partners/<str:partner>/', partner_view),

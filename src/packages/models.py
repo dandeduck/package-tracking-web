@@ -57,7 +57,7 @@ class Driver(models.Model):
 
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    collection_date = models.DateField(auto_now_add=True)
+    collection_date = models.DateTimeField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
 
@@ -106,6 +106,7 @@ class Package(models.Model):
     destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    full_name = models.CharField(max_length=32, blank=True)
     phone_number = models.CharField(max_length=32, blank=True)
 
     def formatted_phone_number(self):

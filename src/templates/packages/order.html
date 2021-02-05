@@ -1,14 +1,14 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <h2> Order {{order.collection_date}} </h2>
+    <h2> Order {{order.collection_date.date()}} </h2>
     <form name="update-all" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}
         <a href="javascript:submitform('update-all')">update all</a>
         <input type="hidden" name="package" value="all" />
     </form>
     {% for package in packages %}
         <li>
-            from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} <a href="/packages/{{package.id}}/">tracking</a>
+            from {{package.origin.city}} to {{package.destination}} {{package.status}} <a href="/packages/{{package.id}}/">tracking</a>
             {%if is_staff %}
                 <a href="javascript:submitform({{forloop.counter}})">update</a>
                 <form name="{{forloop.counter}}" action="/order/?id={{order.id}}" method="POST"> {% csrf_token %}
@@ -17,6 +17,9 @@
             {%endif%}
         </li>
     {% endfor %}
+    <div class="nav--bottom">
+        <a href="/partners/{{order.partner.name}}/">BACK</a>
+    </div>
 
     <script type="text/javascript">
         function submitform(count)

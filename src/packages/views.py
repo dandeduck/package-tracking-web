@@ -89,37 +89,23 @@ def partner_order_view(request, partner, order):
         destination_street_number = request.POST.get('destination_street_number')
         destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
 
-        rate = float(request.POST.get('rate'))
+        rate = float(request.POST.get('rate').replace('₪', ''))
         phone_number = request.POST.get('phone_number')
+        full_name = request.POST.get('full_name')
 
-        Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate, phone_number=phone_number)
+        Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate,
+                               full_name=full_name, phone_number=phone_number)
 
     context = {
         'packages': order.related_packages(),
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'cities': City.objects.all()
+        'cities': City.objects.all(),
+        'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
     }
 
     return render(request, 'packages/order_edit.html', context)
-
-
-def get_address(city_name, area, street, street_number):
-    city = get_city(city_name, area)
-    address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
-
-    if not address:
-        return Address.objects.create(city=city, street_name=street, street_number=street_number)
-    return address.get()
-
-
-def get_city(name, area):
-    city = City.objects.filter(name=name)
-
-    if not city.exists():
-        return City.objects.create(name=name, area=area)
-    return city.get()
 
 
 def package_edit_view(request, partner, order, package):
@@ -150,10 +136,12 @@ def package_edit_view(request, partner, order, package):
         destination_street_number = request.POST.get('destination_street_number')
         destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
 
-        rate = float(request.POST.get('rate'))
+        rate = float(request.POST.get('rate').replace('₪', ''))
         phone_number = request.POST.get('phone_number')
+        full_name = request.POST.get('full_name')
 
-        package.update(origin=origin_address, destination=destination_address, rate=rate, phone_number=phone_number)
+        package.update(origin=origin_address, destination=destination_address, rate=rate,
+                       full_name=full_name, phone_number=phone_number)
 
         return redirect('/notify/?p='+partner.name+'&next=/partners/'+partner.name+'/'+str(package.get().order.id)+'/')
 
@@ -169,3 +157,20 @@ def staff_view(request):
     }
 
     return render(request, 'packages/staff.html', context)
+
+
+def get_address(city_name, area, street, street_number):
+    city = get_city(city_name, area)
+    address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
+
+    if not address:
+        return Address.objects.create(city=city, street_name=street, street_number=street_number)
+    return address.get()
+
+
+def get_city(name, area):
+    city = City.objects.filter(name=name)
+
+    if not city.exists():
+        return City.objects.create(name=name, area=area)
+    return city.get()

@@ -1,11 +1,11 @@
 {%extends 'base.html' %}
 
 {% block main_block %}
-    <h2> Order {{order.collection_date}} </h2>
+    <h2> Order {{order.collection_date.date}} </h2>
     <ul>
         {%for package in packages%}
             <li>
-                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/"> edit </a>
+                {{package.full_name}} {{package.origin.city}}, {{package.origin.street_name}} -> {{package.destination}} {{package.status}} ({%include "financials/calc_rate.html" %}₪) <a href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/"> edit </a>
             </li>
         {%endfor%}
     </ul>
@@ -14,11 +14,10 @@
     <div class="creation" id="creation" style="display: none;">
         <form method="POST" name="create" id="create"> {% csrf_token %}
             <div class="creation--left">
-                <label>origin</label>
+                <label>Origin</label>
                 <input type="text" placeholder="Street" name="origin_street" value="{{partner.address.street_name}}"/>
                 <input type="number" placeholder="House Number" name="origin_street_number" value="{{partner.address.street_number}}"/>
                 <input type="text" placeholder="City" name="origin_city" list="cities" value="{{partner.address.city.name}}"/>
-                {% include "packages/parts/list_cities.html" %}
                 <select name="origin_area" class="area__select sla1" form="create">
                     {%for db, human in cities.0.AREA_CHOICES%}
                         {%if db == partner.address.city.area%}
@@ -33,11 +32,10 @@
                 </select>
             </div>
             <div class="creation--center">
-                <label>destination</label>
+                <label>Destination</label>
                 <input type="text" placeholder="Street" name="destination_street"/>
                 <input type="number" placeholder="House Number" value="0" name="destination_street_number"/>
                 <input type="text" placeholder="City" name="destination_city" list="cities"/>
-                {% include "packages/parts/list_cities.html" %}
                 <select name="destination_area" class="area__select sla2" form="create">
                     {%for db, human in cities.0.AREA_CHOICES%}
                         <option>{{human}}</option>
@@ -45,13 +43,15 @@
                 </select>
             </div>
             <div class="creation--right">
-                <label for="rates">Package price</label>
+                <label for="rates">Base package price</label>
                 <select name="rate" class="rate__select slr" form="create" id="rates">
                     {%for rate in rates%}
-                        <option>{{rate|floatformat}}</option>
+                        <option>{{rate|floatformat}}₪</option>
                     {%endfor%}
                 </select>
-                <input type="tel" placeholder="0587978897" name="phone_number"/>
+                <p>Optional</p>
+                <input type="text" placeholder="Full name" name="full_name" list="names"/>
+                <input type="tel" placeholder="Cell number" name="phone_number"/>
             </div>
             <div class="creation--bottom">
                 <button onclick="javascript:toggle_creation()">add</button>
@@ -61,7 +61,20 @@
             <button onclick="javascript:hide_form()">cancel</button>
         </div>
     </div>
-    <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
+    <div class="nav--bottom">
+        <a href="/partners/{{partner.name}}/">BACK</a>
+        <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
+    </div>
+    <datalist id="cities">
+        {%for city in cities%}
+            <option>{{city}}</option>
+        {%endfor%}
+    </datalist>
+    <datalist id="names">
+        {%for name in names%}
+            <option>{{name}}</option>
+        {%endfor%}
+    </datalist>
     <script type="text/javascript">
         function toggle_creation() {
             if(show_creation.style.display === "none") {

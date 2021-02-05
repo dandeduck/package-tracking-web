@@ -1,5 +1,5 @@
 {%if package.destination.city.area == package.destination.city.CENTER %}
-    {{package.rate}}
+    {{package.rate|floatformat}}
 {%else%}
-    {{package.rate|floatformat|add:"10"}}
+    {{package.rate|add:"10"|floatformat}}
 {%endif%}
