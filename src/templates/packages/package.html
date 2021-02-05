@@ -2,8 +2,9 @@
 
 {% block main_block %}
     <ul>
-        <li>{{package.destination}}</li>
-        <li>{{package.status}}</li>
-        <li>{{package.phone_number}}</li>
+        <li>Origin: {{package.origin.city}}</li>
+        <li>Destination: {{package.destination}}</li>
+        <li>Status: {{package.status}}</li>
+        <li>Phone number: {{package.formatted_phone_number}}</li>
     </ul>
 {% endblock %}

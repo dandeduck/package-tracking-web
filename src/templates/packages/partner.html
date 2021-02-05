@@ -5,7 +5,7 @@
     <ul>
         {% for order, amount, status, driver in order_amount_status_drivers %}
         <li>
-            {{order.collection_date}} : <a href="/order/?id={{order.id}}">{{amount}} packages </a> -> {{status}}
+            {{order.collection_date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
             {%if is_staff %}
                 <form name="drivers" method="POST">
                     {% csrf_token %}
@@ -24,11 +24,11 @@
                     </select>
                 </form>
             {%endif%}
-            <a href="/partner/order/?p={{partner.name}}&order={{order.id}}"> edit </a>
+            <a href="/partners/{{partner.name}}/{{order.id}}/"> edit </a>
         </li>
         {% endfor %}
     </ul>
-    <form name="new-order" action="/partner/?p={{partner}}" method="POST"> {% csrf_token %}
+    <form name="new-order" action="/partners/{{partner}}/" method="POST"> {% csrf_token %}
         <a href="javascript:submitform('new-order')">+ new order</a>
     </form>
     <script type="text/javascript">

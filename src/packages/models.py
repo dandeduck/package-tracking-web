@@ -108,6 +108,12 @@ class Package(models.Model):
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     phone_number = models.CharField(max_length=32, blank=True)
 
+    def formatted_phone_number(self):
+        if self.phone_number == '':
+            return 'Not provided'
+        else:
+            return self.phone_number
+
     def next_status(self):
         status = self.status
 

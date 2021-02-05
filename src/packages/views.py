@@ -6,8 +6,7 @@ from .models import Driver
 from util import is_member, is_staff
 
 
-def order_view(request):
-    order_id = request.GET.get('id')
+def order_view(request, order_id):
     order = Order.objects.get(id=order_id)
 
     if request.POST:
@@ -28,15 +27,14 @@ def order_view(request):
     return render(request, "packages/order.html", context)
 
 
-def package_view(request):
-    package_id = request.GET.get('id')
+def package_view(request, package_id):
     context = {'package': Package.objects.get(id=package_id)}
 
     return render(request, "packages/package.html", context)
 
 
-def partner_view(request):
-    requested_partner = Partner.objects.get(name=request.GET.get('p'))
+def partner_view(request, partner):
+    requested_partner = Partner.objects.get(name=partner)
 
     if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -48,7 +46,7 @@ def partner_view(request):
             order.update(driver=assigned_driver)
         else:
             new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
-            return redirect('/partner/order/?p='+requested_partner.name+'&order='+new_order_id)
+            return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
     orders = requested_partner.related_orders()
     orders.sort()
     package_amounts = []
@@ -71,9 +69,9 @@ def partner_view(request):
     return render(request, "packages/partner.html", context)
 
 
-def partner_order_view(request):
-    partner = Partner.objects.get(name=request.GET.get('p'))
-    order = Order.objects.get(id=request.GET.get('order'))
+def partner_order_view(request, partner, order):
+    partner = Partner.objects.get(name=partner)
+    order = Order.objects.get(id=order)
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -124,9 +122,9 @@ def get_city(name, area):
     return city.get()
 
 
-def package_edit_view(request):
-    partner = Partner.objects.get(name=request.GET.get('p'))
-    package = Package.objects.filter(id=request.GET.get('package'))
+def package_edit_view(request, partner, package):
+    partner = Partner.objects.get(name=partner)
+    package = Package.objects.filter(id=package)
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -156,7 +154,7 @@ def package_edit_view(request):
 
         package.update(origin=origin_address, destination=destination_address, rate=rate, phone_number=phone_number)
 
-        return redirect('/notify/?p='+partner.name+'&next=/partner/order/?p='+partner.name+'==order='+str(package.get().order.id))
+        return redirect('/notify/?p='+partner.name+'&next=/partners/'+partner.name+'/'+str(package.get().order.id)+'/')
 
     return render(request, 'packages/package_edit.html', context)
 

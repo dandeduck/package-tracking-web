@@ -5,7 +5,7 @@
     <ul>
         {%for package in packages%}
             <li>
-                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partner/order/package/?p={{partner.name}}&package={{package.id}}"> edit </a>
+                from {{package.origin.city}}, {{package.origin.street_name}} to {{package.destination}} {{package.status}} for {% include "financials/calc_rate.html" %} <a href="/partner/{{partner.name}}/{{package.id}}/"> edit </a>
             </li>
         {%endfor%}
     </ul>
