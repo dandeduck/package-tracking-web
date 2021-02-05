@@ -69,18 +69,11 @@ class Order(models.Model):
 
     def overall_package_status(self):
         packages = self.related_packages()
-        status_sum = 0
-        amount = len(packages)
 
-        for package in packages:
-            status_sum += int(package)
-
-        if status_sum < amount * 3:
-            if status_sum > amount:
-                return Package.ON_ROUTE
-            else:
-                return Package.DELIVERED
-        return Package.WAIT
+        if packages.exists():
+            return packages.order_by('-status')[0].status
+        else:
+            return Package.WAIT
 
     def __str__(self):
         return str(self.partner) + ' ' + str(self.collection_date) + ' ' + str(self.driver)
@@ -90,12 +83,14 @@ class Order(models.Model):
 
 
 class Package(models.Model):
-    WAIT = 'Awaiting delivery'
+    WAIT = 'Awaiting collection'
+    STORED = 'Received by the company'
     ON_ROUTE = 'On route to destination'
     DELIVERED = 'Delivered'
 
     STATUS_CHOICES = [
         (WAIT, WAIT),
+        (STORED, STORED),
         (ON_ROUTE, ON_ROUTE),
         (DELIVERED, DELIVERED),
     ]
@@ -119,6 +114,8 @@ class Package(models.Model):
         status = self.status
 
         if status == self.WAIT:
+            return self.STORED
+        if status == self.STORED:
             return self.ON_ROUTE
         elif status == self.ON_ROUTE:
             return self.DELIVERED
@@ -134,12 +131,14 @@ class Package(models.Model):
         status = self.status
 
         if status == self.WAIT:
+            return 4
+        if status == self.STORED:
             return 3
         elif status == self.ON_ROUTE:
             return 2
         elif status == self.DELIVERED:
             return 1
-        return 4
+        return 5
 
     def __lt__(self, other):
         return int(self) > int(other)
