@@ -23,10 +23,7 @@
             <div class="col mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">
-                            <span class="badge badge-primary rounded-pill">{{amount}}</span>
-                            {{order.collection_date.date}}
-                        </h5>
+                        <h5 class="card-title"><span class="h6 align-top mx-1 text-secondary" >{{amount}}</span> {{order.collection_date.date}}</h5>
                         <p class="card-text">
                             {% if status == Package.WAIT%}
                                 <span class="text-danger">{{status}}</span>
