@@ -9,9 +9,9 @@
         <div class="col mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">הזמנה חדשה</h5>
-                        <form name="new-order" action="/partners/{{partner}}/" method="post"> {% csrf_token %}
-                            <a class="btn badge badge-primary" href="javascript:submitform('new-order')">+</a>
+                        <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                            <label for="add"><span class="card-title align-bottom h5">הזמנה חדשה</span></label>
+                            <a class="btn btn-dark btn-sm mx-3" href="javascript:submitform('new-order')" type="submit" id="add">+</a>
                         </form>
                     </div>
                 </div>
@@ -76,7 +76,6 @@
         </li>
         {% endfor %}
     </ul>
-
     <script type="text/javascript">
         function submitform(count) {
             document.forms[count].submit();
