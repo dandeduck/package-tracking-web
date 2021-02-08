@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 
-{% block main_block %}
-    {%if fail%}
-        <p> Your password and username don't match any active user</p>
-    {%endif%}
-
-    <form method='POST' action='/login/' class="login__form">
-        {% csrf_token %}
-      <div class="login__form--top">
-          <input type="text" placeholder="Username" name="username" value="{{username}}"/>
-          <input type="password" placeholder="Password" name="password" />
-      </div>
-      <div class="login__form--bottom">
-          <input type="submit" value="login" class="login__button btn" />
-      </div>
-    </form>
+{% block narrow_content %}
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form-signin">
+                <form method='POST' class="login__form"> {% csrf_token %}
+                    <h1 class="h3 mb-5 fw-normal">היכנסו בבקשה</h1>
+                    {%if fail%}
+                        <p class="text-warning">שם משתמש או הסיסמה לא תואמים</p>
+                    {%endif%}
+                    <label class="visually-hidden" for="inputUsername">שם משתמש</label>
+                    <input id="inputUsername" class="form-control" type="text" name="username" placeholder="שם משתמש" required="" autofocus=""/>
+                    <label class="visually-hidden" for="inputPassword">סיסמה</label>
+                    <input id="inputPassword" class="form-control mb-4" type="password" name="password" placeholder="סיסמה" required=""/>
+                    <button class="w-100 btn-lg btn-primary" type="submit">כניסה</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,11 +1,17 @@
 {%extends 'base.html' %}
 
-{% block main_block %}
-    <h2> All partners </h2>
-    <ul>
+{% block title %}
+    ספקיות
+{%endblock%}
+
+{% block narrow_content %}
+    <div class="list-group list-group-flush">
         {%for partner in partners%}
-            <li><a href="/partners/{{partner.name}}/">{{partner.name}}</a></li>
+            <a href="/partners/{{partner.name}}/" class="list-group-item list-group-item-action p-3">{{partner.name}} </a>
         {%endfor%}
-    </ul>
-    <a href="/financials/">Financials</a>
+    </div>
 {% endblock %}
+
+{% block bottom%}
+    <a href="/financials/" class="card-link">כספים</a>
+{%endblock%}
