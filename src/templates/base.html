@@ -46,12 +46,8 @@
             <div class="container text-center mx-auto">
                 <h1 class="mb-5 mt-5">{% block title %} {%endblock%}</h1>
                 <div class="d-flex justify-content-center h-100">
-                    {% block wide_content %}
+                    {% block content %}
                     {% endblock %}
-                    <div class="w-25 p-3">
-                        {%block narrow_content%}
-                        {%endblock%}
-                    </div>
                 </div>
                 <div>
                     {% block bottom %}

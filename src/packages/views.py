@@ -99,11 +99,18 @@ def partner_view(request, partner):
         drivers.append(order.driver)
 
     order_amount_status_drivers = [(orders[i], package_amounts[i], order_statuses[i], drivers[i]) for i in range(0, len(orders))]
+    order_amount_status_drivers += order_amount_status_drivers
+    order_amount_status_drivers += order_amount_status_drivers
+    order_amount_status_drivers += order_amount_status_drivers
+    order_amount_status_drivers += order_amount_status_drivers
+    order_amount_status_drivers += order_amount_status_drivers
+    order_amount_status_drivers += order_amount_status_drivers
     context = {
         'order_amount_status_drivers': order_amount_status_drivers,
         'drivers': list(Driver.objects.all()),
         'is_staff': is_staff(request),
-        'partner': requested_partner
+        'partner': requested_partner,
+        'Package': Package
     }
 
     return render(request, "packages/partner.html", context)

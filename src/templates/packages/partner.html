@@ -1,5 +1,52 @@
 {%extends 'base.html' %}
 
+{% block title%}
+    הזמנות
+{%endblock%}
+<!--    <span class="badge badge-primary badge-pill">14</span>-->
+{% block content%}
+    <div class="d-flex row">
+        <div class="col mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">הזמנה חדשה</h5>
+                        <form name="new-order" action="/partners/{{partner}}/" method="post"> {% csrf_token %}
+                            <a class="btn badge badge-primary" href="javascript:submitform('new-order')">+</a>
+                        </form>
+                    </div>
+                </div>
+        </div>
+        {% for order, amount, status, driver in order_amount_status_drivers %}
+            {% if forloop.counter0|divisibleby:6 %}
+                <div class="w-100"></div>
+            {%endif%}
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="badge badge-primary rounded-pill">{{amount}}</span>
+                            {{order.collection_date.date}}
+                        </h5>
+                        <p class="card-text">
+                            {% if status == Package.WAIT%}
+                                <span class="text-danger">{{status}}</span>
+                            {% elif status == Package.STORED%}
+                                <span class="text-warning">{{status}}</span>
+                            {% elif status == Package.ON_ROUTE%}
+                                <span class="text-warning">{{status}}</span>
+                            {% elif status == Package.DELIVERED%}
+                                <span class="text-success">{{status}}</span>
+                            {%endif%}
+                        </p>
+                        <a class="btn btn-primary" href="">Track</a>
+                        <a class="card-link p-3" href="/orders/{{order.id}}/">Edit</a>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div>
+{% endblock %}
+
 {% block main_block %}
     <h2> All orders </h2>
     {% include "packages/parts/search.html" %}
@@ -29,9 +76,7 @@
         </li>
         {% endfor %}
     </ul>
-    <form name="new-order" action="/partners/{{partner}}/" method="post"> {% csrf_token %}
-        <a href="javascript:submitform('new-order')">+ new order</a>
-    </form>
+
     <script type="text/javascript">
         function submitform(count) {
             document.forms[count].submit();
