@@ -6,14 +6,9 @@
 {% block content%}
     <div class="d-flex row">
         <div class="col mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <form name="new-order" id="new-order" method="post"> {% csrf_token %}
-                        <label for="add"><span class="card-title align-bottom h5">הזמנה חדשה</span></label>
-                        <button type="submit" class="btn btn-outline-dark btn-sm mx-3" id="add">+</button>
-                    </form>
-                </div>
-            </div>
+            <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark btn-lg mx-3" >הזמנה חדשה +</button>
+            </form>
         </div>
         {% for order, amount, status, driver in order_amount_status_drivers %}
             {% if forloop.counter0|divisibleby:6 %}
