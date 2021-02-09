@@ -47,26 +47,14 @@ class Partner(models.Model):
         return str(self) == str(other)
 
 
-class Driver(models.Model):
-    NO_DRIVER = 'Missing'
-    name = models.CharField(max_length=32, unique=True, default=NO_DRIVER)
-
-    def __str__(self):
-        return self.name
-
-
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     collection_date = models.DateTimeField(auto_now_add=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     notes = models.TextField(blank=True)
 
     def related_packages(self):
         return Package.objects.filter(order=self)
-
-    def has_driver(self):
-        return self.driver.name != Driver.NO_DRIVER
 
     def overall_package_status(self):
         packages = self.related_packages()
@@ -77,7 +65,7 @@ class Order(models.Model):
             return Package.WAIT
 
     def __str__(self):
-        return str(self.partner) + ' ' + str(self.collection_date) + ' ' + str(self.driver)
+        return str(self.partner) + ' ' + str(self.collection_date)
 
     def __lt__(self, other):
         return self.collection_date > other.collection_date

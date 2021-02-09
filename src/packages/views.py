@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from .models import Order, City, Address
 from .models import Partner
 from .models import Package
-from .models import Driver
 from util import is_member, is_staff
 
 
@@ -82,27 +81,19 @@ def partner_view(request, partner):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
-        if request.POST.get('driver'):
-            assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
-            order = Order.objects.filter(id=request.POST.get('order'))
-            order.update(driver=assigned_driver)
-        else:
-            new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
-            return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
+        new_order_id = str(Order.objects.create(partner=requested_partner).id)
+        return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
     orders = requested_partner.related_orders().order_by('-collection_date')
     package_amounts = []
     order_statuses = []
-    drivers = []
 
     for order in orders:
         package_amounts.append(len(order.related_packages()))
         order_statuses.append(order.overall_package_status())
-        drivers.append(order.driver)
 
-    order_amount_status_drivers = [(orders[i], package_amounts[i], order_statuses[i], drivers[i]) for i in range(0, len(orders))]
+    order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
     context = {
-        'order_amount_status_drivers': order_amount_status_drivers,
-        'drivers': list(Driver.objects.all()),
+        'order_amount_status': order_amount_status,
         'is_staff': is_staff(request),
         'partner': requested_partner,
         'Package': Package

@@ -10,7 +10,7 @@
                 <button type="submit" class="btn btn-outline-dark btn-lg mx-3" >הזמנה חדשה +</button>
             </form>
         </div>
-        {% for order, amount, status, driver in order_amount_status_drivers %}
+        {% for order, amount, status in order_amount_status %}
             {% if forloop.counter0|divisibleby:6 %}
                 <div class="w-100"></div>
             {%endif%}
@@ -31,24 +31,6 @@
                                 <span class="text-dark">{{status}}</span>
                             {%endif%}
                         </p>
-                        {% if is_staff %}
-                            <form name="drivers" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="order" value="{{order.id}}"/>
-                                <select class="form-select mb-3" id="driver_select" name="driver" onchange="this.form.submit()">
-                                    {%for inner_driver in drivers%}
-                                        {%if inner_driver == driver %}
-                                            <option>{{driver}}</option>
-                                        {%endif%}
-                                    {%endfor%}
-                                    {%for other_driver in drivers%}
-                                        {%if other_driver != driver %}
-                                            <option>{{other_driver}}</option>
-                                        {%endif%}
-                                    {%endfor%}
-                                </select>
-                            </form>
-                        {% endif %}
                         <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
                         <a class="card-link p-3 text-decoration-none" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
                     </div>
