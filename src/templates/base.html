@@ -43,15 +43,17 @@
             </div>
         </nav>
         <main class="flex-fill">
-            <div class="container text-center mx-auto">
-                <h1 class="mb-5 mt-5">{% block title %} {%endblock%}</h1>
-                <div class="d-flex justify-content-center h-100">
-                    {% block content %}
-                    {% endblock %}
+            <div class="d-flex w-75 text-center mx-auto justify-content-center">
+                <div class="w-75">
+                    <h1 class="mb-5 mt-5">{% block title %} {%endblock%}</h1>
+                    <div class="h-100">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
         </main>
-        <div class="footer container justify-content-right text-end mb-5 mt-3">
+        <div class="footer container justify-content-end mb-5 mt-3">
             <button class="btn btn-outline-dark bi-chevron-right" onclick="goBack()" >חזרה</button>
             {% block bottom %}
             {%endblock%}

@@ -5,7 +5,7 @@
 {%endblock%}
 
 {% block content %}
-    <div class="list-group list-group-flush w-25 p-3">
+    <div class="list-group list-group-flush p-3 container w-25">
         {%for partner in partners%}
             <a href="/partners/{{partner.name}}/" class="list-group-item list-group-item-action p-3">{{partner.name}} </a>
         {%endfor%}

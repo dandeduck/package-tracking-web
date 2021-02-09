@@ -3,7 +3,6 @@
 {% block title%}
     הזמנות
 {%endblock%}
-<!--    <span class="badge badge-primary badge-pill">14</span>-->
 {% block content%}
     <div class="d-flex row">
         <div class="col mb-3">
@@ -33,49 +32,33 @@
                                 <span class="text-warning">{{status}}</span>
                             {% elif status == Package.DELIVERED%}
                                 <span class="text-success">{{status}}</span>
+                            {% else %}
+                                <span class="text-dark">{{status}}</span>
                             {%endif%}
                         </p>
-                        <form name="drivers" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="order" value="{{order.id}}"/>
-                            <select class="form-select mb-3" id="driver_select" name="driver" onchange="this.form.submit()">
-                                {%for inner_driver in drivers%}
-                                    {%if inner_driver == driver %}
-                                        <option>{{driver}}</option>
-                                    {%endif%}
-                                {%endfor%}
-                                {%for other_driver in drivers%}
-                                    {%if other_driver != driver %}
-                                        <option>{{other_driver}}</option>
-                                    {%endif%}
-                                {%endfor%}
-                            </select>
-                        </form>
-                        <a class="btn btn-outline-primary" href="">Track</a>
-                        <a class="card-link p-3" href="/orders/{{order.id}}/">Edit</a>
+                        {% if is_staff %}
+                            <form name="drivers" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="order" value="{{order.id}}"/>
+                                <select class="form-select mb-3" id="driver_select" name="driver" onchange="this.form.submit()">
+                                    {%for inner_driver in drivers%}
+                                        {%if inner_driver == driver %}
+                                            <option>{{driver}}</option>
+                                        {%endif%}
+                                    {%endfor%}
+                                    {%for other_driver in drivers%}
+                                        {%if other_driver != driver %}
+                                            <option>{{other_driver}}</option>
+                                        {%endif%}
+                                    {%endfor%}
+                                </select>
+                            </form>
+                        {% endif %}
+                        <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
+                        <a class="card-link p-3" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
                     </div>
                 </div>
             </div>
         {%endfor%}
     </div>
-{% endblock %}
-
-{% block main_block %}
-    <h2> All orders </h2>
-    {% include "packages/parts/search.html" %}
-    <ul>
-        {% for order, amount, status, driver in order_amount_status_drivers %}
-        <li>
-            {{order.collection_date.date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
-            {%if is_staff %}
-            {%endif%}
-            <a href="/partners/{{partner.name}}/{{order.id}}/"> edit </a>
-        </li>
-        {% endfor %}
-    </ul>
-    <script type="text/javascript">
-        function submitform(count) {
-            document.forms[count].submit();
-        }
-    </script>
 {% endblock %}
