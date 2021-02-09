@@ -7,14 +7,14 @@
 {% block content%}
     <div class="d-flex row">
         <div class="col mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <form name="new-order" id="new-order" method="post"> {% csrf_token %}
-                            <label for="add"><span class="card-title align-bottom h5">הזמנה חדשה</span></label>
-                            <a class="btn btn-dark btn-sm mx-3" href="javascript:submitform('new-order')" type="submit" id="add">+</a>
-                        </form>
-                    </div>
+            <div class="card">
+                <div class="card-body">
+                    <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                        <label for="add"><span class="card-title align-bottom h5">הזמנה חדשה</span></label>
+                        <button type="submit" class="btn btn-outline-dark btn-sm mx-3" id="add">+</button>
+                    </form>
                 </div>
+            </div>
         </div>
         {% for order, amount, status, driver in order_amount_status_drivers %}
             {% if forloop.counter0|divisibleby:6 %}
@@ -35,7 +35,23 @@
                                 <span class="text-success">{{status}}</span>
                             {%endif%}
                         </p>
-                        <a class="btn btn-primary" href="">Track</a>
+                        <form name="drivers" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="order" value="{{order.id}}"/>
+                            <select class="form-select mb-3" id="driver_select" name="driver" onchange="this.form.submit()">
+                                {%for inner_driver in drivers%}
+                                    {%if inner_driver == driver %}
+                                        <option>{{driver}}</option>
+                                    {%endif%}
+                                {%endfor%}
+                                {%for other_driver in drivers%}
+                                    {%if other_driver != driver %}
+                                        <option>{{other_driver}}</option>
+                                    {%endif%}
+                                {%endfor%}
+                            </select>
+                        </form>
+                        <a class="btn btn-outline-primary" href="">Track</a>
                         <a class="card-link p-3" href="/orders/{{order.id}}/">Edit</a>
                     </div>
                 </div>
@@ -52,22 +68,6 @@
         <li>
             {{order.collection_date.date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
             {%if is_staff %}
-                <form name="drivers" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="order" value="{{order.id}}"/>
-                    <select name="driver" onchange="this.form.submit()">
-                        {%for inner_driver in drivers%}
-                            {%if inner_driver == driver %}
-                                <option>{{driver}}</option>
-                            {%endif%}
-                        {%endfor%}
-                        {%for other_driver in drivers%}
-                            {%if other_driver != driver %}
-                                <option>{{other_driver}}</option>
-                            {%endif%}
-                        {%endfor%}
-                    </select>
-                </form>
             {%endif%}
             <a href="/partners/{{partner.name}}/{{order.id}}/"> edit </a>
         </li>
