@@ -1,11 +1,62 @@
 {%extends 'base.html' %}
 
-{% block main_block %}
+{% block title%}
+    תוצאות חיפוש
+{%endblock%}
+{% block content%}
     <script>
         window.onload = function() {
             reveal_search();
         }
     </script>
+    <div class="row justify-content-center mb-3">
+        <div class="col text-center">
+            {% include "packages/parts/search.html" %}
+        </div>
+    </div>
+    <div class="d-flex row">
+        {%if order_packages%}
+            {% for order, packages in order_packages%}
+                {% if forloop.counter0|divisibleby:4 and forloop.counter0 != 0%}
+                    <div class="w-100"></div>
+                {%endif%}
+                <div class="col mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">{{order.collection_date.date}}</h6>
+                            {% for package in packages%}
+                                {% if forloop.counter0|divisibleby:5 and forloop.counter0 != 0%}
+                                    <div class="w-100"></div>
+                                {%endif%}
+                                <div class="col mb-3">
+                                    <div class="card">
+                                        <div class="card-body text-start">
+                                            <h5 class="card-title">{{package.destination}}</h5>
+                                            <ul class="card-subtitle list-inline text-muted">
+                                                <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street_name}}</h6></li>
+                                                <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                                            </ul>
+                                            <p class="card-text">
+                                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-{{package.status_color}}">{{package.status}}</span>
+                                                <span class="row justify-content-end ms-1 fw-light">{{package.full_name}} {{package.phone_number}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {%endfor%}
+                            <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
+                            <a class="card-link p-3 text-decoration-none" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            {%endfor%}
+            {%else%}
+                <h6 class="display-6 mt-5">לא נמצאו תוצאות</h6>
+        {%endif%}
+    </div>
+{% endblock %}
+
+{% block main_block %}
     <div>
         {% include "packages/parts/search.html" %}
         <ul>

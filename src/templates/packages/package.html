@@ -24,16 +24,13 @@
             {% for status, status2 in package.STATUS_CHOICES%}
                 <div class="row">
                     <div class="col">
-
-<!--                        <div class="card">-->
-                            <div class="card-body">
-                                {%if package.status != status%}
-                                    <h5 class="card-title fw-light text-muted">{{status}}</h5>
-                                {%else%}
-                                    <h5 class="card-title border-success border py-2">{{status}}</h5>
-                                {%endif%}
-                            </div>
-<!--                        </div>-->
+                        <div class="card-body">
+                            {%if package.status != status%}
+                                <h5 class="card-title fw-light text-muted">{{status}}</h5>
+                            {%else%}
+                                <h5 class="card-title border-success border-2 rounded border px-2 py-2">{{status}}</h5>
+                            {%endif%}
+                        </div>
                     </div>
                 </div>
                 {% if forloop.counter != package.STATUS_CHOICES|length %}
