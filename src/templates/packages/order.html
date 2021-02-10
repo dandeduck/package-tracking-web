@@ -21,7 +21,7 @@
                             {% if package.status == package.WAIT%}
                                 <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-danger">{{package.status}}</span>
                             {% elif package.status == package.STORED%}
-                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-warning">{{package.status}}</span>
+                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-info">{{package.status}}</span>
                             {% elif package.status == package.ON_ROUTE%}
                                 <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-warning">{{package.status}}</span>
                             {% elif package.status == package.DELIVERED%}
@@ -38,11 +38,7 @@
     </div>
 {%endblock%}
 
-<!--    <form method="post"> {% csrf_token %}-->
-<!--        <a href="javascript:submitform('update-all')">update all</a>-->
-<!--        <input type="hidden" name="package" value="all" />-->
-<!--        <button type="submit" class="btn btn-outline-success">Update</button>-->
-<!--    </form>-->
+
 <!--                <form method="post"> {% csrf_token %}-->
 <!--                    <input type="hidden" name="package" value="{{package.id}}" />-->
 <!--                    <button type="submit" class="btn btn-outline-success">Update</button>-->

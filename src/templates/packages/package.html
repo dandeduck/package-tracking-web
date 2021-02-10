@@ -11,7 +11,7 @@
         <div class="col align-self-center display-6">:Contact Info</div>
     </div>
     <div class="row mt-2">
-        <div class="col align-self-center h5 lead">{{package.formatted_phone_number}}</div>
+        <div class="col align-self-center h5 lead">{{name}} {{package.formatted_phone_number}}</div>
     </div>
     <div class="position-absolute top-50 start-50 translate-middle">
         {% for status, status2 in package.STATUS_CHOICES%}
@@ -34,11 +34,3 @@
         {%endfor%}
     </div>
 {%endblock%}
-{% block main_block %}
-    <ul>
-        <li>Origin: {{package.origin.city}}</li>
-        <li>Destination: {{package.destination}}</li>
-        <li>Status: {{package.status}}</li>
-        <li>Phone number: {{package.formatted_phone_number}}₪</li>
-    </ul>
-{% endblock %}

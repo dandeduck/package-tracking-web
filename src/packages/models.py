@@ -57,12 +57,10 @@ class Order(models.Model):
         return Package.objects.filter(order=self)
 
     def overall_package_status(self):
-        packages = self.related_packages()
+        packages = list(self.related_packages())
+        packages.sort()
 
-        if packages.exists():
-            return packages.order_by('-status')[0].status
-        else:
-            return Package.WAIT
+        return packages[0].status
 
     def __str__(self):
         return str(self.partner) + ' ' + str(self.collection_date)
@@ -73,7 +71,7 @@ class Order(models.Model):
 
 class Package(models.Model):
     WAIT = 'Awaiting collection'
-    STORED = 'Received by the company'
+    STORED = 'Warehoused'
     ON_ROUTE = 'On route to destination'
     DELIVERED = 'Delivered'
 
@@ -109,6 +107,17 @@ class Package(models.Model):
         elif status == self.ON_ROUTE:
             return self.DELIVERED
         return self.DELIVERED
+
+    def prev_status(self):
+        status = self.status
+
+        if status == self.WAIT:
+            return self.WAIT
+        if status == self.STORED:
+            return self.WAIT
+        elif status == self.ON_ROUTE:
+            return self.STORED
+        return self.ON_ROUTE
 
     def as_query(self):
         return Package.objects.filter(id=self.id)

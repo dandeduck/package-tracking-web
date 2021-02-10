@@ -1,104 +1,90 @@
 {%extends 'base.html' %}
 
-{% block main_block %}
-    <h2> Order {{order.collection_date.date}} </h2>
-    <ul>
-        {%for package in packages%}
-            <li>
-                {{package.full_name}} {{package.origin.city}}, {{package.origin.street_name}} -> {{package.destination}} {{package.status}} ({%include "financials/calc_rate.html" %}₪) <a href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/"> edit </a>
-            </li>
-        {%endfor%}
-    </ul>
-
-    <button onclick="javascript:toggle_creation()" id="show_creation">add</button>
-    <div class="creation" id="creation" style="display: none;">
-        <form method="post" name="create" id="create"> {% csrf_token %}
-            <div class="creation--left">
-                <label>Origin</label>
-                <input type="text" placeholder="Street" name="origin_street" value="{{partner.address.street_name}}"/>
-                <input type="number" placeholder="House Number" name="origin_street_number" value="{{partner.address.street_number}}"/>
-                <input type="text" placeholder="City" name="origin_city" list="cities" value="{{partner.address.city.name}}"/>
-                <select name="origin_area" class="area__select sla1" form="create">
-                    {%for db, human in cities.0.AREA_CHOICES%}
-                        {%if db == partner.address.city.area%}
-                            <option>{{human}}</option>
-                        {%endif%}
-                    {%endfor%}
-                    {%for db, human in cities.0.AREA_CHOICES%}
-                        {%if db != partner.address.city.area%}
-                            <option>{{human}}</option>
-                        {%endif%}
-                    {%endfor%}
-                </select>
+{% block title%}
+     הזמנה {{order.collection_date.date}}
+{%endblock%}
+{% block content %}
+    <div class="container w-50">
+        <div class="row mb-3">
+            <div class="col align-self-center order-2">
+                <button class="btn">חבילה חדשה</button>
             </div>
-            <div class="creation--center">
-                <label>Destination</label>
-                <input type="text" placeholder="Street" name="destination_street"/>
-                <input type="number" placeholder="House Number" value="0" name="destination_street_number"/>
-                <input type="text" placeholder="City" name="destination_city" list="cities"/>
-                <select name="destination_area" class="area__select sla2" form="create">
-                    {%for db, human in cities.0.AREA_CHOICES%}
-                        <option>{{human}}</option>
-                    {%endfor%}
-                </select>
-            </div>
-            <div class="creation--right">
-                <label for="rates">Base package price</label>
-                <select name="rate" class="rate__select slr" form="create" id="rates">
-                    {%for rate in rates%}
-                        <option>{{rate|floatformat}}₪</option>
-                    {%endfor%}
-                </select>
-                <p>Optional</p>
-                <input type="text" placeholder="Full name" name="full_name" list="names"/>
-                <input type="tel" placeholder="Cell number" name="phone_number"/>
-            </div>
-            <div class="creation--bottom">
-                <button onclick="javascript:toggle_creation()">add</button>
-            </div>
-        </form>
-        <div class="creation--bottom">
-            <button onclick="javascript:hide_form()">cancel</button>
+            {%if is_staff%}
+                <div class="col order-1">
+                    <form method="post"> {% csrf_token %}
+                        <input type="hidden" name="package" value="{{package.id}}"/>
+                        <input type="hidden" name="update-type" value="update-all"/>
+                        <button type="submit" class="btn btn-outline-success">Update All</button>
+                    </form>
+                </div>
+                <div class="col order-3">
+                    <form method="post"> {% csrf_token %}
+                        <input type="hidden" name="package" value="{{package.id}}" />
+                        <input type="hidden" name="update-type" value="revert-all"/>
+                        <button class="btn btn-outline-danger">Revert All</button>
+                    </form>
+                </div>
+            {%endif%}
         </div>
     </div>
-    <div class="nav--bottom">
-        <a href="/partners/{{partner.name}}/">ALL ORDERS</a>
-        <a href="/notify/?p={{partner}}&next=/partners/{{partner}}">SAVE</a>
+    <div class="d-flex row">
+        {% for package in packages%}
+            {% if forloop.counter0|divisibleby:5 and forloop.counter0 != 0%}
+                <div class="w-100"></div>
+            {%endif%}
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-body text-start">
+                        <h5 class="card-title">{{package.destination}}</h5>
+                        <ul class="card-subtitle list-inline text-muted">
+                            <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street_name}}</h6></li>
+                            <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                        </ul>
+                        <p class="card-text ">
+                            {% if package.status == package.WAIT%}
+                                <a class="btn btn-outline-primary mb-1" href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/">Edit</a> <span class="text-danger">{{package.status}}</span>
+                            {% elif package.status == package.STORED%}
+                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-info">{{package.status}}</span>
+                            {% elif package.status == package.ON_ROUTE%}
+                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-warning">{{package.status}}</span>
+                            {% elif package.status == package.DELIVERED%}
+                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-success">{{package.status}}</span>
+                            {% else %}
+                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-dark">{{package.status}}</span>
+                            {%endif%}
+                            <span class="row justify-content-end ms-1 fw-light mb-2">{{package.full_name}} {{package.phone_number}}</span>
+                            {% if is_staff%}
+                                <ul class="list-inline">
+                                    <li class="list-inline-item">
+                                        <form method="post"> {% csrf_token %}
+                                            <input type="hidden" name="package" value="{{package.id}}"/>
+                                            <input type="hidden" name="update-type" value="update"/>
+                                            <button type="submit" class="btn btn-outline-success">Update</button>
+                                        </form>
+                                    </li>
+                                    <li class="list-inline-item me-4">
+                                        <form method="post"> {% csrf_token %}
+                                            <input type="hidden" name="package" value="{{package.id}}" />
+                                            <input type="hidden" name="update-type" value="revert"/>
+                                            <button class="btn btn-outline-danger">Revert</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            {%endif%}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
     </div>
-    <datalist id="cities">
-        {%include "packages/parts/list_options.html" with list=cities%}
-    </datalist>
-    <datalist id="streets">
-        {%include "packages/parts/list_options.html" with list=streets%}
-    </datalist>
-    <datalist id="names">
-        {%include "packages/parts/list_options.html" with list=names%}
-    </datalist>
-    <script type="text/javascript">
-        function toggle_creation() {
-            if(show_creation.style.display === "none") {
-                document.forms[0].submit();
-                hide_form();
-            }
-            else {
-                show_form();
-            }
-        }
+{%endblock%}
 
-        function show_form() {
-            var creation = document.getElementById("creation");
-            var show_creation = document.getElementById("show_creation");
-
-            show_creation.style.display = "none";
-            creation.style.display = "block";
-        }
-
-        function hide_form() {
-            var creation = document.getElementById("creation");
-            var show_creation = document.getElementById("show_creation");
-
-            show_creation.style.display = "block";
-            creation.style.display = "none";
-        }
-    </script>
-{% endblock %}
+<datalist id="cities">
+    {%include "packages/parts/list_options.html" with list=cities%}
+</datalist>
+<datalist id="streets">
+    {%include "packages/parts/list_options.html" with list=streets%}
+</datalist>
+<datalist id="names">
+    {%include "packages/parts/list_options.html" with list=names%}
+</datalist>

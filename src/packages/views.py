@@ -69,7 +69,16 @@ def order_view(request, order_id):
 
 
 def package_view(request, package_id):
-    context = {'package': Package.objects.get(id=package_id)}
+    package = Package.objects.get(id=package_id)
+    name = package.full_name.split(' ')[0] + ':'
+
+    if not name:
+        name = ''
+
+    context = {
+        'package': package,
+        'name': name
+    }
 
     return render(request, "packages/package.html", context)
 
@@ -102,7 +111,7 @@ def partner_view(request, partner):
     return render(request, "packages/partner.html", context)
 
 
-def partner_order_view(request, partner, order):
+def order_edit_view(request, partner, order):
     partner = Partner.objects.get(name=partner)
     order = Order.objects.get(id=order)
 
@@ -110,33 +119,57 @@ def partner_order_view(request, partner, order):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
-        origin_city = request.POST.get('origin_city')
-        origin_area = request.POST.get('origin_area')
-        origin_street = request.POST.get('origin_street')
-        origin_street_number = request.POST.get('origin_street_number')
-        origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
+        package = request.POST.get('package')
+        update_type = request.POST.get('update-type')
 
-        destination_city = request.POST.get('destination_city')
-        destination_area = request.POST.get('destination_area')
-        destination_street = request.POST.get('destination_street')
-        destination_street_number = request.POST.get('destination_street_number')
-        destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
+        if update_type:
+            package = Package.objects.filter(id=package)
+            print("AAA " + update_type)
 
-        rate = float(request.POST.get('rate').replace('₪', ''))
-        phone_number = request.POST.get('phone_number')
-        full_name = request.POST.get('full_name')
+            if update_type == 'revert':
+                package.update(status=package.get().prev_status())
+            elif update_type == 'update':
+                print("HERE")
+                package.update(status=package.get().next_status())
+            elif update_type == 'update-all':
+                for inner in order.related_packages():
+                    inner.as_query().update(status=inner.next_status())
+            else:
+                for inner in order.related_packages():
+                    inner.as_query().update(status=inner.prev_status())
 
-        Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate,
-                               full_name=full_name, phone_number=phone_number)
+        else:
+            origin_city = request.POST.get('origin_city')
+            origin_area = request.POST.get('origin_area')
+            origin_street = request.POST.get('origin_street')
+            origin_street_number = request.POST.get('origin_street_number')
+            origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
 
+            destination_city = request.POST.get('destination_city')
+            destination_area = request.POST.get('destination_area')
+            destination_street = request.POST.get('destination_street')
+            destination_street_number = request.POST.get('destination_street_number')
+            destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
+
+            rate = float(request.POST.get('rate').replace('₪', ''))
+            phone_number = request.POST.get('phone_number')
+            full_name = request.POST.get('full_name')
+
+            Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate,
+                                   full_name=full_name, phone_number=phone_number)
+
+    packages = list(order.related_packages())
+    packages += packages
+    packages += packages
     context = {
-        'packages': order.related_packages(),
+        'packages': packages,
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
         'cities': City.objects.all(),
         'streets': Address.objects.values_list('street_name', flat=True),
-        'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
+        'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True),
+        'is_staff': is_staff(request)
     }
 
     return render(request, 'packages/order_edit.html', context)
