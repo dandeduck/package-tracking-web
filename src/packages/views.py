@@ -124,12 +124,10 @@ def order_edit_view(request, partner, order):
 
         if update_type:
             package = Package.objects.filter(id=package)
-            print("AAA " + update_type)
 
             if update_type == 'revert':
                 package.update(status=package.get().prev_status())
             elif update_type == 'update':
-                print("HERE")
                 package.update(status=package.get().next_status())
             elif update_type == 'update-all':
                 for inner in order.related_packages():

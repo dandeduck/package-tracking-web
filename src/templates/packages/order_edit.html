@@ -7,7 +7,7 @@
     <div class="container w-50">
         <div class="row mb-3">
             <div class="col order-2">
-                <a class="btn btn-outline-dark btn-lg">חבילה חדשה +</a>
+                <a class="btn btn-outline-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop">חבילה חדשה +</a>
             </div>
             {%if is_staff%}
                 <div class="col order-1">
@@ -26,6 +26,23 @@
                 </div>
             {%endif%}
         </div>
+    </div>
+    <div class="modal fade justify-content-start" id="staticBackdrop" role="dialog" data-bs-backdrop="static" data-bs-keydrop="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">שינוי/יצירת חבילה</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+              </div>
+            </div>
+          </div>
     </div>
     <div class="d-flex row">
         {% for package in packages%}
