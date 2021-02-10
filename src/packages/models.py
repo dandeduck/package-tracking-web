@@ -119,6 +119,19 @@ class Package(models.Model):
             return self.STORED
         return self.ON_ROUTE
 
+    def status_color(self):
+        status = self.status
+
+        if status == self.WAIT:
+            return 'danger'
+        if status == self.STORED:
+            return 'info'
+        elif status == self.ON_ROUTE:
+            return 'warning'
+        elif status == self.DELIVERED:
+            return 'success'
+        return 'dark'
+
     def as_query(self):
         return Package.objects.filter(id=self.id)
 

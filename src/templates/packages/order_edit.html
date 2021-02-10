@@ -6,8 +6,8 @@
 {% block content %}
     <div class="container w-50">
         <div class="row mb-3">
-            <div class="col align-self-center order-2">
-                <button class="btn">חבילה חדשה</button>
+            <div class="col order-2">
+                <a class="btn btn-outline-dark btn-lg">חבילה חדשה +</a>
             </div>
             {%if is_staff%}
                 <div class="col order-1">
@@ -41,17 +41,7 @@
                             <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
                         </ul>
                         <p class="card-text ">
-                            {% if package.status == package.WAIT%}
-                                <a class="btn btn-outline-primary mb-1" href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/">Edit</a> <span class="text-danger">{{package.status}}</span>
-                            {% elif package.status == package.STORED%}
-                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-info">{{package.status}}</span>
-                            {% elif package.status == package.ON_ROUTE%}
-                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-warning">{{package.status}}</span>
-                            {% elif package.status == package.DELIVERED%}
-                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-success">{{package.status}}</span>
-                            {% else %}
-                                <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-dark">{{package.status}}</span>
-                            {%endif%}
+                            <a class="btn btn-outline-primary mb-1" href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/">Edit</a> <span class="text-{{package.status_color}}">{{package.status}}</span>
                             <span class="row justify-content-end ms-1 fw-light mb-2">{{package.full_name}} {{package.phone_number}}</span>
                             {% if is_staff%}
                                 <ul class="list-inline">
