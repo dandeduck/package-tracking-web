@@ -1,5 +1,39 @@
 {%extends 'base.html' %}
 
+{% block content%}
+    <div class="row">
+        <div class="col align-self-start display-6">To <span class="h5 lead">{{package.destination}}</span></div>
+        <div class="col align-self-end display-6">From <span class="h5 lead">{{package.origin.city}}</span></div>
+    </div>
+    <div class="row my-3">
+    </div>
+    <div class="row">
+        <div class="col align-self-center display-6">:Contact Info</div>
+    </div>
+    <div class="row mt-2">
+        <div class="col align-self-center h5 lead">{{package.formatted_phone_number}}</div>
+    </div>
+    <div class="position-absolute top-50 start-50 translate-middle">
+        {% for status, status2 in package.STATUS_CHOICES%}
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            {%if package.status != status%}
+                                <h5 class="card-title fw-light">{{status}}</h5>
+                            {%else%}
+                                <h5 class="card-title text-success">{{status}}</h5>
+                            {%endif%}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.counter != package.STATUS_CHOICES|length %}
+                <span class="bi-arrow-down"></span>
+            {%endif%}
+        {%endfor%}
+    </div>
+{%endblock%}
 {% block main_block %}
     <ul>
         <li>Origin: {{package.origin.city}}</li>
