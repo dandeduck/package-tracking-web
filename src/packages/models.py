@@ -60,7 +60,10 @@ class Order(models.Model):
         packages = list(self.related_packages())
         packages.sort()
 
-        return packages[0].status
+        if packages:
+            return packages[0].status
+        else:
+            return Package.WAIT
 
     def __str__(self):
         return str(self.partner) + ' ' + str(self.collection_date)
