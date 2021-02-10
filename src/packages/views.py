@@ -165,8 +165,6 @@ def order_edit_view(request, partner, order):
                                    full_name=full_name, phone_number=phone_number)
 
     packages = list(order.related_packages())
-    packages += packages
-    packages += packages
     context = {
         'packages': packages,
         'order': order,
