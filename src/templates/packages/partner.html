@@ -4,16 +4,14 @@
     הזמנות
 {%endblock%}
 {% block content%}
-    <div class="container w-50">
-        <div class="row justify-content-center">
-            <div class="col">
-                {% include "packages/parts/search.html" %}
-            </div>
-            <div class="col mb-3">
-                <form name="new-order" id="new-order" method="post"> {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-dark btn-lg mx-3" >הזמנה חדשה +</button>
-                </form>
-            </div>
+    <div class="row justify-content-center mb-3">
+        <div class="col text-start">
+            {% include "packages/parts/search.html" %}
+        </div>
+        <div class="col text-end">
+            <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark" >הזמנה חדשה +</button>
+            </form>
         </div>
     </div>
     <div class="d-flex row">
