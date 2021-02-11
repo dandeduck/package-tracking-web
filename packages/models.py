@@ -1,3 +1,4 @@
+import enum
 import uuid as uuid
 from django.db import models
 
@@ -84,20 +85,37 @@ class Order(models.Model):
 
 
 class Package(models.Model):
-    WAIT = 'Awaiting collection'
-    STORED = 'Received by the company'
-    ON_ROUTE = 'On route to destination'
-    DELIVERED = 'Delivered'
+    class Status(enum.Enum):
+        WAIT = 'Awaiting collection'
+        STORED = 'Received by the company'
+        ON_ROUTE = 'On route to destination'
+        DELIVERED = 'Delivered'
 
-    STATUS_CHOICES = [
-        (WAIT, WAIT),
-        (STORED, STORED),
-        (ON_ROUTE, ON_ROUTE),
-        (DELIVERED, DELIVERED),
-    ]
+        def ordinal(self):
+            members = list(self.__class__)
+            index = members.index(self) + 1
+            if index >= len(members):
+                index = len(members) - 1
+            return index
+
+        def next(self):
+            members = list(self.__class__)
+            index = self.ordinal()
+            return members[index]
+
+        def prev(self):
+            members = list(self.__class__)
+            index = members.index(self) - 1
+            if index < 0:
+                index = 0
+            return index
+
+        @classmethod
+        def choices(cls):
+            return tuple((i.name, i.value) for i in cls)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default=WAIT)
+    status = models.CharField(max_length=32, choices=Status.choices(), default=Status.WAIT)
     origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='origin')
     destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -112,15 +130,10 @@ class Package(models.Model):
             return self.phone_number
 
     def next_status(self):
-        status = self.status
+        return Package.Status(self.status).next()
 
-        if status == self.WAIT:
-            return self.STORED
-        if status == self.STORED:
-            return self.ON_ROUTE
-        elif status == self.ON_ROUTE:
-            return self.DELIVERED
-        return self.DELIVERED
+    def prev_status(self):
+        return Package.Status(self.status).prev()
 
     def as_query(self):
         return Package.objects.filter(id=self.id)
@@ -129,17 +142,7 @@ class Package(models.Model):
         return f"{self.destination} {self.status}"
 
     def __int__(self):
-        status = self.status
-
-        if status == self.WAIT:
-            return 4
-        if status == self.STORED:
-            return 3
-        elif status == self.ON_ROUTE:
-            return 2
-        elif status == self.DELIVERED:
-            return 1
-        return 5
+        return Package.Status(self.status).ordinal()
 
     def __lt__(self, other):
         return int(self) > int(other)

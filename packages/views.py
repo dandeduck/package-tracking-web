@@ -6,8 +6,8 @@ from .models import Driver
 from util import is_member, is_staff
 
 
-def partner_search(request, partner):
-    partner = Partner.objects.filter(name=partner).get()
+def partner_search(request, partner_name):
+    partner = Partner.objects.filter(name=partner_name).get()
 
     name_query = request.GET.get('name')
     street_name_query = request.GET.get('street_name')
@@ -74,8 +74,8 @@ def package_view(request, package_id):
     return render(request, "packages/package.html", context)
 
 
-def partner_view(request, partner):
-    requested_partner = Partner.objects.get(name=partner)
+def partner_view(request, partner_id):
+    requested_partner = Partner.objects.get(name=partner_id)
 
     if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -109,9 +109,9 @@ def partner_view(request, partner):
     return render(request, "packages/partner.html", context)
 
 
-def partner_order_view(request, partner, order):
-    partner = Partner.objects.get(name=partner)
-    order = Order.objects.get(id=order)
+def partner_order_view(request, partner_id, order_id):
+    partner = Partner.objects.get(name=partner_id)
+    order = Order.objects.get(id=order_id)
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -149,9 +149,9 @@ def partner_order_view(request, partner, order):
     return render(request, 'packages/order_edit.html', context)
 
 
-def package_edit_view(request, partner, order, package):
-    partner = Partner.objects.get(name=partner)
-    package = Package.objects.filter(id=package)
+def package_edit_view(request, partner_id, order, package_id):
+    partner = Partner.objects.get(name=partner_id)
+    package = Package.objects.filter(id=package_id)
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
