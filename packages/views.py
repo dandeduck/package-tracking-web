@@ -39,11 +39,10 @@ def partner_search(request, partner_name):
     order_packages = [(orders[i], packages[i]) for i in range(0, len(orders))]
     context = {
         'partner': partner,
-        'cities': City.objects.all(),
-        'streets': Address.objects.values_list('street_name', flat=True),
         'order_packages': order_packages,
-        'names': Package.objects.values_list('full_name', flat=True),
     }
+    context += string_data_lists_context()
+
     return render(request, 'packages/partner_search.html', context)
 
 
@@ -141,12 +140,11 @@ def partner_order_view(request, partner_id, order_id):
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'cities': City.objects.all(),
-        'streets': Address.objects.values_list('street_name', flat=True),
-        'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
     }
+    context += string_data_lists_context()
 
     return render(request, 'packages/order_edit.html', context)
+
 
 def staff_view(request):
     if not is_member(request, 'staff'):
@@ -174,3 +172,11 @@ def get_or_create_city(name, area):
     if not city.exists():
         return City.objects.create(name=name, area=area)
     return city.get()
+
+
+def string_data_lists_context():
+    return {
+        'cities': City.objects.all(),
+        'streets': Address.objects.values_list('street_name', flat=True),
+        'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
+    }
