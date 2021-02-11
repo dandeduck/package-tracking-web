@@ -121,13 +121,13 @@ def partner_order_view(request, partner_id, order_id):
         origin_area = request.POST.get('origin_area')
         origin_street = request.POST.get('origin_street')
         origin_street_number = request.POST.get('origin_street_number')
-        origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
+        origin_address = get_or_create_address(origin_city, origin_area, origin_street, origin_street_number)
 
         destination_city = request.POST.get('destination_city')
         destination_area = request.POST.get('destination_area')
         destination_street = request.POST.get('destination_street')
         destination_street_number = request.POST.get('destination_street_number')
-        destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
+        destination_address = get_or_create_address(destination_city, destination_area, destination_street, destination_street_number)
 
         rate = float(request.POST.get('rate').replace('₪', ''))
         phone_number = request.POST.get('phone_number')
@@ -148,48 +148,6 @@ def partner_order_view(request, partner_id, order_id):
 
     return render(request, 'packages/order_edit.html', context)
 
-
-def package_edit_view(request, partner_id, order, package_id):
-    partner = Partner.objects.get(name=partner_id)
-    package = Package.objects.filter(id=package_id)
-
-    if not is_member(request, partner.name) and not is_staff(request):
-        return render(request, 'errors/access_restricted.html', {})
-
-    context = {
-        'package': package.get(),
-        'order': order,
-        'partner': partner,
-        'rates': partner.rates.split(','),
-        'cities': City.objects.all(),
-        'streets': Address.objects.values_list('street_name', flat=True)
-    }
-
-    if request.POST:
-        origin_city = request.POST.get('origin_city')
-        origin_area = request.POST.get('origin_area')
-        origin_street = request.POST.get('origin_street')
-        origin_street_number = request.POST.get('origin_street_number')
-        origin_address = get_address(origin_city, origin_area, origin_street, origin_street_number)
-
-        destination_city = request.POST.get('destination_city')
-        destination_area = request.POST.get('destination_area')
-        destination_street = request.POST.get('destination_street')
-        destination_street_number = request.POST.get('destination_street_number')
-        destination_address = get_address(destination_city, destination_area, destination_street, destination_street_number)
-
-        rate = float(request.POST.get('rate').replace('₪', ''))
-        phone_number = request.POST.get('phone_number')
-        full_name = request.POST.get('full_name')
-
-        package.update(origin=origin_address, destination=destination_address, rate=rate,
-                       full_name=full_name, phone_number=phone_number)
-
-        return redirect('/notify/?p='+partner.name+'&next=/partners/'+partner.name+'/'+str(package.get().order.id)+'/')
-
-    return render(request, 'packages/package_edit.html', context)
-
-
 def staff_view(request):
     if not is_member(request, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
@@ -201,8 +159,8 @@ def staff_view(request):
     return render(request, 'packages/staff.html', context)
 
 
-def get_address(city_name, area, street, street_number):
-    city = get_city(city_name, area)
+def get_or_create_address(city_name, area, street, street_number):
+    city = get_or_create_city(city_name, area)
     address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
 
     if not address:
@@ -210,7 +168,7 @@ def get_address(city_name, area, street, street_number):
     return address.get()
 
 
-def get_city(name, area):
+def get_or_create_city(name, area):
     city = City.objects.filter(name__iexact=name)
 
     if not city.exists():
