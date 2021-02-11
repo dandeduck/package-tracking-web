@@ -26,7 +26,7 @@ class Address(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.city) + ", " + str(self.street_name) + " " + str(self.street_number)
+        return f"{self.city}, {self.street_name} {self.street_number}"
 
 
 class Partner(models.Model):
@@ -77,7 +77,7 @@ class Order(models.Model):
             return Package.WAIT
 
     def __str__(self):
-        return str(self.partner) + ' ' + str(self.collection_date) + ' ' + str(self.driver)
+        return f"{self.partner} {self.collection_date} {self.driver}"
 
     def __lt__(self, other):
         return self.collection_date > other.collection_date
@@ -126,7 +126,7 @@ class Package(models.Model):
         return Package.objects.filter(id=self.id)
 
     def __str__(self):
-        return str(self.destination) + " " + str(self.status)
+        return f"{self.destination} {self.status}"
 
     def __int__(self):
         status = self.status
