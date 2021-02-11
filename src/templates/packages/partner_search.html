@@ -17,9 +17,6 @@
     <div class="d-flex row">
         {%if order_packages%}
             {% for order, packages in order_packages%}
-                {% if forloop.counter0|divisibleby:4 and forloop.counter0 != 0%}
-                    <div class="w-100"></div>
-                {%endif%}
                 <div class="col mb-3">
                     <div class="card">
                         <div class="card-body">

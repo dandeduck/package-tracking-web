@@ -7,11 +7,11 @@
 {% block content %}
     <div class="list-group list-group-flush p-3 container w-25">
         {%for partner in partners%}
-            <a href="/partners/{{partner.name}}/" class="list-group-item list-group-item-action p-3">{{partner.name}} </a>
+            <a class="list-group-item list-group-item-action p-3" href="/partners/{{partner.name}}/">{{partner.name}} </a>
         {%endfor%}
     </div>
 {% endblock %}
 
 {% block bottom%}
-    <a href="/financials/" class="card-link">כספים</a>
+    <a class="btn btn-outline-dark" href="/financials/">כספים</a>
 {%endblock%}
