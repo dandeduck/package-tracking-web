@@ -8,35 +8,38 @@
     <div class="row my-3">
     </div>
     <div class="row">
-        <div class="col align-self-center display-6">:Contact Info</div>
+        <div class="col align-self-center text-center display-6">:Contact Info</div>
     </div>
     <div class="row mt-2">
-        <div class="col align-self-center h5 lead">{{name}} {{package.formatted_phone_number}}</div>
+        <div class="col align-self-center h5 lead mb-5">{{name}} {{package.formatted_phone_number}}</div>
     </div>
-    <div class="position-relative top-50">
-        <div class="row translate-middle">
-            <div class="col"></div>
-            <div class="col-10 align-self-top display-6 text-end ">:Status</div>
+    <div class="container mt-5">
+        <div class="row justify-content-end mb-2">
+            <div class="col-auto offset-xxl-3 offset-xl-3 offset-lg-2 offset-md-1 display-6">:Status</div>
         </div>
-    </div>
-    <div class="position-relative top-100">
-        <div class="position-absolute start-50 translate-middle">
-            {% for status, status2 in package.STATUS_CHOICES%}
-                <div class="row">
-                    <div class="col">
-                        <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-auto text-start">
+                <ul class="list-unstyled">
+                    {% for status, status2 in package.STATUS_CHOICES%}
+                        <li class="mb-3">
                             {%if package.status != status%}
                                 <h5 class="card-title fw-light text-muted">{{status}}</h5>
                             {%else%}
-                                <h5 class="card-title border-success border-2 rounded border px-2 py-2">{{status}}</h5>
+                                <ul class="list-inline">
+                                    <li class="list-inline-item">
+                                        <div class="spinner-grow align-baseline text-success spinner-grow-sm" role="status">
+                                          <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="card-title">{{status}}</h5>
+                                    </li>
+                                </ul>
                             {%endif%}
-                        </div>
-                    </div>
-                </div>
-                {% if forloop.counter != package.STATUS_CHOICES|length %}
-                    <span class="bi-arrow-down text-muted"></span>
-                {%endif%}
-            {%endfor%}
+                        </li>
+                    {%endfor%}
+                </ul>
+            </div>
         </div>
     </div>
 {%endblock%}
