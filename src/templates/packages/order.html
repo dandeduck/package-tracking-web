@@ -4,12 +4,9 @@
      הזמנה {{order.collection_date.date}}
 {%endblock%}
 {% block content %}
-    <div class="d-flex row">
+    <div class="row justify-content-center">
         {% for package in packages%}
-            {% if forloop.counter0|divisibleby:5 and forloop.counter0 != 0%}
-                <div class="w-100"></div>
-            {%endif%}
-            <div class="col-lg col-md-12 mb-3">
+            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
                 <div class="card">
                     <div class="card-body text-start">
                         <h5 class="card-title">{{package.destination}}</h5>

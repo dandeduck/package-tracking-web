@@ -67,6 +67,10 @@ def order_view(request, order_id):
             package.update(status=package.get().next_status())
 
     packages = list(order.related_packages())
+    packages += packages
+    packages += packages
+    packages += packages
+    packages += packages
     context = {
         'order': order,
         'packages': packages,
