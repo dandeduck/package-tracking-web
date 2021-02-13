@@ -1,9 +1,0 @@
-{%extends 'base.html' %}
-
-{% block main_block %}
-    <ul>
-        {%for partner in partners%}
-            <li><a href="/partner/?p={{partner.name}}">{{partner.name}}</a></li>
-        {%endfor%}
-    </ul>
-{% endblock %}
