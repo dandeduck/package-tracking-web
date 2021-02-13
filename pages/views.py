@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect, render_to_response
-from django.template import RequestContext
+from django.shortcuts import render, redirect
+
 from util import is_staff, has_group, first_group_name
 
 
@@ -42,14 +42,6 @@ def contact_view(request):
     return render(request, 'pages/contact.html', {})
 
 
-def notify_view(request):
-    # TODO:
-    # send email and stuff
-    redirect_url = request.GET.get('next').replace('==', '&')
-    return redirect(redirect_url)
-
-
 def financial_view(request):
     context = {}
     return render(request, 'pages/financials.html', context)
-

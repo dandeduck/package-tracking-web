@@ -1,12 +1,33 @@
-<button onclick="javascipt:reveal_search()" id="search_reveal">search</button>
-<div class="search" id="search" style="display: none;">
-    <p>Destination:</p>
-    <form method="get" action="/search/{{partner}}/">
-        <input type="text" placeholder="City" name="city" list="cities"/>
-        <input type="text" placeholder="Street" name="street_name" list="streets"/>
-        <input type="number" placeholder="0" name="street_number"/>
-        <input type="text" placeholder="Full name" name="name" list="names"/>
-        <input type="submit" value="search">
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+input[type="number"] {
+   -moz-appearance: textfield;
+}
+</style>
+
+<button class="btn btn-outline-success" onclick="javascipt:reveal_search()" id="search_reveal">חיפוש יעד <span class="bi-search"></span></button>
+
+<div id="search" style="display: none;">
+    <form class="row" method="get" action="/search/{{partner}}/" dir="ltr">
+        <div class="col-xxl-3 col-lg-6">
+            <input class="form-control text-start" type="text" placeholder="City" name="city" list="cities"/>
+        </div>
+        <div class="col-xxl-3 col-lg-6">
+            <input class="form-control text-start" type="text" placeholder="Street" name="street_name" list="streets"/>
+        </div>
+        <div class="col-xxl-1 col-lg-2">
+            <input class="form-control" type="number" placeholder="0" name="street_number" dir="ltr"/>
+        </div>
+        <div class="col-xxl-3 col-lg-6">
+            <input class="form-control text-start" type="text" placeholder="Full name" name="name" list="names"/>
+        </div>
+        <div class="col-auto" dir="rtl">
+            <button class="btn btn-outline-success" type="submit">חיפוש <span class="bi-search"></span></button>
+        </div>
     </form>
 </div>
 

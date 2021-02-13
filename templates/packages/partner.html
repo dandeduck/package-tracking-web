@@ -1,40 +1,44 @@
 {%extends 'base.html' %}
 
-{% block main_block %}
-    <h2> All orders </h2>
-    {% include "packages/parts/search.html" %}
-    <ul>
-        {% for order, amount, status, driver in order_amount_status_drivers %}
-        <li>
-            {{order.collection_date.date}} {{amount}} packages : <a href="/orders/{{order.id}}/"> tracking </a> :: {{status}}
-            {%if is_staff %}
-                <form name="drivers" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="order" value="{{order.id}}"/>
-                    <select name="driver" onchange="this.form.submit()">
-                        {%for inner_driver in drivers%}
-                            {%if inner_driver == driver %}
-                                <option>{{driver}}</option>
+{% block title%}
+    הזמנות
+{%endblock%}
+{% block content%}
+    <div class="row justify-content-center mb-3">
+        <div class="col text-start">
+            {% include "packages/parts/search.html" %}
+        </div>
+        <div class="col text-end">
+            <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark" >הזמנה חדשה +</button>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% for order, amount, status in order_amount_status %}
+
+            <div class="col-xxl-auto col-xl-3 col-lg-4 col-sm-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><span class="h6 align-top mx-1 text-secondary" >{{amount}}</span> {{order.collection_date.date}}</h5>
+                        <p class="card-text">
+                            {% if status == Package.WAIT%}
+                                <span class="text-danger">{{status}}</span>
+                            {% elif status == Package.STORED%}
+                                <span class="text-info">{{status}}</span>
+                            {% elif status == Package.ON_ROUTE%}
+                                <span class="text-warning">{{status}}</span>
+                            {% elif status == Package.DELIVERED%}
+                                <span class="text-success">{{status}}</span>
+                            {% else %}
+                                <span class="text-dark">{{status}}</span>
                             {%endif%}
-                        {%endfor%}
-                        {%for other_driver in drivers%}
-                            {%if other_driver != driver %}
-                                <option>{{other_driver}}</option>
-                            {%endif%}
-                        {%endfor%}
-                    </select>
-                </form>
-            {%endif%}
-            <a href="/partners/{{partner.name}}/{{order.id}}/"> edit </a>
-        </li>
-        {% endfor %}
-    </ul>
-    <form name="new-order" action="/partners/{{partner}}/" method="post"> {% csrf_token %}
-        <a href="javascript:submitform('new-order')">+ new order</a>
-    </form>
-    <script type="text/javascript">
-        function submitform(count) {
-            document.forms[count].submit();
-        }
-    </script>
+                        </p>
+                        <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
+                        <a class="card-link p-3 text-decoration-none" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div>
 {% endblock %}

@@ -1,8 +1,8 @@
+from django.core import serializers
 from django.shortcuts import render, redirect
 from .models import Order, City, Address
 from .models import Partner
 from .models import Package
-from .models import Driver
 from util import is_member, is_staff
 
 
@@ -16,27 +16,35 @@ def partner_search(request, partner_name):
     number_query = request.GET.get('number')
 
     packages = Package.objects.filter(order__partner__name=partner.name)
+    filtered_packages = Package.objects.none()
 
     if name_query:
         packages = packages.filter(full_name__icontains=name_query)
+        filtered_packages = packages
     if number_query:
         packages = packages.filter(phone_number__icontains=number_query)
+        filtered_packages = packages
     if street_name_query:
         packages = packages.filter(destination__street_name__icontains=street_name_query)
+        filtered_packages = packages
     if street_number_query:
         packages = packages.filter(destination__street_number__contains=street_number_query)
+        filtered_packages = packages
     if city_query:
         packages = packages.filter(destination__city__name__icontains=city_query)
+        filtered_packages = packages
 
     orders = []
     related_packages = []
-    for package in packages.order_by('-order__collection_date'):
+    for package in filtered_packages.order_by('-order__collection_date'):
         order = package.order
         if order not in orders:
             orders.append(order)
-            related_packages.append(package)
+            related_packages.append([package])
+        else:
+            related_packages[orders.index(order)].append(package)
 
-    order_packages = [(orders[i], packages[i]) for i in range(0, len(orders))]
+    order_packages = [(orders[i], related_packages[i]) for i in range(0, len(orders))]
     context = {
         'partner': partner,
         'order_packages': order_packages,
@@ -58,9 +66,10 @@ def order_view(request, order_id):
             package = order.related_packages().filter(id=package_id)
             package.update(status=package.get().next_status())
 
+    packages = list(order.related_packages())
     context = {
         'order': order,
-        'packages': order.related_packages(),
+        'packages': packages,
         'is_staff': is_staff(request)
     }
 
@@ -68,7 +77,16 @@ def order_view(request, order_id):
 
 
 def package_view(request, package_id):
-    context = {'package': Package.objects.get(id=package_id)}
+    package = Package.objects.get(id=package_id)
+    name = package.full_name.split(' ')[0] + ':'
+
+    if not name:
+        name = ''
+
+    context = {
+        'package': package,
+        'name': name
+    }
 
     return render(request, "packages/package.html", context)
 
@@ -80,66 +98,56 @@ def partner_view(request, partner_id):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
-        if request.POST.get('driver'):
-            assigned_driver = Driver.objects.get(name=request.POST.get('driver'))
-            order = Order.objects.filter(id=request.POST.get('order'))
-            order.update(driver=assigned_driver)
-        else:
-            new_order_id = str(Order.objects.create(partner=requested_partner, driver=Driver.objects.get(name=Driver.NO_DRIVER)).id)
-            return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
+        new_order_id = str(Order.objects.create(partner=requested_partner).id)
+        return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
     orders = requested_partner.related_orders().order_by('-collection_date')
     package_amounts = []
     order_statuses = []
-    drivers = []
 
     for order in orders:
         package_amounts.append(len(order.related_packages()))
         order_statuses.append(order.overall_package_status())
-        drivers.append(order.driver)
 
-    order_amount_status_drivers = [(orders[i], package_amounts[i], order_statuses[i], drivers[i]) for i in range(0, len(orders))]
+    order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
     context = {
-        'order_amount_status_drivers': order_amount_status_drivers,
-        'drivers': list(Driver.objects.all()),
+        'order_amount_status': order_amount_status,
         'is_staff': is_staff(request),
-        'partner': requested_partner
+        'partner': requested_partner,
+        'Package': Package
     }
 
     return render(request, "packages/partner.html", context)
 
 
-def partner_order_view(request, partner_id, order_id):
-    partner = Partner.objects.get(name=partner_id)
+def order_edit_view(request, partner_name, order_id):
+    partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
 
     if not is_member(request, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
-        origin_city = request.POST.get('origin_city')
-        origin_area = request.POST.get('origin_area')
-        origin_street = request.POST.get('origin_street')
-        origin_street_number = request.POST.get('origin_street_number')
-        origin_address = get_or_create_address(origin_city, origin_area, origin_street, origin_street_number)
+        package_id = request.POST.get('package')
+        update_type = request.POST.get('update-type')
 
-        destination_city = request.POST.get('destination_city')
-        destination_area = request.POST.get('destination_area')
-        destination_street = request.POST.get('destination_street')
-        destination_street_number = request.POST.get('destination_street_number')
-        destination_address = get_or_create_address(destination_city, destination_area, destination_street, destination_street_number)
+        if update_type:
+            change_packages_status(package_id, update_type, order)
 
-        rate = float(request.POST.get('rate').replace('₪', ''))
-        phone_number = request.POST.get('phone_number')
-        full_name = request.POST.get('full_name')
+        elif request.POST.get('save'):
+            updated_packages = update_saved_packages(request)
+            new_packages = create_saved_packages(request)
+            send_emails(updated_packages, new_packages)
+        else:
+            save_changes_to_cookies(request, order)
 
-        Package.objects.create(origin=origin_address, destination=destination_address, order=order, rate=rate,
-                               full_name=full_name, phone_number=phone_number)
-
+    packages = list(order.related_packages())
     context = {
-        'packages': order.related_packages(),
+        'packages': packages,
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
+        'has_unsaved_progress': not request.COOKIES.get('new_packages') or not request.COOKIES.get('updated_packages'),
+        'is_staff': is_staff(request)
     }
     context += string_data_lists_context()
 
@@ -157,13 +165,92 @@ def staff_view(request):
     return render(request, 'packages/staff.html', context)
 
 
-def get_or_create_address(city_name, area, street, street_number):
-    city = get_or_create_city(city_name, area)
-    address = Address.objects.filter(city=city, street_name=street, street_number=street_number)
+def change_packages_status(package_id, update_type, order):
+    package = Package.objects.filter(id=package_id)
 
-    if not address:
-        return Address.objects.create(city=city, street_name=street, street_number=street_number)
-    return address.get()
+    if update_type == 'revert':
+        package.update(status=package.get().prev_status())
+    elif update_type == 'update':
+        package.update(status=package.get().next_status())
+    elif update_type == 'update-all':
+        for inner in order.related_packages():
+            inner.as_query().update(status=inner.next_status())
+    else:
+        for inner in order.related_packages():
+            inner.as_query().update(status=inner.prev_status())
+
+
+def update_saved_packages(request):
+    packages = serializers.deserialize('json', request.COOKIES.get('updated_packages'))
+
+    for package in packages:
+        actual_package = Package.objects.filter(id=package.id)
+        actual_package.update(origin=package.origin, destination=package.destination, rate=package.rate,
+                              full_name=package.full_name, phone_number=package.phone_number)
+
+    return packages
+
+
+def create_saved_packages(request):
+    packages = serializers.deserialize('json', request.COOKIES.get('new_packages'))
+
+    for package in packages:
+        Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
+                               rate=package.rate, full_name=package.full_name, phone_number=package.phone_number)
+
+    return packages
+
+
+def send_emails(updated_packages, new_packages):
+    # TODO:
+    # send out emails where we need
+    pass
+
+
+def save_changes_to_cookies(request, order):
+    origin_address = get_or_create_origin_address(request)
+    destination_address = get_or_create_destination_address(request)
+
+    rate = float(request.POST.get('rate').replace('₪', ''))
+    phone_number = request.POST.get('phone_number')
+    full_name = request.POST.get('full_name')
+
+    package_id = request.POST.get('package_id')
+
+    package = Package(origin=origin_address, destination=destination_address,
+                      rate=rate, phone_number=phone_number, full_name=full_name, order=order)
+    if package_id:
+        package.id = package_id
+        json = request.COOKIES.get('updated_packages')
+        json = add_package_to_json(package, json)
+        request.set_cookie('updated_packages', json)
+    else:
+        json = request.COOKIES.get('new_packages')
+        json = add_package_to_json(package, json)
+        request.set_cookie('new_packages', json)
+
+
+def get_or_create_destination_address(request):
+    destination_city_name = request.POST.get('destination_city')
+    destination_area = request.POST.get('destination_area')
+    destination_street = request.POST.get('destination_street')
+    destination_street_number = request.POST.get('destination_street_number')
+
+    return get_or_create_address(destination_city_name, destination_area, destination_street, destination_street_number)
+
+
+def get_or_create_origin_address(request):
+    origin_city_name = request.POST.get('origin_city')
+    origin_area = request.POST.get('origin_area')
+    origin_street = request.POST.get('origin_street')
+    origin_street_number = request.POST.get('origin_street_number')
+
+    return get_or_create_address(origin_city_name, origin_area, origin_street, origin_street_number)
+
+
+def get_or_create_address(city_name, area, street_name, street_number):
+    destination_city = get_or_create_city(city_name, area)
+    return Address.objects.get_or_create(city=destination_city, street_name=street_name, street_number=street_number)[0]
 
 
 def get_or_create_city(name, area):
@@ -180,3 +267,10 @@ def string_data_lists_context():
         'streets': Address.objects.values_list('street_name', flat=True),
         'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
     }
+
+
+def add_package_to_json(package, json):
+    packages = serializers.deserialize('json', json)
+    packages.append(package)
+
+    return serializers.serialize('json', packages)

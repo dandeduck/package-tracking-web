@@ -1,30 +1,26 @@
 {%extends 'base.html' %}
 
-{% block main_block %}
-    <h2> Order {{order.collection_date.date}} </h2>
-    <form name="update-all" method="post"> {% csrf_token %}
-        <a href="javascript:submitform('update-all')">update all</a>
-        <input type="hidden" name="package" value="all" />
-    </form>
-    {% for package in packages %}
-        <li>
-            from {{package.origin.city}} to {{package.destination}} {{package.status}} <a href="/packages/{{package.id}}/">tracking</a>
-            {%if is_staff %}
-                <a href="javascript:submitform({{forloop.counter}})">update</a>
-                <form name="{{forloop.counter}}" method="post"> {% csrf_token %}
-                    <input type="hidden" name="package" value="{{package.id}}" />
-                </form>
-            {%endif%}
-        </li>
-    {% endfor %}
-    <div class="nav--bottom">
-        <a href="/partners/{{order.partner.name}}/">< BACK</a>
+{% block title%}
+     הזמנה {{order.collection_date.date}}
+{%endblock%}
+{% block content %}
+    <div class="row justify-content-center">
+        {% for package in packages%}
+            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
+                <div class="card">
+                    <div class="card-body text-start">
+                        <h5 class="card-title">{{package.destination}}</h5>
+                        <ul class="card-subtitle list-inline text-muted">
+                            <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street_name}}</h6></li>
+                            <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                        </ul>
+                        <p class="card-text">
+                            <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-{{package.status_color}}">{{package.status}}</span>
+                            <span class="row justify-content-end ms-1 fw-light">{{package.full_name}} {{package.phone_number}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
     </div>
-
-    <script type="text/javascript">
-        function submitform(count)
-        {
-            document.forms[count].submit();
-        }
-    </script>
-{% endblock %}
+{%endblock%}
