@@ -62,7 +62,7 @@ class Order(models.Model):
         packages.sort()
 
         if packages:
-            return packages[0].status
+            return packages[0].status_obj()
         else:
             return Package.Status.WAIT
 
@@ -99,9 +99,9 @@ class Package(models.Model):
 
         def color(self):
             members = list(StatusColor)
-            index = members.index(self)
+            index = list(self.__class__).index(self)
 
-            return list(self.StatusColor)[index]
+            return members[index].value
 
         @classmethod
         def choices(cls):
@@ -121,6 +121,9 @@ class Package(models.Model):
             return 'Not provided'
         else:
             return self.phone_number
+
+    def status_obj(self):
+        return Package.Status(self.status)
 
     def next_status(self):
         return Package.Status(self.status).next()

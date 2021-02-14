@@ -112,8 +112,7 @@ def partner_view(request, partner_name):
     context = {
         'order_amount_status': order_amount_status,
         'is_staff': is_staff(request),
-        'partner': requested_partner,
-        'Package': Package
+        'partner': requested_partner
     }
 
     return render(request, "packages/partner.html", context)

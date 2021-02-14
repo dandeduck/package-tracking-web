@@ -21,17 +21,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><span class="h6 align-top mx-1 text-secondary" >{{amount}}</span> {{order.collection_date.date}}</h5>
                         <p class="card-text">
-                            {% if status == Package.Status.WAIT%}
-                                <span class="text-danger">{{status}}</span>
-                            {% elif status == Package.Status.STORED%}
-                                <span class="text-info">{{status}}</span>
-                            {% elif status == Package.Status.ON_ROUTE%}
-                                <span class="text-warning">{{status}}</span>
-                            {% elif status == Package.Status.DELIVERED%}
-                                <span class="text-success">{{status}}</span>
-                            {% else %}
-                                <span class="text-dark">{{status}}</span>
-                            {%endif%}
+                            <span class="text-{{status.color}}">{{status.value}}</span>
                         </p>
                         <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
                         <a class="card-link p-3 text-decoration-none" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
