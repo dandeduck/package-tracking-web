@@ -81,6 +81,13 @@
     </div>
 {%endblock%}
 
+{%block bottom%}
+    <form method="post">
+        <input type="hidden" value="save" />
+        <a class="btn btn-outline-success bi-save" type="submit">שמור</a>
+    </form>
+{%endblock%}
+
 <datalist id="cities">
     {%include "packages/parts/list_options.html" with list=cities%}
 </datalist>

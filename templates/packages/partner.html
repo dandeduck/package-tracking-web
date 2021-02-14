@@ -16,19 +16,18 @@
     </div>
     <div class="row justify-content-center">
         {% for order, amount, status in order_amount_status %}
-
             <div class="col-xxl-auto col-xl-3 col-lg-4 col-sm-6 mb-3">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><span class="h6 align-top mx-1 text-secondary" >{{amount}}</span> {{order.collection_date.date}}</h5>
                         <p class="card-text">
-                            {% if status == Package.WAIT%}
+                            {% if status == Package.Status.WAIT%}
                                 <span class="text-danger">{{status}}</span>
-                            {% elif status == Package.STORED%}
+                            {% elif status == Package.Status.STORED%}
                                 <span class="text-info">{{status}}</span>
-                            {% elif status == Package.ON_ROUTE%}
+                            {% elif status == Package.Status.ON_ROUTE%}
                                 <span class="text-warning">{{status}}</span>
-                            {% elif status == Package.DELIVERED%}
+                            {% elif status == Package.Status.DELIVERED%}
                                 <span class="text-success">{{status}}</span>
                             {% else %}
                                 <span class="text-dark">{{status}}</span>

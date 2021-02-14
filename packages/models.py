@@ -66,6 +66,9 @@ class Order(models.Model):
         else:
             return Package.Status.WAIT
 
+    def status_color(self):
+        return Package.Status(self.overall_package_status()).color()
+
     def __str__(self):
         return f"{self.partner} {self.collection_date}"
 
@@ -76,20 +79,15 @@ class Order(models.Model):
 class Package(models.Model):
     class Status(enum.Enum):
         WAIT = 'Awaiting collection'
-        STORED = 'Received by the company'
+        STORED = 'Warehoused'
         ON_ROUTE = 'On route to destination'
         DELIVERED = 'Delivered'
 
-        def ordinal(self):
+        def next(self):
             members = list(self.__class__)
             index = members.index(self) + 1
             if index >= len(members):
                 index = len(members) - 1
-            return index
-
-        def next(self):
-            members = list(self.__class__)
-            index = self.ordinal()
             return members[index]
 
         def prev(self):
@@ -97,14 +95,20 @@ class Package(models.Model):
             index = members.index(self) - 1
             if index < 0:
                 index = 0
-            return index
+            return members[index]
+
+        def color(self):
+            members = list(StatusColor)
+            index = members.index(self)
+
+            return list(self.StatusColor)[index]
 
         @classmethod
         def choices(cls):
-            return tuple((i.name, i.value) for i in cls)
+            return [(i.name, i.value) for i in cls]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(max_length=32, choices=Status.choices(), default=Status.WAIT)
+    status = models.CharField(max_length=32, choices=Status.choices(), default='WAIT')
     origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='origin')
     destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -124,6 +128,9 @@ class Package(models.Model):
     def prev_status(self):
         return Package.Status(self.status).prev()
 
+    def status_color(self):
+        return Package.Status(self.status).color()
+
     def as_query(self):
         return Package.objects.filter(id=self.id)
 
@@ -135,3 +142,10 @@ class Package(models.Model):
 
     def __lt__(self, other):
         return int(self) > int(other)
+
+
+class StatusColor(enum.Enum):
+    DANGER = 'danger'
+    INFO = 'info'
+    WARNING = 'warning'
+    SUCCESS = 'success'

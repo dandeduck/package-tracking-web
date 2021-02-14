@@ -49,7 +49,7 @@ def partner_search(request, partner_name):
         'partner': partner,
         'order_packages': order_packages,
     }
-    context += string_data_lists_context()
+    context.update(string_data_lists_context())
 
     return render(request, 'packages/partner_search.html', context)
 
@@ -91,8 +91,8 @@ def package_view(request, package_id):
     return render(request, "packages/package.html", context)
 
 
-def partner_view(request, partner_id):
-    requested_partner = Partner.objects.get(name=partner_id)
+def partner_view(request, partner_name):
+    requested_partner = Partner.objects.get(name=partner_name)
 
     if not is_member(request, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
@@ -149,7 +149,7 @@ def order_edit_view(request, partner_name, order_id):
         'has_unsaved_progress': not request.COOKIES.get('new_packages') or not request.COOKIES.get('updated_packages'),
         'is_staff': is_staff(request)
     }
-    context += string_data_lists_context()
+    context.update(string_data_lists_context())
 
     return render(request, 'packages/order_edit.html', context)
 
