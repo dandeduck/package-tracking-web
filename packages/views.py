@@ -132,11 +132,6 @@ def order_edit_view(request, partner_name, order_id):
 
         if update_type:
             change_packages_status(package_id, update_type, order)
-
-        elif request.POST.get('save'):
-            updated_packages = update_saved_packages(request)
-            new_packages = create_saved_packages(request)
-            send_emails(updated_packages, new_packages)
         else:
             save_changes_to_cookies(request, order)
 
@@ -146,12 +141,21 @@ def order_edit_view(request, partner_name, order_id):
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'has_unsaved_progress': not request.COOKIES.get('new_packages') or not request.COOKIES.get('updated_packages'),
+        'has_unsaved_progress': request.COOKIES.get('new_packages') or request.COOKIES.get('updated_packages'),
         'is_staff': is_staff(request)
     }
     context.update(string_data_lists_context())
 
-    return render(request, 'packages/order_edit.html', context)
+    response = render(request, 'packages/order_edit.html', context)
+
+    if request.POST.get('save'):
+        updated_packages = update_saved_packages(request)
+        new_packages = create_saved_packages(request)
+        send_emails(updated_packages, new_packages)
+        response.delete_cookie('updated_packages')
+        response.delete_cookie('new_packages')
+
+    return response
 
 
 def staff_view(request):

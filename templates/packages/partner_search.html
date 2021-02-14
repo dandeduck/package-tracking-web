@@ -54,18 +54,3 @@
         {%endif%}
     </div>
 {% endblock %}
-
-{% block main_block %}
-    <div>
-        {% include "packages/parts/search.html" %}
-        <ul>
-            {%for order, package in order_packages%}
-                <li><a href="/partners/{{partner}}/{{order.id}}/">Order {{order.collection_date.date}}</a> {{package.status}} {{package.destination}}</li>
-            {%endfor%}
-            {%if not order_packages%}
-                <li>No results</li>
-            {%endif%}
-        </ul>
-    </div>
-    <a href="/partners/{{partner}}/">< BACK</a>
-{% endblock %}

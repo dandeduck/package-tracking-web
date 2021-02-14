@@ -25,6 +25,11 @@
             </div>
         {%endif%}
     </div>
+    {%if has_unsaved_progress%}
+        <div class="">
+            <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
+        </div>
+    {%endif%}
     <div class="modal fade justify-content-start" id="staticBackdrop" role="dialog" data-bs-backdrop="static" data-bs-keydrop="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -82,10 +87,12 @@
 {%endblock%}
 
 {%block bottom%}
-    <form method="post">
-        <input type="hidden" value="save" />
-        <a class="btn btn-outline-success bi-save" type="submit">שמור</a>
-    </form>
+    {%if has_unsaved_progress%}
+        <form method="post">
+            <input type="hidden" value="save" />
+            <a class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></a>
+        </form>
+    {%endif%}
 {%endblock%}
 
 <datalist id="cities">
