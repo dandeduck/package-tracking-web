@@ -115,6 +115,7 @@ class Package(models.Model):
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     full_name = models.CharField(max_length=32, blank=True)
     phone_number = models.CharField(max_length=32, blank=True)
+    notes = models.TextField(blank=True)
 
     def formatted_phone_number(self):
         if self.phone_number == '':

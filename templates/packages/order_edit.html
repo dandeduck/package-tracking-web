@@ -30,24 +30,111 @@
             <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
         </div>
     {%endif%}
-    <div class="modal fade" id="modalCenter" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            ...
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+           -webkit-appearance: none;
+           margin: 0;
+        }
+        input[type="number"] {
+           -moz-appearance: textfield;
+        }
+    </style>
+    <div class="modal fade" id="modalCenter" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true" dir="ltr">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header" dir="rtl">
+                    <h5 class="modal-title" id="modalCenterTitle">יצירה/עריכה של חבילה</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form method="post">
+                            <label for="origin" class="form-label">Origin</label>
+                            <div id="origin" class="row g-0 mb-3">
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="origin_street" list="streets" placeholder="Street"/>
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" name="origin_street_number" placeholder="0"/>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="origin_city" list="cities" placeholder="City"/>
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-select" name="origin_area">
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db == package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db != package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="destination" class="form-label">Destination</label>
+                            <div id="destination" class="row g-0 mb-3">
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="destination_street" list="streets" placeholder="Street"/>
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" name="destination_street_number" placeholder="0"/>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="destination_city" list="cities" placeholder="City"/>
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-select" name="destination_area">
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db == package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db != package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="name" class="form-label text-start">Info</label>
+                            <div id="info" class="row g-0 mb-3">
+                                <div class="col">
+                                    <input id="name" type="text" class="form-control" name="full_name" placeholder="Name"/>
+                                </div>
+                                <div class="col">
+                                    <input type="tel" class="form-control" name="phone_number" placeholder="Phone Number"/>
+                                </div>
+                            </div>
+                            <label for="notes-text" class="col-form-label">Notes:</label>
+                            <textarea class="form-control" id="notes-text"></textarea>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" dir="rtl">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">בטל</button>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-success">אשר</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <div class="row justify-content-center">
         {% for package in packages%}
@@ -96,7 +183,11 @@
         </form>
     {%endif%}
 {%endblock%}
-
+<datalist id="areas">
+    <option>Central</option>
+    <option>Northern</option>
+    <option>Southern</option>
+</datalist>
 <datalist id="cities">
     {%include "packages/parts/list_options.html" with list=cities%}
 </datalist>
