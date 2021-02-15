@@ -6,7 +6,7 @@
 {% block content %}
     <div class="row justify-content-center mb-3">
         <div class="col-auto order-2">
-            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">חבילה חדשה +</a>
+            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalCenter">חבילה חדשה +</a>
         </div>
         {%if is_staff%}
             <div class="col-auto order-1">
@@ -30,22 +30,24 @@
             <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
         </div>
     {%endif%}
-    <div class="modal fade justify-content-start" id="staticBackdrop" role="dialog" data-bs-backdrop="static" data-bs-keydrop="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">שינוי/יצירת חבילה</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                ...
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
-              </div>
-            </div>
+    <div class="modal fade" id="modalCenter" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="row justify-content-center">
         {% for package in packages%}

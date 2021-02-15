@@ -94,7 +94,7 @@ def package_view(request, package_id):
 def partner_view(request, partner_name):
     requested_partner = Partner.objects.get(name=partner_name)
 
-    if not is_member(request, requested_partner.name) and not is_staff(request):
+    if not is_member(request.user, requested_partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
@@ -122,7 +122,7 @@ def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
 
-    if not is_member(request, partner.name) and not is_staff(request):
+    if not is_member(request.user, partner.name) and not is_staff(request):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
@@ -158,7 +158,7 @@ def order_edit_view(request, partner_name, order_id):
 
 
 def staff_view(request):
-    if not is_member(request, 'staff'):
+    if not is_member(request.user, 'staff'):
         return render(request, 'errors/access_restricted.html', {})
 
     context = {

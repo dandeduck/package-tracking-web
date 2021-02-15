@@ -1,5 +1,5 @@
-def is_member(request, group_name):
-    return request.user.groups.filter(name=group_name).exists()
+def is_member(user, group_name):
+    return user.groups.filter(name=group_name).exists()
 
 
 def has_group(request):
@@ -11,4 +11,4 @@ def first_group_name(request):
 
 
 def is_staff(request):
-    return is_member(request, 'staff')
+    return is_member(request.user, 'staff')
