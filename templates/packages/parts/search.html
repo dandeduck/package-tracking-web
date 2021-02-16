@@ -12,21 +12,21 @@ input[type="number"] {
 <button class="btn btn-outline-success" onclick="javascipt:reveal_search()" id="search_reveal">חיפוש יעד <span class="bi-search"></span></button>
 
 <div id="search" style="display: none;">
-    <form class="row" method="get" action="/search/{{partner}}/" dir="ltr">
-        <div class="col-xxl-3 col-lg-6">
-            <input class="form-control text-start" type="text" placeholder="City" name="city" list="cities"/>
-        </div>
-        <div class="col-xxl-3 col-lg-6">
+    <form class="row g-xl-1 g-md-0 g-sm-1" method="get" action="/search/{{partner}}/" dir="ltr">
+        <div class="col-md-3 col-8">
             <input class="form-control text-start" type="text" placeholder="Street" name="street_name" list="streets"/>
         </div>
-        <div class="col-xxl-1 col-lg-2">
+        <div class="col-md-1 col-4">
             <input class="form-control" type="number" placeholder="0" name="street_number" dir="ltr"/>
         </div>
-        <div class="col-xxl-3 col-lg-6">
+        <div class="col-md-3">
+            <input class="form-control text-start" type="text" placeholder="City" name="city" list="cities"/>
+        </div>
+        <div class="col-md-3">
             <input class="form-control text-start" type="text" placeholder="Full name" name="name" list="names"/>
         </div>
         <div class="col-auto" dir="rtl">
-            <button class="btn btn-outline-success" type="submit">חיפוש <span class="bi-search"></span></button>
+            <button class="btn btn-outline-success bi-search" type="submit">
         </div>
     </form>
 </div>
