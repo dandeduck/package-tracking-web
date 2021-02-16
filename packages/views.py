@@ -70,7 +70,7 @@ def order_view(request, order_id):
     context = {
         'order': order,
         'packages': packages,
-        'is_staff': is_staff(request)
+        'is_staff': is_staff(request.user)
     }
 
     return render(request, "packages/order.html", context)
@@ -94,7 +94,7 @@ def package_view(request, package_id):
 def partner_view(request, partner_name):
     requested_partner = Partner.objects.get(name=partner_name)
 
-    if not is_member(request.user, requested_partner.name) and not is_staff(request):
+    if not is_member(request.user, requested_partner.name) and not is_staff(request.user):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
@@ -111,7 +111,7 @@ def partner_view(request, partner_name):
     order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
     context = {
         'order_amount_status': order_amount_status,
-        'is_staff': is_staff(request),
+        'is_staff': is_staff(request.user),
         'partner': requested_partner
     }
 
@@ -122,7 +122,7 @@ def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
 
-    if not is_member(request.user, partner.name) and not is_staff(request):
+    if not is_member(request.user, partner.name) and not is_staff(request.user):
         return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
@@ -141,7 +141,7 @@ def order_edit_view(request, partner_name, order_id):
         'partner': partner,
         'rates': partner.rates.split(','),
         'has_unsaved_progress': request.COOKIES.get('new_packages') or request.COOKIES.get('updated_packages'),
-        'is_staff': is_staff(request)
+        'is_staff': is_staff(request.user)
     }
     context.update(string_data_lists_context())
 

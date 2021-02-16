@@ -26,10 +26,11 @@ def login_view(request):
 
 
 def home_view(request):
-    if has_group(request):
-        if is_staff(request):
+    user = request.user
+    if has_group(user):
+        if is_staff(user):
             return redirect('/staff/')
-        return redirect('/partners/'+first_group_name(request))
+        return redirect('/partners/'+first_group_name(user))
 
     return render(request, 'pages/home.html', {})
 
