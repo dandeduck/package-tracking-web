@@ -41,13 +41,22 @@
         }
     </style>
     <div class="modal fade" id="modalCenter" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true" dir="ltr">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" dir="rtl">
-                    <h5 class="modal-title" id="modalCenterTitle">יצירה/עריכה של חבילה</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <h5 class="modal-title" id="modalCenterTitle">יצירה/עריכה של חבילה</h5>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -122,7 +131,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-auto">
-                                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">בטל</button>
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close">בטל</button>
                             </div>
                             <div class="col">
 
