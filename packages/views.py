@@ -189,7 +189,7 @@ def update_saved_packages(request):
     for package in packages:
         actual_package = Package.objects.filter(id=package.id)
         actual_package.update(origin=package.origin, destination=package.destination, rate=package.rate,
-                              full_name=package.full_name, phone_number=package.phone_number)
+                              full_name=package.full_name, phone_number=package.phone_number, notes=package.notes)
 
     return packages
 
@@ -199,7 +199,8 @@ def create_saved_packages(request):
 
     for package in packages:
         Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
-                               rate=package.rate, full_name=package.full_name, phone_number=package.phone_number)
+                               rate=package.rate, full_name=package.full_name, phone_number=package.phone_number,
+                               notes=package.notes)
 
     return packages
 
@@ -217,11 +218,12 @@ def save_changes_to_cookies(request, order):
     rate = float(request.POST.get('rate').replace('₪', ''))
     phone_number = request.POST.get('phone_number')
     full_name = request.POST.get('full_name')
+    notes = request.POST.get('notes')
 
     package_id = request.POST.get('package_id')
 
-    package = Package(origin=origin_address, destination=destination_address,
-                      rate=rate, phone_number=phone_number, full_name=full_name, order=order)
+    package = Package(origin=origin_address, destination=destination_address,rate=rate, phone_number=phone_number,
+                      full_name=full_name, order=order, notes=notes)
     if package_id:
         package.id = package_id
         json = request.COOKIES.get('updated_packages')
