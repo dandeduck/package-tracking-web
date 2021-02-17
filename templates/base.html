@@ -54,7 +54,13 @@
         <div class="footer container mb-5 mt-3">
             <div class="row">
                 <div class="col text-end">
-                    <button class="btn btn-outline-dark bi-chevron-right" onclick="window.location = document.referrer;" >חזרה</button>
+                    <script>
+                        window.onload = function() {
+                            if (!document.referrer)
+                                document.getElementById('back-btn').style.display = 'none'
+                        }
+                    </script>
+                    <button id="back-btn" class="btn btn-outline-dark bi-chevron-right" onclick="window.location = document.referrer;">חזרה</button>
                 </div>
                 <div class="col text-start">
                     {% block bottom %}
