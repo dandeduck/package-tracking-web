@@ -33,7 +33,7 @@ class Address(models.Model):
 class Partner(models.Model):
     name = models.CharField(max_length=64, unique=True, primary_key=True)
     rates = models.CharField(max_length=32, default='0')
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.PROTECT)
 
     def get_rates(self):
         return [int(rate) for rate in str(self.rates).split(',')]
