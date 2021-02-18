@@ -48,6 +48,7 @@ def partner_search(request, partner_name):
     context = {
         'partner': partner,
         'order_packages': order_packages,
+        'is_staff': is_staff(request.user)
     }
     context.update(string_data_lists_context())
 
@@ -85,7 +86,8 @@ def package_view(request, package_id):
 
     context = {
         'package': package,
-        'name': name
+        'name': name,
+        'is_staff': is_staff(request.user)
     }
 
     return render(request, "packages/package.html", context)
@@ -162,7 +164,8 @@ def staff_view(request):
         return render(request, 'errors/access_restricted.html', {})
 
     context = {
-        'partners': Partner.objects.all()
+        'partners': Partner.objects.all(),
+        'is_staff': is_staff(request.user)
     }
 
     return render(request, 'packages/staff.html', context)
