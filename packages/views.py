@@ -133,8 +133,6 @@ def order_edit_view(request, partner_name, order_id):
 
         if update_type:
             change_packages_status(package_id, update_type, order)
-        else:
-            save_changes_to_cookies(request, order)
 
     packages = list(order.related_packages())
     context = {
@@ -149,6 +147,8 @@ def order_edit_view(request, partner_name, order_id):
 
     response = render(request, 'packages/order_edit.html', context)
 
+    if request.POST.get('rate'):
+        save_changes_to_cookies(request, order, response)
     if request.POST.get('save'):
         updated_packages = update_saved_packages(request)
         new_packages = create_saved_packages(request)
@@ -214,7 +214,7 @@ def send_emails(updated_packages, new_packages):
     pass
 
 
-def save_changes_to_cookies(request, order):
+def save_changes_to_cookies(request, order, response):
     origin_address = get_or_create_origin_address(request)
     destination_address = get_or_create_destination_address(request)
 
@@ -231,11 +231,11 @@ def save_changes_to_cookies(request, order):
         package.id = package_id
         json = request.COOKIES.get('updated_packages')
         json = add_package_to_json(package, json)
-        request.set_cookie('updated_packages', json)
+        response.set_cookie('updated_packages', json)
     else:
         json = request.COOKIES.get('new_packages')
         json = add_package_to_json(package, json)
-        request.set_cookie('new_packages', json)
+        response.set_cookie('new_packages', json)
 
 
 def get_or_create_destination_address(request):
@@ -278,7 +278,9 @@ def string_data_lists_context():
 
 
 def add_package_to_json(package, json):
-    packages = serializers.deserialize('json', json)
-    packages.append(package)
+    if json:
+        packages = serializers.deserialize('json', json)
+        list(packages).append(package)
+    packages = [package]
 
     return serializers.serialize('json', packages)
