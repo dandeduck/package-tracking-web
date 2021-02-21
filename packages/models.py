@@ -14,7 +14,7 @@ class City(models.Model):
         (SOUTH, 'Southern')
     ]
 
-    name = models.CharField(max_length=32, unique=True, primary_key=True)
+    name = models.CharField(max_length=64, unique=True, primary_key=True)
     area = models.CharField(max_length=16, choices=AREA_CHOICES)
 
     def __str__(self):
@@ -32,7 +32,7 @@ class Address(models.Model):
 
 class Partner(models.Model):
     name = models.CharField(max_length=64, unique=True, primary_key=True)
-    rates = models.CharField(max_length=32, default='0')
+    rates = models.CharField(max_length=64, default='0')
     address = models.ForeignKey(Address, on_delete=models.PROTECT)
 
     def get_rates(self):
@@ -109,11 +109,11 @@ class Package(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=32, choices=Status.choices(), default='WAIT')
-    origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='origin')
-    destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='destination')
+    origin = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='origin')
+    destination = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
-    full_name = models.CharField(max_length=32, blank=True)
+    full_name = models.CharField(max_length=64, blank=True)
     phone_number = models.CharField(max_length=32, blank=True)
     notes = models.TextField(blank=True)
 
