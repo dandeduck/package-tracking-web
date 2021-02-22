@@ -115,7 +115,7 @@ class Package(models.Model):
             return [(i.name, i.value) for i in cls]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(max_length=32, choices=Status.choices(), default='WAIT')
+    status = models.CharField(max_length=32, choices=Status.choices(), default=Status.choices()[0][1])
     origin = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='origin')
     destination = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -153,6 +153,9 @@ class Package(models.Model):
 
     def __lt__(self, other):
         return int(self) > int(other)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 class StatusColor(enum.Enum):

@@ -7,7 +7,7 @@
 {% block content %}
     <div class="row justify-content-center mb-3">
         <div class="col-auto order-2">
-            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-street="{{partner.address.street_name}}" data-bs-origin-street-number="{{partner.address.street_number}}" data-bs-origin-city="{{partner.address.city.name}}" data-bs-origin-area="{{partner.address.city.area}}">חבילה חדשה +</a>
+            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-street="{{partner.address.street}}" data-bs-origin-street-number="{{partner.address.street_number}}" data-bs-origin-city="{{partner.address.city.name}}" data-bs-origin-area="{{partner.address.city.area}}">חבילה חדשה +</a>
         </div>
         {%if is_staff%}
             <div class="col-auto order-1">

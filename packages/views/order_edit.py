@@ -3,6 +3,8 @@ from packages.models import Address, City, Order, Package, Partner, Street
 from django.shortcuts import render
 from util import is_member, is_staff
 from packages.util import string_data_lists_context
+from django.http import HttpResponse
+from django.template import loader
 
 def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
@@ -18,29 +20,54 @@ def order_edit_view(request, partner_name, order_id):
         if update_type:
             change_packages_status(package_id, update_type, order)
 
-    packages = list(order.related_packages())
+    cookies = request.COOKIES
+
+    if request.POST.get('rate'):
+        save_changes_to_cookies(request, cookies, order, request.COOKIES.get(str(order_id)+'_new_packages'), request.COOKIES.get(str(order_id)+'_updated_packages'))
+    
+    new_packages_cookie = request.COOKIES.get(str(order_id)+'_new_packages')
+    updated_packages_cookie = request.COOKIES.get(str(order_id)+'_updated_packages')
+
+    packages = []
+
+    if new_packages_cookie:
+        packages += json_to_packages(new_packages_cookie)
+    if updated_packages_cookie:
+        packages += json_to_packages(updated_packages_cookie)
+
+    for package in list(order.related_packages()):
+        if package not in packages:
+            packages.append(package)
+
     context = {
         'packages': packages,
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'has_unsaved_progress': request.COOKIES.get('new_packages') or request.COOKIES.get('updated_packages'),
+        'has_unsaved_progress': new_packages_cookie or updated_packages_cookie,
         'is_staff': is_staff(request.user)
     }
     context.update(string_data_lists_context())
 
     response = render(request, 'packages/order_edit.html', context)
 
-    if request.POST.get('rate'):
-        save_changes_to_cookies(request, order, response)
+    if updated_packages_cookie:
+        response.set_cookie(str(order.id)+'_updated_packages', updated_packages_cookie)
+    if new_packages_cookie:
+        response.set_cookie(str(order.id)+'_new_packages', new_packages_cookie)
+
     if request.POST.get('save'):
-        updated_packages = update_saved_packages(request)
-        new_packages = create_saved_packages(request)
+        updated_packages = update_saved_packages(updated_packages_cookie)
+        new_packages = create_saved_packages(new_packages_cookie)
         send_emails(updated_packages, new_packages)
-        response.delete_cookie('updated_packages')
-        response.delete_cookie('new_packages')
+        response.delete_cookie(str(order_id)+'_updated_packages')
+        response.delete_cookie(str(order_id)+'_new_packages')
 
     return response
+
+
+def json_to_packages(json):
+    return [des.object for des in serializers.deserialize('json', json)]
 
 
 def change_packages_status(package_id, update_type, order):
@@ -57,8 +84,8 @@ def change_packages_status(package_id, update_type, order):
         for inner in order.related_packages():
             inner.as_query().update(status=inner.prev_status())
 
-def update_saved_packages(request):
-    packages = serializers.deserialize('json', request.COOKIES.get('updated_packages'))
+def update_saved_packages(updated_packages_cookie):
+    packages = serializers.deserialize(updated_packages_cookie)
 
     for package in packages:
         actual_package = Package.objects.filter(id=package.id)
@@ -68,8 +95,8 @@ def update_saved_packages(request):
     return packages
 
 
-def create_saved_packages(request):
-    packages = serializers.deserialize('json', request.COOKIES.get('new_packages'))
+def create_saved_packages(new_packages_cookie):
+    packages = serializers.deserialize(new_packages_cookie)
 
     for package in packages:
         Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
@@ -85,7 +112,7 @@ def send_emails(updated_packages, new_packages):
     pass
 
 
-def save_changes_to_cookies(request, order, response):
+def save_changes_to_cookies(request, cookies, order, updated_packages_cookie, new_packages_cookie):
     origin_address = get_or_create_origin_address(request)
     destination_address = get_or_create_destination_address(request)
 
@@ -100,13 +127,16 @@ def save_changes_to_cookies(request, order, response):
                       full_name=full_name, order=order, notes=notes)
     if package_id:
         package.id = package_id
-        json = request.COOKIES.get('updated_packages')
+        json = updated_packages_cookie
         json = add_package_to_json(package, json)
-        response.set_cookie('updated_packages', json)
+
+        cookies[str(order.id)+'_updated_packages'] = json
+
     else:
-        json = request.COOKIES.get('new_packages')
+        json = new_packages_cookie
         json = add_package_to_json(package, json)
-        response.set_cookie('new_packages', json)
+
+        cookies[str(order.id)+'_new_packages'] = json
 
 
 def get_or_create_destination_address(request):
@@ -129,7 +159,7 @@ def get_or_create_origin_address(request):
 
 def get_or_create_address(city_name, area, street_name, street_number):
     destination_city = get_or_create_city(city_name, area)
-    return Address.objects.get_or_create(city=destination_city, street=Street.objects.get_or_create(street_name), street_number=street_number)[0]
+    return Address.objects.get_or_create(city=destination_city, street=Street.objects.get_or_create(name=street_name)[0], street_number=street_number)[0]
 
 
 def get_or_create_city(name, area):
