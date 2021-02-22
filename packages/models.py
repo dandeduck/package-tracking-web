@@ -21,13 +21,20 @@ class City(models.Model):
         return self.name
 
 
+class Street(models.Model):
+    name = models.CharField(max_length=64, unique=True, primary_key=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Address(models.Model):
-    street_name = models.CharField(max_length=32)
     street_number = models.PositiveSmallIntegerField()
+    street = models.ForeignKey(Street, on_delete=models.CASCADE)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.city}, {self.street_name} {self.street_number}"
+        return f"{self.city}, {self.street} {self.street_number}"
 
 
 class Partner(models.Model):

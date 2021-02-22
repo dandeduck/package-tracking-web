@@ -1,6 +1,6 @@
 from django.core import serializers
 from django.shortcuts import render, redirect
-from .models import Order, City, Address
+from .models import Order, City, Address, Street
 from .models import Partner
 from .models import Package
 from util import is_member, is_staff
@@ -25,7 +25,7 @@ def partner_search(request, partner_name):
         packages = packages.filter(phone_number__icontains=number_query)
         filtered_packages = packages
     if street_name_query:
-        packages = packages.filter(destination__street_name__icontains=street_name_query)
+        packages = packages.filter(destination__street__name__icontains=street_name_query)
         filtered_packages = packages
     if street_number_query:
         packages = packages.filter(destination__street_number__contains=street_number_query)
@@ -258,7 +258,7 @@ def get_or_create_origin_address(request):
 
 def get_or_create_address(city_name, area, street_name, street_number):
     destination_city = get_or_create_city(city_name, area)
-    return Address.objects.get_or_create(city=destination_city, street_name=street_name, street_number=street_number)[0]
+    return Address.objects.get_or_create(city=destination_city, street=Street.objects.get_or_create(street_name), street_number=street_number)[0]
 
 
 def get_or_create_city(name, area):
@@ -272,7 +272,7 @@ def get_or_create_city(name, area):
 def string_data_lists_context():
     return {
         'cities': City.objects.all(),
-        'streets': Address.objects.values_list('street_name', flat=True),
+        'streets': Street.objects.all(),
         'names': Package.objects.exclude(full_name='').values_list('full_name', flat=True)
     }
 
