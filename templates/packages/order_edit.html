@@ -228,6 +228,20 @@
             document.getElementById('package-form').submit()
         }
     </script>
+    <datalist id="areas">
+        <option>Central</option>
+        <option>Northern</option>
+        <option>Southern</option>
+    </datalist>
+    <datalist id="cities">
+        {%include "packages/parts/list_options.html" with list=cities%}
+    </datalist>
+    <datalist id="streets">
+        {%include "packages/parts/list_options.html" with list=streets%}
+    </datalist>
+    <datalist id="names">
+        {%include "packages/parts/list_options.html" with list=names%}
+    </datalist>
 {%endblock%}
 
 {%block bottom%}
@@ -238,17 +252,3 @@
         </form>
     {%endif%}
 {%endblock%}
-<datalist id="areas">
-    <option>Central</option>
-    <option>Northern</option>
-    <option>Southern</option>
-</datalist>
-<datalist id="cities">
-    {%include "packages/parts/list_options.html" with list=cities%}
-</datalist>
-<datalist id="streets">
-    {%include "packages/parts/list_options.html" with list=streets%}
-</datalist>
-<datalist id="names">
-    {%include "packages/parts/list_options.html" with list=names%}
-</datalist>
