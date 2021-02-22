@@ -246,9 +246,9 @@
 
 {%block bottom%}
     {%if has_unsaved_progress%}
-        <form method="post">
-            <input type="hidden" value="save" />
-            <a class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></a>
+        <form method="post"> {%csrf_token%}
+            <input type="hidden" name="save" value="save"/>
+            <button class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></button>
         </form>
     {%endif%}
 {%endblock%}

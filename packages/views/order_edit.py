@@ -57,9 +57,12 @@ def order_edit_view(request, partner_name, order_id):
         response.set_cookie(str(order.id)+'_new_packages', new_packages_cookie)
 
     if request.POST.get('save'):
-        updated_packages = update_saved_packages(updated_packages_cookie)
-        new_packages = create_saved_packages(new_packages_cookie)
-        send_emails(updated_packages, new_packages)
+        if updated_packages_cookie:
+            updated_packages = update_saved_packages(updated_packages_cookie)
+            send_update_email(updated_packages)
+        if new_packages_cookie:
+            new_packages = create_saved_packages(new_packages_cookie)
+            send_new_email(new_packages)
         response.delete_cookie(str(order_id)+'_updated_packages')
         response.delete_cookie(str(order_id)+'_new_packages')
 
@@ -85,7 +88,7 @@ def change_packages_status(package_id, update_type, order):
             inner.as_query().update(status=inner.prev_status())
 
 def update_saved_packages(updated_packages_cookie):
-    packages = serializers.deserialize(updated_packages_cookie)
+    packages = serializers.deserialize('json', updated_packages_cookie)
 
     for package in packages:
         actual_package = Package.objects.filter(id=package.id)
@@ -96,9 +99,10 @@ def update_saved_packages(updated_packages_cookie):
 
 
 def create_saved_packages(new_packages_cookie):
-    packages = serializers.deserialize(new_packages_cookie)
+    packages = serializers.deserialize('json', new_packages_cookie)
 
     for package in packages:
+        package = package.object
         Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
                                rate=package.rate, full_name=package.full_name, phone_number=package.phone_number,
                                notes=package.notes)
@@ -106,9 +110,15 @@ def create_saved_packages(new_packages_cookie):
     return packages
 
 
-def send_emails(updated_packages, new_packages):
-    # TODO:
-    # send out emails where we need
+def send_update_email(packages):
+    #TODO:
+    #
+    pass
+
+
+def send_new_email(packages):
+    #TODO:
+    #
     pass
 
 
