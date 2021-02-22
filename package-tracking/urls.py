@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django.urls import path
-from packages.views import partner_view, package_view, order_view, staff_view, order_edit_view, partner_search
 from pages.views import home_view, about_view, contact_view, login_view, logout_view, financial_view
+from packages.views.partner import partner_view
+from packages.views.order_edit import order_edit_view
+from packages.views.package import package_view
+from packages.views.order import order_view
+from packages.views.staff import staff_view
+from packages.views.partner import partner_view
+from packages.views.partner_search import partner_search_view
+
 
 urlpatterns = [
     path('login/', login_view),
@@ -18,5 +25,5 @@ urlpatterns = [
     path('packages/<str:package_id>/', package_view),
     path('orders/<str:order_id>/', order_view),
     path('staff/', staff_view),
-    path('search/<str:partner_name>/', partner_search)
+    path('search/<str:partner_name>/', partner_search_view)
 ]
