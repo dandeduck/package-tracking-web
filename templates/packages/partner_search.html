@@ -20,7 +20,7 @@
         {%if order_packages%}
             {% for order, packages in order_packages%}
                 <div class="col-auto mb-3">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="card-body">
                             <h6 class="card-title">{{order.collection_date.date}}</h6>
                             {% for package in packages%}
@@ -28,7 +28,7 @@
                                     <div class="w-100"></div>
                                 {%endif%}
                                 <div class="col mb-3">
-                                    <div class="card">
+                                    <div class="card h-100">
                                         <div class="card-body text-start">
                                             <h5 class="card-title">{{package.destination}}</h5>
                                             <ul class="card-subtitle list-inline text-muted">
