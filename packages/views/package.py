@@ -9,7 +9,8 @@ def package_view(request, package_id):
     context = {
         'package': package,
         'name': name,
-        'is_staff': is_staff(request.user)
+        'is_staff': is_staff(request.user),
+        'status_choices': package.Status.choices()
     }
 
     return render(request, "packages/package.html", context)
