@@ -69,7 +69,7 @@ class Order(models.Model):
         packages.sort()
 
         if packages:
-            return packages[0].status_obj()
+            return packages[-1].status_obj()
         else:
             return Package.Status.WAIT
 
