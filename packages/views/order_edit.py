@@ -39,6 +39,8 @@ def order_edit_view(request, partner_name, order_id):
         if package not in packages:
             packages.append(package)
 
+    packages.reverse()
+
     context = {
         'packages': packages,
         'order': order,
