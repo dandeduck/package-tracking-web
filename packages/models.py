@@ -128,12 +128,6 @@ class Package(models.Model):
     phone_number = models.CharField(max_length=32, blank=True)
     notes = models.TextField(blank=True)
 
-    def formatted_phone_number(self):
-        if self.phone_number == '':
-            return 'Not provided'
-        else:
-            return self.phone_number
-
     def status_obj(self):
         return Package.Status(self.status)
 
