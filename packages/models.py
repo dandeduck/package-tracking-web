@@ -90,6 +90,10 @@ class Package(models.Model):
         ON_ROUTE = 'On route to destination'
         DELIVERED = 'Delivered'
 
+        def ordinal(self):
+            members = list(self.__class__)
+            return members.index(self)
+
         def next(self):
             members = list(self.__class__)
             index = members.index(self) + 1
