@@ -95,14 +95,14 @@ class Package(models.Model):
             index = members.index(self) + 1
             if index >= len(members):
                 index = len(members) - 1
-            return members[index]
+            return members[index].value
 
         def prev(self):
             members = list(self.__class__)
             index = members.index(self) - 1
             if index < 0:
                 index = 0
-            return members[index]
+            return members[index].value
 
         def color(self):
             members = list(StatusColor)

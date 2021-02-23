@@ -44,7 +44,7 @@ def order_edit_view(request, partner_name, order_id):
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
-        'has_unsaved_progress': new_packages_cookie or updated_packages_cookie,
+        'has_unsaved_progress': (new_packages_cookie or updated_packages_cookie) and not request.POST.get('save'),
         'is_staff': is_staff(request.user)
     }
     context.update(string_data_lists_context())
