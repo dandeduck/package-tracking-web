@@ -1,0 +1,52 @@
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+input[type="number"] {
+   -moz-appearance: textfield;
+}
+</style>
+
+<button class="btn btn-outline-success" onclick="javascipt:reveal_search()" id="search_reveal">חיפוש יעד <span class="bi-search"></span></button>
+
+<div id="search" style="display: none;">
+    <form class="row g-xl-1 g-md-0 g-sm-1" method="get" action="/search/{{partner}}/" dir="ltr">
+        <div class="col-md-3 col-8">
+            <input class="form-control text-start" type="text" placeholder="Street" name="street_name" list="streets"/>
+        </div>
+        <div class="col-md-1 col-4">
+            <input class="form-control" type="number" placeholder="0" name="street_number" dir="ltr"/>
+        </div>
+        <div class="col-md-3">
+            <input class="form-control text-start" type="text" placeholder="City" name="city" list="cities"/>
+        </div>
+        <div class="col-md-3">
+            <input class="form-control text-start" type="text" placeholder="Full name" name="name" list="names"/>
+        </div>
+        <div class="col-auto" dir="rtl">
+            <button class="btn btn-outline-success bi-search" type="submit">
+        </div>
+    </form>
+</div>
+
+<datalist id="cities">
+    {%include "packages/parts/list_options.html" with list=cities%}
+</datalist>
+<datalist id="streets">
+    {%include "packages/parts/list_options.html" with list=streets%}
+</datalist>
+<datalist id="names">
+    {%include "packages/parts/list_options.html" with list=names%}
+</datalist>
+
+<script type="text/javascript">
+    function reveal_search() {
+        var reveal_button = document.getElementById('search_reveal');
+        var search = document.getElementById('search');
+
+        reveal_button.style.display = 'none';
+        search.style.display = 'block';
+    }
+</script>

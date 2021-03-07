@@ -1,0 +1,33 @@
+{%extends 'base.html' %}
+
+{% block title%}
+    הזמנות
+{%endblock%}
+{% block content%}
+    <div class="row justify-content-center mb-3">
+        <div class="col text-start">
+            {% include "packages/parts/search.html" %}
+        </div>
+        <div class="col text-end">
+            <form name="new-order" id="new-order" method="post"> {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark" >הזמנה חדשה +</button>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% for order, amount, status in order_amount_status %}
+            <div class="col-xxl-auto col-xl-3 col-lg-4 col-sm-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><span class="h6 align-top mx-1 text-secondary" >{{amount}}</span> {{order.collection_date.date}}</h5>
+                        <p class="card-text">
+                            <span class="text-{{status.color}}">{{status.value}}</span>
+                        </p>
+                        <a class="btn btn-outline-primary" href="/orders/{{order.id}}/">Track</a>
+                        <a class="card-link p-3 text-decoration-none" href="/partners/{{partner.name}}/{{order.id}}/">Edit</a>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div>
+{% endblock %}

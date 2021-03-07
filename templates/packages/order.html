@@ -1,0 +1,26 @@
+{%extends 'base.html' %}
+
+{% block title%}
+     הזמנה {{order.collection_date.date}}
+{%endblock%}
+{% block content %}
+    <div class="row justify-content-center">
+        {% for package in packages%}
+            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-start">
+                        <h5 class="card-title">{{package.destination}}</h5>
+                        <ul class="card-subtitle list-inline text-muted">
+                            <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street}}</h6></li>
+                            <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                        </ul>
+                        <p class="card-text">
+                            <a class="btn btn-outline-primary mb-1" href="/packages/{{package.id}}/">Track</a> <span class="text-{{package.status_color}}">{{package.status}}</span>
+                            <span class="row justify-content-end ms-1 fw-light">{{package.full_name}} {{package.phone_number}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div>
+{%endblock%}

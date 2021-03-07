@@ -1,0 +1,254 @@
+{%extends 'base.html' %}
+
+{% block title%}
+     הזמנה {{order.collection_date.date}}
+{%endblock%}
+
+{% block content %}
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto order-2">
+            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-street="{{partner.address.street}}" data-bs-origin-street-number="{{partner.address.street_number}}" data-bs-origin-city="{{partner.address.city.name}}" data-bs-origin-area="{{partner.address.city.area}}">חבילה חדשה +</a>
+        </div>
+        {%if is_staff%}
+            <div class="col-auto order-1">
+                <form method="post"> {% csrf_token %}
+                    <input type="hidden" name="package" value="{{package.id}}"/>
+                    <input type="hidden" name="update-type" value="update-all"/>
+                    <button type="submit" class="btn btn-outline-success">Update All</button>
+                </form>
+            </div>
+            <div class="col-auto order-3">
+                <form method="post"> {% csrf_token %}
+                    <input type="hidden" name="package" value="{{package.id}}" />
+                    <input type="hidden" name="update-type" value="revert-all"/>
+                    <button class="btn btn-outline-danger">Revert All</button>
+                </form>
+            </div>
+        {%endif%}
+    </div>
+    {%if has_unsaved_progress%}
+        <div class="">
+            <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
+        </div>
+    {%endif%}
+    <div class="row justify-content-center">
+        {% for package in packages%}
+            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-start">
+                        <h5 class="card-title">{{package.destination}}</h5>
+                        <ul class="card-subtitle list-inline text-muted">
+                            <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street}}</h6></li>
+                            <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                        </ul>
+                        <p class="card-text">
+                            <a class="btn btn-outline-primary mb-1 ms-1" href="/partners/{{partner.name}}/{{order.id}}/{{package.id}}/">Edit</a> <span class="text-{{package.status_color}}">{{package.status}}</span>
+                            <span class="row justify-content-end ms-1 fw-light mb-2">{{package.full_name}} {{package.phone_number}}</span>
+                            {% if is_staff%}
+                                <ul class="list-inline">
+                                    <li class="list-inline-item">
+                                        <form method="post"> {% csrf_token %}
+                                            <input type="hidden" name="package" value="{{package.id}}"/>
+                                            <input type="hidden" name="update-type" value="update"/>
+                                            <button type="submit" class="btn btn-outline-success">Update</button>
+                                        </form>
+                                    </li>
+                                    <li class="list-inline-item me-4">
+                                        <form method="post"> {% csrf_token %}
+                                            <input type="hidden" name="package" value="{{package.id}}" />
+                                            <input type="hidden" name="update-type" value="revert"/>
+                                            <button class="btn btn-outline-danger">Revert</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            {%endif%}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+           -webkit-appearance: none;
+           margin: 0;
+        }
+        input[type="number"] {
+           -moz-appearance: textfield;
+        }
+    </style>
+    <div class="modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="package-modal-title" aria-hidden="true" dir="ltr">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" dir="rtl">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <h5 class="modal-title" id="package-modal-title">יצירה/עריכה של חבילה</h5>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form id="package-form" method="post"> {%csrf_token%}
+                            <input id="package-id" type="hidden" name="package_id"/>
+                            <label for="origin" class="form-label">Origin</label>
+                            <div id="origin" class="row g-1 mb-3">
+                                <div class="col-4">
+                                    <input id="origin-street" type="text" class="form-control rounded-0 border-0" name="origin_street" list="streets" placeholder="Street"/>
+                                </div>
+                                <div class="col-2">
+                                    <input id="origin-street-number" type="number" class="form-control rounded-0 border-0" name="origin_street_number" placeholder="0"/>
+                                </div>
+                                <div class="col-3">
+                                    <input id="origin-city" type="text" class="form-control rounded-0 border-0" name="origin_city" list="cities" placeholder="City"/>
+                                </div>
+                                <div class="col-3">
+                                    <select id="origin-area" class="form-select rounded-0 border-0" name="origin_area">
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db == package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db != package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="destination" class="form-label">Destination</label>
+                            <div id="destination" class="row g-1 mb-3">
+                                <div class="col-4">
+                                    <input id="destination-street" type="text" class="form-control rounded-0 border-0" name="destination_street" list="streets" placeholder="Street"/>
+                                </div>
+                                <div class="col-2">
+                                    <input id="destination-street-number" type="number" class="form-control rounded-0 border-0" name="destination_street_number" placeholder="0"/>
+                                </div>
+                                <div class="col-3">
+                                    <input id="destination-city" type="text" class="form-control rounded-0 border-0" name="destination_city" list="cities" placeholder="City"/>
+                                </div>
+                                <div class="col-3">
+                                    <select id="destination-area" class="form-select rounded-0 border-0" name="destination_area">
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db == package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                        {%for db, human in cities.0.AREA_CHOICES%}
+                                            {%if db != package.origin.city.area%}
+                                                <option>{{human}}</option>
+                                            {%endif%}
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="name" class="form-label text-start">Info</label>
+                            <div id="info" class="row g-1 mb-3">
+                                <div class="col-5">
+                                    <input id="name" type="text" class="form-control rounded-0 border-0" name="full_name" placeholder="Name"/>
+                                </div>
+                                <div class="col-4">
+                                    <input type="tel" class="form-control rounded-0 border-0" name="phone_number" placeholder="Phone Number"/>
+                                </div>
+                                <div class="col-3">
+                                    <select id="rate" class="form-select rounded-0 border-0" name="rate">
+                                        {%for rate in rates%}
+                                            <option>{{rate}} ₪</option>
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <label for="notes-text" class="col-form-label">Notes:</label>
+                            <textarea class="form-control rounded-0" id="notes-text" name="notes"></textarea>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" dir="rtl">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close">בטל</button>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-outline-success" onclick="submitPackageForm()">אשר</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //this is so pretty ^_^
+        document.getElementById('package-modal').addEventListener('show.bs.modal', function (event) {
+            var origin_street = event.relatedTarget.getAttribute('data-bs-origin-street')
+            var origin_street_number = event.relatedTarget.getAttribute('data-bs-origin-street-number')
+            var origin_city = event.relatedTarget.getAttribute('data-bs-origin-city')
+            var origin_area = event.relatedTarget.getAttribute('data-bs-origin-area')
+
+            document.getElementById('origin-street').value = origin_street
+            document.getElementById('origin-street-number').value = origin_street_number
+            document.getElementById('origin-city').value = origin_city
+            document.getElementById('origin-area').value = origin_area
+
+            var destination_street = event.relatedTarget.getAttribute('data-bs-destination-street')
+            var destination_street_number = event.relatedTarget.getAttribute('data-bs-destination-street-number')
+            var destination_city = event.relatedTarget.getAttribute('data-bs-destination-city')
+            var destination_area = event.relatedTarget.getAttribute('data-bs-destination-area')
+
+            document.getElementById('destination-street').value = destination_street
+            document.getElementById('destination-street-number').value = destination_street_number
+            document.getElementById('destination-city').value = destination_city
+            document.getElementById('destination-area').value = destination_area
+
+            var full_name = event.relatedTarget.getAttribute('data-bs-full-name')
+            var phone_number = event.relatedTarget.getAttribute('data-bs-phone-number')
+            var notes = event.relatedTarget.getAttribute('data-bs-notes')
+            var rate = event.relatedTarget.getAttribute('data-bs-rate')
+            document.getElementById('full-name').value = full_name
+            document.getElementById('phone-number').value = phone_number
+            document.getElementById('notes').value = notes
+            document.getElementById('rate').value = rate
+        })
+        function submitPackageForm() {
+            //add validation here
+            document.getElementById('package-form').submit()
+        }
+    </script>
+    <datalist id="areas">
+        <option>Central</option>
+        <option>Northern</option>
+        <option>Southern</option>
+    </datalist>
+    <datalist id="cities">
+        {%include "packages/parts/list_options.html" with list=cities%}
+    </datalist>
+    <datalist id="streets">
+        {%include "packages/parts/list_options.html" with list=streets%}
+    </datalist>
+    <datalist id="names">
+        {%include "packages/parts/list_options.html" with list=names%}
+    </datalist>
+{%endblock%}
+
+{%block bottom%}
+    {%if has_unsaved_progress%}
+        <form method="post"> {%csrf_token%}
+            <input type="hidden" name="save" value="save"/>
+            <button class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></button>
+        </form>
+    {%endif%}
+{%endblock%}
