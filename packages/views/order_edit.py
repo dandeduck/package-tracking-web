@@ -23,7 +23,7 @@ def order_edit_view(request, partner_name, order_id):
     cookies = request.COOKIES
 
     if request.POST.get('rate'):
-        save_changes_to_cookies(request, cookies, order, request.COOKIES.get(str(order_id)+'_new_packages'), request.COOKIES.get(str(order_id)+'_updated_packages'))
+        save_changes_to_cookies(request, cookies, order)
     
     new_packages_cookie = request.COOKIES.get(str(order_id)+'_new_packages')
     updated_packages_cookie = request.COOKIES.get(str(order_id)+'_updated_packages')
@@ -124,7 +124,10 @@ def send_new_email(packages):
     pass
 
 
-def save_changes_to_cookies(request, cookies, order, updated_packages_cookie, new_packages_cookie):
+def save_changes_to_cookies(request, cookies, order):
+    new_packages_cookie = cookies.get(str(order.id)+'_new_packages')
+    updated_packages_cookie = cookies.get(str(order.id)+'_updated_packages')
+
     origin_address = get_or_create_origin_address(request)
     destination_address = get_or_create_destination_address(request)
 
@@ -146,7 +149,9 @@ def save_changes_to_cookies(request, cookies, order, updated_packages_cookie, ne
 
     else:
         json = new_packages_cookie
+        print('\n\nbefore: ' + str(new_packages_cookie) + '\n' + '\n')
         json = add_package_to_json(package, json)
+        print('after: ' + str(json) + '\n' + '\n')
 
         cookies[str(order.id)+'_new_packages'] = json
 
@@ -184,8 +189,11 @@ def get_or_create_city(name, area):
 
 def add_package_to_json(package, json):
     if json:
-        packages = serializers.deserialize('json', json)
-        list(packages).append(package)
-    packages = [package]
+        packages = json_to_packages(json)
+        packages.append(package)
+        print(type(package))
+        print(type(packages[0]))
+    else:
+        packages = [package]
 
     return serializers.serialize('json', packages)
