@@ -1,14 +1,10 @@
-def is_member(user, group_name):
-    return user.groups.filter(name=group_name).exists()
+from packages.models import Partner
 
+def user_partners(user):
+    partners = []
 
-def has_group(user):
-    return user.groups.all().exists()
+    for partner in Partner.objects.all():
+        if user.has_perm('view_partner', partner):
+            partners.append(partner)
 
-
-def first_group_name(user):
-    return list(user.groups.all())[0].name
-
-
-def is_staff(user):
-    return is_member(user, 'staff')
+    return partners

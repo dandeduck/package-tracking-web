@@ -46,6 +46,9 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
+GUARDIAN_RENDER_403 = True
+GUARDIAN_TEMPLATE_403 = os.path.join(BASE_DIR, "templates/errors/403.html")
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from util import is_staff
 from packages.models import Package
 
 def package_view(request, package_id):
@@ -9,7 +8,7 @@ def package_view(request, package_id):
     context = {
         'package': package,
         'name': name,
-        'is_staff': is_staff(request.user),
+        'is_staff': request.user.is_staff,
         'status_choices': package.Status.choices()
     }
 

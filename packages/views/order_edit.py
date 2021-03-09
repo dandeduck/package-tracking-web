@@ -1,17 +1,15 @@
 from django.core import serializers
 from packages.models import Address, City, Order, Package, Partner, Street
 from django.shortcuts import render
-from util import is_member, is_staff
 from packages.util import string_data_lists_context
 from django.http import HttpResponse
 from django.template import loader
+from guardian.decorators import permission_required_or_403
 
+@permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
-
-    if not is_member(request.user, partner.name) and not is_staff(request.user):
-        return render(request, 'errors/access_restricted.html', {})
 
     if request.POST:
         package_id = request.POST.get('package')
@@ -47,7 +45,7 @@ def order_edit_view(request, partner_name, order_id):
         'partner': partner,
         'rates': partner.rates.split(','),
         'has_unsaved_progress': (new_packages_cookie or updated_packages_cookie) and not request.POST.get('save'),
-        'is_staff': is_staff(request.user)
+        'is_staff': request.user.is_staff
     }
     context.update(string_data_lists_context())
 
