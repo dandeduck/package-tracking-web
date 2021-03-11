@@ -31,8 +31,8 @@ def home_view(request):
 
     if partners:
         if len(partners) > 1:
-            return redirect('/partners/')
-        return redirect('/partner/'+partners[0])
+            return redirect('partner/partners/')
+        return redirect('/partner/'+partners[0].name)
 
     return render(request, 'pages/home.html', {})
 
