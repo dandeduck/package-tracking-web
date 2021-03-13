@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
-from util import is_staff, has_group, first_group_name
+from util import user_partners
 
 
 def logout_view(request):
@@ -27,10 +27,12 @@ def login_view(request):
 
 def home_view(request):
     user = request.user
-    if has_group(user):
-        if is_staff(user):
-            return redirect('/staff/')
-        return redirect('/partners/'+first_group_name(user))
+    partners = user_partners(user)
+
+    if partners:
+        if len(partners) > 1:
+            return redirect('partner/')
+        return redirect('/partner/'+partners[0].name)
 
     return render(request, 'pages/home.html', {})
 

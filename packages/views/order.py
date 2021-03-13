@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from util import is_staff
 from packages.models import Order
 
 def order_view(request, order_id):
@@ -18,7 +17,7 @@ def order_view(request, order_id):
     context = {
         'order': order,
         'packages': packages,
-        'is_staff': is_staff(request.user)
+        'is_staff': request.user.is_staff
     }
 
     return render(request, "packages/order.html", context)

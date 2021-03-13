@@ -1,9 +1,10 @@
 from packages.util import string_data_lists_context
-from util import is_staff
 from django.shortcuts import render
 from packages.models import Package, Partner
+from guardian.decorators import permission_required_or_403
 
 
+@permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def partner_search_view(request, partner_name):
     partner = Partner.objects.filter(name=partner_name).get()
 
@@ -46,7 +47,7 @@ def partner_search_view(request, partner_name):
     context = {
         'partner': partner,
         'order_packages': order_packages,
-        'is_staff': is_staff(request.user)
+        'is_staff': request.user.is_staff
     }
     context.update(string_data_lists_context())
 

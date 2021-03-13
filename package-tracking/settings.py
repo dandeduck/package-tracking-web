@@ -38,7 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'packages',
+    'guardian',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+GUARDIAN_RENDER_403 = True
+GUARDIAN_TEMPLATE_403 = os.path.join(BASE_DIR, "templates/errors/403.html")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

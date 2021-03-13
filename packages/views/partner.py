@@ -1,16 +1,14 @@
 from django.shortcuts import redirect, render
-from util import is_member, is_staff
 from packages.models import Order, Partner
+from guardian.decorators import permission_required_or_403
 
+@permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def partner_view(request, partner_name):
     requested_partner = Partner.objects.get(name=partner_name)
 
-    if not is_member(request.user, requested_partner.name) and not is_staff(request.user):
-        return render(request, 'errors/access_restricted.html', {})
-
     if request.POST:
         new_order_id = str(Order.objects.create(partner=requested_partner).id)
-        return redirect('/partners/'+requested_partner.name+'/'+new_order_id+'/')
+        return redirect('/partner/'+requested_partner.name+'/'+new_order_id+'/')
     orders = requested_partner.related_orders().order_by('-collection_date')
     package_amounts = []
     order_statuses = []
@@ -22,7 +20,7 @@ def partner_view(request, partner_name):
     order_amount_status = [(orders[i], package_amounts[i], order_statuses[i]) for i in range(0, len(orders))]
     context = {
         'order_amount_status': order_amount_status,
-        'is_staff': is_staff(request.user),
+        'is_staff': request.user.is_staff,
         'partner': requested_partner
     }
 
