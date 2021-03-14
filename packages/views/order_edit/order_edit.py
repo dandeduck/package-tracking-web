@@ -2,21 +2,12 @@ from django.core import serializers
 from packages.models import Address, City, Order, Package, Partner, Street
 from django.shortcuts import render
 from packages.util import string_data_lists_context
-from django.http import HttpResponse
-from django.template import loader
 from guardian.decorators import permission_required_or_403
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
-
-    if request.POST:
-        package_id = request.POST.get('package')
-        update_type = request.POST.get('update-type')
-
-        if update_type:
-            change_packages_status(package_id, update_type, order)
 
     cookies = request.COOKIES
 
@@ -71,21 +62,6 @@ def order_edit_view(request, partner_name, order_id):
 
 def json_to_packages(json):
     return [des.object for des in serializers.deserialize('json', json)]
-
-
-def change_packages_status(package_id, update_type, order):
-    package = Package.objects.filter(id=package_id)
-
-    if update_type == 'revert':
-        package.update(status=package.get().prev_status())
-    elif update_type == 'update':
-        package.update(status=package.get().next_status())
-    elif update_type == 'update-all':
-        for inner in order.related_packages():
-            inner.as_query().update(status=inner.next_status())
-    else:
-        for inner in order.related_packages():
-            inner.as_query().update(status=inner.prev_status())
 
 def update_saved_packages(updated_packages_cookie):
     packages = serializers.deserialize('json', updated_packages_cookie)

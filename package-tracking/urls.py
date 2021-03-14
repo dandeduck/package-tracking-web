@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path
 from pages.views import home_view, about_view, contact_view, login_view, logout_view, financial_view
 from packages.views.partner import partner_view
-from packages.views.order_edit import order_edit_view
+from packages.views.order_edit.order_edit import order_edit_view
+from packages.views.order_edit.package_update import package_update_view
 from packages.views.package import package_view
 from packages.views.order import order_view
 from packages.views.partners import partners_view
@@ -22,6 +23,7 @@ urlpatterns = [
 
     path('partner/<str:partner_name>/', partner_view),
     path('partner/<str:partner_name>/<str:order_id>/', order_edit_view),
+    path('partner/<str:partner_name>/<str:order_id>/update/', package_update_view),
     path('partner/', partners_view),
     path('package/<str:package_id>/', package_view),
     path('order/<str:order_id>/', order_view),

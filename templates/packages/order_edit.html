@@ -11,15 +11,13 @@
         </div>
         {%if is_staff%}
             <div class="col-auto order-1">
-                <form method="post"> {% csrf_token %}
-                    <input type="hidden" name="package" value="{{package.id}}"/>
-                    <input type="hidden" name="update-type" value="update-all"/>
+                <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
+                    <input type="hidden" name="update-type" value="increase-all"/>
                     <button type="submit" class="btn btn-outline-success">Update All</button>
                 </form>
             </div>
             <div class="col-auto order-3">
-                <form method="post"> {% csrf_token %}
-                    <input type="hidden" name="package" value="{{package.id}}" />
+                <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                     <input type="hidden" name="update-type" value="revert-all"/>
                     <button class="btn btn-outline-danger">Revert All</button>
                 </form>
@@ -47,14 +45,14 @@
                             {% if is_staff%}
                                 <ul class="list-inline">
                                     <li class="list-inline-item">
-                                        <form method="post"> {% csrf_token %}
+                                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                                             <input type="hidden" name="package" value="{{package.id}}"/>
-                                            <input type="hidden" name="update-type" value="update"/>
+                                            <input type="hidden" name="update-type" value="increase"/>
                                             <button type="submit" class="btn btn-outline-success">Update</button>
                                         </form>
                                     </li>
                                     <li class="list-inline-item me-4">
-                                        <form method="post"> {% csrf_token %}
+                                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                                             <input type="hidden" name="package" value="{{package.id}}" />
                                             <input type="hidden" name="update-type" value="revert"/>
                                             <button class="btn btn-outline-danger">Revert</button>
