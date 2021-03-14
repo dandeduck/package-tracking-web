@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
-from packages.views.order_edit.order_edit import order_edit_view
-from packages.models import Address, City, Order, Package, Partner, Street
+from packages.models import Order, Package, Partner
 from guardian.decorators import permission_required_or_403
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
