@@ -4,7 +4,6 @@ from guardian.decorators import permission_required_or_403
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def package_update_view(request, partner_name, order_id):
-    partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
 
     if request.POST:
