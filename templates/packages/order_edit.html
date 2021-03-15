@@ -244,8 +244,7 @@
 
 {%block bottom%}
     {%if has_unsaved_progress%}
-        <form method="post"> {%csrf_token%}
-            <input type="hidden" name="save" value="save"/>
+        <form method="get" action="/partner/{{partner.name}}/{{order.id}}/save/"> {%csrf_token%}
             <button class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></button>
         </form>
     {%endif%}

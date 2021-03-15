@@ -14,7 +14,7 @@ def package_update_view(request, partner_name, order_id):
         if update_type:
             update_packages(package_id, update_type, order)
     
-    return redirect(f"/partner/{partner_name}/{order_id}/")
+    return redirect(f"/partner/{partner_name}/{order_id}/", mod_request=request)
 
 
 def update_packages(package_id, update_type, order):
