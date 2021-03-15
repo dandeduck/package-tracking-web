@@ -36,7 +36,7 @@
                     <div class="card-body text-start">
                         <div class="row">
                             <div class="col-auto text-decoration-none">
-                                <a type="button" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="הערות: {{package.notes}} {{package.rate}} ₪"><h5 class="bi-three-dots"></h5></a>
+                                <a type="button" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="הערות: {{package.notes|default:'<אין>'}} מחיר: {{package.rate}} ₪"><h5 class="bi-three-dots"></h5></a>
                             </div>
                             <div class="col">
                                 <h5 class="card-title">{{package.destination}}</h5>
