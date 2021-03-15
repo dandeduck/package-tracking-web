@@ -1,3 +1,4 @@
+from django.db import reset_queries
 from django.shortcuts import redirect
 from django.core import serializers
 from packages.views.order_edit.order_edit import order_edit_view
@@ -16,12 +17,11 @@ def save_changes_view(request, partner_name, order_id):
         new_packages = create_saved_packages(new_packages_cookie)
         send_new_email(new_packages)
 
-    request.COOKIES.update({
-        str(order_id)+'_new_packages': None,
-        str(order_id)+'_updated_packages': None
-    })
-    
-    return redirect(f"/partner/{partner_name}/{order_id}/", mod_request=request)
+    response = redirect(f"/partner/{partner_name}/{order_id}/", mod_request=request)
+    response.set_cookie(str(order_id)+'_new_packages', None)
+    response.set_cookie(str(order_id)+'_updated_packages', None)
+
+    return response
 
 
 def update_saved_packages(updated_packages_cookie):

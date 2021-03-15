@@ -25,7 +25,10 @@ def order_edit_view(request, partner_name, order_id):
     if updated_packages_cookie:
         packages += json_to_packages(updated_packages_cookie)
 
-    for package in list(order.related_packages()):
+    existing = list(order.related_packages())
+    existing.reverse()
+    
+    for package in existing:
         if package not in packages:
             packages.append(package)
 
