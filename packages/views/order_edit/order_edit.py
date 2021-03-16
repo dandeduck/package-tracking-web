@@ -2,8 +2,6 @@ from django.core import serializers
 from packages.models import Address, City, Order, Package, Partner, Street
 from django.shortcuts import render
 from packages.util import string_data_lists_context
-from django.http import HttpResponse
-from django.template import loader
 from guardian.decorators import permission_required_or_403
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -11,20 +9,14 @@ def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
     order = Order.objects.get(id=order_id)
 
-    if request.POST:
-        package_id = request.POST.get('package')
-        update_type = request.POST.get('update-type')
-
-        if update_type:
-            change_packages_status(package_id, update_type, order)
-
     cookies = request.COOKIES
+    make_cookies_make_sense(cookies)
 
-    if request.POST.get('rate'):
-        save_changes_to_cookies(request, cookies, order)
+    if request.POST:
+        cookies = changed_cookies(request, cookies, order)
     
-    new_packages_cookie = request.COOKIES.get(str(order_id)+'_new_packages')
-    updated_packages_cookie = request.COOKIES.get(str(order_id)+'_updated_packages')
+    new_packages_cookie = cookies.get(str(order_id)+'_new_packages')
+    updated_packages_cookie = cookies.get(str(order_id)+'_updated_packages')
 
     packages = []
 
@@ -33,11 +25,12 @@ def order_edit_view(request, partner_name, order_id):
     if updated_packages_cookie:
         packages += json_to_packages(updated_packages_cookie)
 
-    for package in list(order.related_packages()):
+    existing = list(order.related_packages())
+    existing.reverse()
+    
+    for package in existing:
         if package not in packages:
             packages.append(package)
-
-    packages.reverse()
 
     context = {
         'packages': packages,
@@ -51,81 +44,27 @@ def order_edit_view(request, partner_name, order_id):
 
     response = render(request, 'packages/order_edit.html', context)
 
-    if updated_packages_cookie:
-        response.set_cookie(str(order.id)+'_updated_packages', updated_packages_cookie)
-    if new_packages_cookie:
-        response.set_cookie(str(order.id)+'_new_packages', new_packages_cookie)
-
-    if request.POST.get('save'):
-        if updated_packages_cookie:
-            updated_packages = update_saved_packages(updated_packages_cookie)
-            send_update_email(updated_packages)
-        if new_packages_cookie:
-            new_packages = create_saved_packages(new_packages_cookie)
-            send_new_email(new_packages)
-        response.delete_cookie(str(order_id)+'_updated_packages')
-        response.delete_cookie(str(order_id)+'_new_packages')
+    response.set_cookie(str(order.id)+'_updated_packages', updated_packages_cookie)
+    response.set_cookie(str(order.id)+'_new_packages', new_packages_cookie)
 
     return response
+
+
+def make_cookies_make_sense(cookies):
+    #this caused a lot of confusion
+    for key, value in cookies.items():
+        if value == 'None':
+            cookies[key] = None
 
 
 def json_to_packages(json):
     return [des.object for des in serializers.deserialize('json', json)]
 
 
-def change_packages_status(package_id, update_type, order):
-    package = Package.objects.filter(id=package_id)
-
-    if update_type == 'revert':
-        package.update(status=package.get().prev_status())
-    elif update_type == 'update':
-        package.update(status=package.get().next_status())
-    elif update_type == 'update-all':
-        for inner in order.related_packages():
-            inner.as_query().update(status=inner.next_status())
-    else:
-        for inner in order.related_packages():
-            inner.as_query().update(status=inner.prev_status())
-
-def update_saved_packages(updated_packages_cookie):
-    packages = serializers.deserialize('json', updated_packages_cookie)
-
-    for package in packages:
-        actual_package = Package.objects.filter(id=package.id)
-        actual_package.update(origin=package.origin, destination=package.destination, rate=package.rate,
-                              full_name=package.full_name, phone_number=package.phone_number, notes=package.notes)
-
-    return packages
-
-
-def create_saved_packages(new_packages_cookie):
-    packages = serializers.deserialize('json', new_packages_cookie)
-
-    for package in packages:
-        package = package.object
-        Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
-                               rate=package.rate, full_name=package.full_name, phone_number=package.phone_number,
-                               notes=package.notes)
-
-    return packages
-
-
-def send_update_email(packages):
-    #TODO:
-    #
-    pass
-
-
-def send_new_email(packages):
-    #TODO:
-    #
-    pass
-
-
-def save_changes_to_cookies(request, cookies, order):
+def changed_cookies(request, cookies, order):
     new_packages_cookie = cookies.get(str(order.id)+'_new_packages')
     updated_packages_cookie = cookies.get(str(order.id)+'_updated_packages')
-
+    
     origin_address = get_or_create_origin_address(request)
     destination_address = get_or_create_destination_address(request)
 
@@ -140,18 +79,16 @@ def save_changes_to_cookies(request, cookies, order):
                       full_name=full_name, order=order, notes=notes)
     if package_id:
         package.id = package_id
-        json = updated_packages_cookie
-        json = add_package_to_json(package, json)
+        json = add_package_to_json(package, updated_packages_cookie)
 
         cookies[str(order.id)+'_updated_packages'] = json
 
     else:
-        json = new_packages_cookie
-        print('\n\nbefore: ' + str(new_packages_cookie) + '\n' + '\n')
-        json = add_package_to_json(package, json)
-        print('after: ' + str(json) + '\n' + '\n')
+        json = add_package_to_json(package, new_packages_cookie)
 
         cookies[str(order.id)+'_new_packages'] = json
+
+    return cookies
 
 
 def get_or_create_destination_address(request):
@@ -189,8 +126,6 @@ def add_package_to_json(package, json):
     if json:
         packages = json_to_packages(json)
         packages.append(package)
-        print(type(package))
-        print(type(packages[0]))
     else:
         packages = [package]
 
