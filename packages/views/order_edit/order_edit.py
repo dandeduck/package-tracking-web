@@ -41,8 +41,6 @@ def order_edit_view(request, partner_name, order_id):
         'has_unsaved_progress': (new_packages_cookie or updated_packages_cookie) and not request.POST.get('save'),
         'is_staff': request.user.is_staff
     }
-    context.update(string_data_lists_context())
-
     response = render(request, 'packages/order_edit.html', context)
 
     response.set_cookie(str(order.id)+'_updated_packages', updated_packages_cookie)

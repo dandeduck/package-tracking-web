@@ -7,7 +7,7 @@
 {% block content %}
     <div class="row justify-content-center mb-3">
         <div class="col-auto order-2">
-            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-street="{{partner.address.street}}" data-bs-origin-street-number="{{partner.address.street_number}}" data-bs-origin-city="{{partner.address.city.name}}" data-bs-origin-area="{{partner.address.city.area}}">חבילה חדשה +</a>
+            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-address="{{partner.address}}" data-bs-rate="{{rates.0}}">חבילה חדשה +</a>
         </div>
         {%if is_staff%}
             <div class="col-auto order-1">
@@ -108,9 +108,9 @@
                             </div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Rate</span>
-                                <select id="rate" class="form-select" name="rate">
+                                <select id="rate" class="form-select" name="rate" required>
                                     {%for rate in rates%}
-                                        <option>{{rate}} ₪</option>
+                                            <option>{{rate}}</option>
                                     {%endfor%}
                                 </select>
                                 <span class="input-group-text">₪</span>
@@ -155,54 +155,15 @@
     <script>
         //this is so pretty ^_^
         document.getElementById('package-modal').addEventListener('show.bs.modal', function (event) {
-            var origin_street = event.relatedTarget.getAttribute('data-bs-origin-street')
-            var origin_street_number = event.relatedTarget.getAttribute('data-bs-origin-street-number')
-            var origin_city = event.relatedTarget.getAttribute('data-bs-origin-city')
-            var origin_area = event.relatedTarget.getAttribute('data-bs-origin-area')
-
-            document.getElementById('origin-street').value = origin_street
-            document.getElementById('origin-street-number').value = origin_street_number
-            document.getElementById('origin-city').value = origin_city
-            document.getElementById('origin-area').value = origin_area
-
-            var destination_street = event.relatedTarget.getAttribute('data-bs-destination-street')
-            var destination_street_number = event.relatedTarget.getAttribute('data-bs-destination-street-number')
-            var destination_city = event.relatedTarget.getAttribute('data-bs-destination-city')
-            var destination_area = event.relatedTarget.getAttribute('data-bs-destination-area')
-
-            document.getElementById('destination-street').value = destination_street
-            document.getElementById('destination-street-number').value = destination_street_number
-            document.getElementById('destination-city').value = destination_city
-            document.getElementById('destination-area').value = destination_area
-
-            var full_name = event.relatedTarget.getAttribute('data-bs-full-name')
-            var phone_number = event.relatedTarget.getAttribute('data-bs-phone-number')
-            var notes = event.relatedTarget.getAttribute('data-bs-notes')
-            var rate = event.relatedTarget.getAttribute('data-bs-rate')
-            document.getElementById('full-name').value = full_name
-            document.getElementById('phone-number').value = phone_number
-            document.getElementById('notes').value = notes
-            document.getElementById('rate').value = rate
+            document.getElementById('origin-address').value = event.relatedTarget.getAttribute('data-bs-origin-address')
+            document.getElementById('destination-address').value = event.relatedTarget.getAttribute('data-bs-destination-address')
+            document.getElementById('rate').value = event.relatedTarget.getAttribute('data-bs-rate')
+            document.getElementById('name').value = event.relatedTarget.getAttribute('data-bs-name')
+            document.getElementById('phone-number').value = event.relatedTarget.getAttribute('data-bs-phone-number')
+            document.getElementById('notes').value = event.relatedTarget.getAttribute('data-bs-notes')
         })
-        function submitPackageForm() {
-            //add validation here
-            document.getElementById('package-form').submit()
-        }
+
     </script>
-    <datalist id="areas">
-        <option>Central</option>
-        <option>Northern</option>
-        <option>Southern</option>
-    </datalist>
-    <datalist id="cities">
-        {%include "packages/parts/list_options.html" with list=cities%}
-    </datalist>
-    <datalist id="streets">
-        {%include "packages/parts/list_options.html" with list=streets%}
-    </datalist>
-    <datalist id="names">
-        {%include "packages/parts/list_options.html" with list=names%}
-    </datalist>
 {%endblock%}
 
 {%block bottom%}
