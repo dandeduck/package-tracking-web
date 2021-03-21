@@ -3,35 +3,10 @@ import uuid as uuid
 from django.db import models
 
 
-class City(models.Model):
-    CENTER = 'Central'
-    NORTH = 'Northern'
-    SOUTH = 'Southern'
-
-    AREA_CHOICES = [
-        (CENTER, 'Central'),
-        (NORTH, 'Northern'),
-        (SOUTH, 'Southern')
-    ]
-
-    name = models.CharField(max_length=64, unique=True, primary_key=True)
-    area = models.CharField(max_length=16, choices=AREA_CHOICES)
-
-    def __str__(self):
-        return self.name
-
-
-class Street(models.Model):
-    name = models.CharField(max_length=64, unique=True, primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-
 class Address(models.Model):
     street_number = models.PositiveSmallIntegerField()
-    street = models.ForeignKey(Street, on_delete=models.CASCADE)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    street = models.CharField(max_length=64)
+    city = models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.city}, {self.street} {self.street_number}"

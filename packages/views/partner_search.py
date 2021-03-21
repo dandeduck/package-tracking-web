@@ -1,4 +1,3 @@
-from packages.util import string_data_lists_context
 from django.shortcuts import render
 from packages.models import Package, Partner
 from guardian.decorators import permission_required_or_403
@@ -49,6 +48,5 @@ def partner_search_view(request, partner_name):
         'order_packages': order_packages,
         'is_staff': request.user.is_staff
     }
-    context.update(string_data_lists_context())
 
     return render(request, 'packages/partner_search.html', context)

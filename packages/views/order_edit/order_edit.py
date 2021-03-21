@@ -1,7 +1,6 @@
 from django.core import serializers
-from packages.models import Address, City, Order, Package, Partner, Street
+from packages.models import Address, Order, Package, Partner
 from django.shortcuts import render
-from packages.util import string_data_lists_context
 from guardian.decorators import permission_required_or_403
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))

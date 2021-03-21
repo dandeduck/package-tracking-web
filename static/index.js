@@ -1,11 +1,27 @@
 let destinationAutocomplete;
+let destination;
+let destinationStreetNumber;
+let destinationStreet;
+let destinationCity;
+
 let originAutocomplete;
 let origin;
-let detination;
+let originStreetNumber;
+let originStreet;
+let originCity;
+
 
 function initAutocomplete() {
-    origin = document.querySelector("#origin-address");
     destination = document.querySelector("#destination-address");
+    destinationStreetNumber = document.querySelector('#destination-street-number');
+    destinationStreet = document.getElementById('destination-street');
+    destinationCity = document.querySelector('#destination-city');
+    
+    origin = document.querySelector("#origin-address");
+    originStreetNumber = document.querySelector('#origin-street-number');
+    originStreet = document.querySelector('#origin-street');
+    originCity = document.querySelector('#origin-city');
+
     
     options = {
         componentRestrictions: { country: "il" }
@@ -20,44 +36,88 @@ function initAutocomplete() {
 
 function fillInDestination() {
     const place = destinationAutocomplete.getPlace();
-    
-    destination.value = extractAddress(place);
-}
-
-function fillInOrigin() {
-    const place = originAutocomplete.getPlace();
-    
-    origin.value = extractAddress(place);
-}
-
-function extractAddress(place) {
-    let address = ""
+    let address = "";
 
     for (const component of place.address_components) {
         const componentType = component.types[0];
 
         switch (componentType) {
             case "street_number": {
-                address = component.long_name
+                streetNumber = component.long_name;
+                destinationStreetNumber.value = streetNumber;
+                address = streetNumber;
                 break;
             }
 
             case "route": {
-                address = component.short_name + ' ' + address + ', '
+                streetName = component.short_name;
+                destinationStreet.value = streetName;
+                address = streetName + ' ' + address + ', '
                 break;
             }
 
             case "premise": {
-                address = component.short_name + ' ' + address +  ', ' 
+                streetNameAndNumber = component.short_name.split(' ');
+                destinationStreet.value = streetNameAndNumber[0];
+                destinationStreetNumber.value = streetNameAndNumber[1];
+                address = component.short_name + ', ';
                 break;
             }
 
             case "locality": {
-                address += component.long_name
+                city = component.long_name;
+                destinationCity.value = city;
+                address += city;
+                break;
+            }
+        }
+    }
+    
+    destination.value = address;
+}
+
+function fillInOrigin() {
+    const place = originAutocomplete.getPlace();
+    let address = "";
+
+    for (const component of place.address_components) {
+        const componentType = component.types[0];
+
+        switch (componentType) {
+            case "street_number": {
+                streetNumber = component.long_name;
+                originStreetNumber.value = streetNumber;
+                address = streetNumber;
+                break;
+            }
+
+            case "route": {
+                streetName = component.short_name;
+                originStreet.value = streetName;
+                address = streetName + ' ' + address + ', ';
+                break;
+            }
+
+            case "premise": {
+                streetNameAndNumber = component.short_name.split(' ');
+                originStreet.value = streetNameAndNumber[0];
+                originStreetNumber.value = streetNameAndNumber[1];
+                address = component.short_name;
+                break;
+            }
+
+            case "locality": {
+                city = component.long_name;
+                originCity.value = city;
+                address += city;
               break;
             }
         }
     }
 
-    return address
+    origin.value = address;
 }
+
+// function customAddressFormatting() {
+//     return {}
+// }
