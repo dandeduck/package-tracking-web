@@ -67,11 +67,11 @@ def changed_cookies(request, cookies, order):
     destination_address = get_or_create_destination_address(request)
 
     rate = float(request.POST.get('rate').replace('₪', ''))
-    phone_number = request.POST.get('phone_number')
+    phone_number = request.POST.get('phone-number')
     full_name = request.POST.get('name')
     notes = request.POST.get('notes')
 
-    package_id = request.POST.get('package_id')
+    package_id = request.POST.get('package-id')
 
     package = Package(origin=origin_address, destination=destination_address,rate=rate, phone_number=phone_number,
                       full_name=full_name, order=order, notes=notes)
