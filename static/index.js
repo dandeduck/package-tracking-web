@@ -12,6 +12,7 @@ let originCity;
 
 
 function initAutocomplete() {
+    //change to dicts?
     destination = document.querySelector("#destination-address");
     destinationStreetNumber = document.querySelector('#destination-street-number');
     destinationStreet = document.getElementById('destination-street');

@@ -5,9 +5,15 @@
 {%endblock%}
 
 {% block content %}
+    {% load packages_extras %}
     <div class="row justify-content-center mb-3">
         <div class="col-auto order-2">
-            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" data-bs-origin-address="{{partner.address}}" data-bs-rate="{{rates.0}}">חבילה חדשה +</a>
+            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" 
+            data-bs-origin-address="{{partner.address.street|addstr:' '|addstr:partner.address.street_number|addstr:', '|addstr:partner.address.city}}" 
+            data-bs-origin-city="{{partner.address.city}}"
+            data-bs-origin-street="{{partner.address.street}}"
+            data-bs-origin-street-number="{{partner.address.street_number}}"
+            data-bs-rate="{{rates.0}}">חבילה חדשה +</a>
         </div>
         {%if is_staff%}
             <div class="col-auto order-1">
@@ -100,14 +106,14 @@
                             <input id="package-id" type="hidden" name="package_id"/>
                             <div class="input-group mb-2">
                                 <span class="input-group-text">Origin</span>
-                                <input id="origin-address" name="origin-address" class="col form-control" placeholder="Street, City" autocomplete="off" required/>
+                                <input id="origin-address" name="origin-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
                                 <input id="origin-city" name="origin-city" type="hidden"/>
                                 <input id="origin-street" name="origin-street" type="hidden"/>
                                 <input id="origin-street-number" name="origin-street-number" type="hidden"/>
                             </div>
                             <div class="input-group mb-2">
                                 <span class="input-group-text">Destination</span>
-                                <input id="destination-address" name="destination-address" class="col form-control" placeholder="Street, City" autocomplete="off" required/>
+                                <input id="destination-address" name="destination-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
                                 <input id="destination-city" name="destination-city" type="hidden"/>
                                 <input id="destination-street" name="destination-street" type="hidden"/>
                                 <input id="destination-street-number" name="destination-street-number" type="hidden"/>
@@ -125,7 +131,7 @@
                             <label for="info" class="form-label text-start">Info</label>
                             <div id="info" class="input-group mb-2">
                                 <span class="input-group-text">Name</span>
-                                <input id="full_name" name="full_name" type="text" class="form-control"/>
+                                <input id="name" name="name" type="text" class="form-control"/>
                             </div>
                             <div class="input-group mb-2">
                                 <span class="input-group-text">Phone number</span>
@@ -162,7 +168,15 @@
         //this is so pretty ^_^
         document.getElementById('package-modal').addEventListener('show.bs.modal', function (event) {
             document.getElementById('origin-address').value = event.relatedTarget.getAttribute('data-bs-origin-address')
+            document.getElementById('origin-city').value = event.relatedTarget.getAttribute('data-bs-origin-city')
+            document.getElementById('origin-street').value = event.relatedTarget.getAttribute('data-bs-origin-street')
+            document.getElementById('origin-street-number').value = event.relatedTarget.getAttribute('data-bs-origin-street-number')
+            
             document.getElementById('destination-address').value = event.relatedTarget.getAttribute('data-bs-destination-address')
+            document.getElementById('destination-city').value = event.relatedTarget.getAttribute('data-bs-destination-city')
+            document.getElementById('destination-street').value = event.relatedTarget.getAttribute('data-bs-destination-street')
+            document.getElementById('destination-street-number').value = event.relatedTarget.getAttribute('data-bs-destination-street-number')
+            
             document.getElementById('rate').value = event.relatedTarget.getAttribute('data-bs-rate')
             document.getElementById('name').value = event.relatedTarget.getAttribute('data-bs-name')
             document.getElementById('phone-number').value = event.relatedTarget.getAttribute('data-bs-phone-number')
