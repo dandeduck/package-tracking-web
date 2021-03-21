@@ -13,7 +13,8 @@ def order_edit_view(request, partner_name, order_id):
     make_cookies_make_sense(cookies)
 
     if request.POST:
-        cookies = changed_cookies(request, cookies, order)
+        # cookies = changed_cookies(request, cookies, order)
+        print(request.POST.get("destination-address"))
     
     new_packages_cookie = cookies.get(str(order_id)+'_new_packages')
     updated_packages_cookie = cookies.get(str(order_id)+'_updated_packages')
