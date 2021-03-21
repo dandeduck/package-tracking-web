@@ -13,7 +13,9 @@ def order_edit_view(request, partner_name, order_id):
 
     if request.POST:
         # cookies = changed_cookies(request, cookies, order)
-        print(request.POST.get("destination-address"))
+        print(request.POST.get("destination-city"))
+        print(request.POST.get("destination-street"))
+        print(request.POST.get("destination-street-number"))
     
     new_packages_cookie = cookies.get(str(order_id)+'_new_packages')
     updated_packages_cookie = cookies.get(str(order_id)+'_updated_packages')

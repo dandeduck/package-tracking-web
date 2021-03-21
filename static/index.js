@@ -24,7 +24,8 @@ function initAutocomplete() {
 
     
     options = {
-        componentRestrictions: { country: "il" }
+        componentRestrictions: { country: "il" },
+        types: ['address']
     };
 
     //there is probablt a better way to do this instead of two autocompletes
@@ -36,49 +37,37 @@ function initAutocomplete() {
 
 function fillInDestination() {
     const place = destinationAutocomplete.getPlace();
-    let address = "";
+    let address = {};
 
-    for (const component of place.address_components) {
-        const componentType = component.types[0];
-
-        switch (componentType) {
-            case "street_number": {
-                streetNumber = component.long_name;
-                destinationStreetNumber.value = streetNumber;
-                address = streetNumber;
-                break;
-            }
-
-            case "route": {
-                streetName = component.short_name;
-                destinationStreet.value = streetName;
-                address = streetName + ' ' + address + ', '
-                break;
-            }
-
-            case "premise": {
-                streetNameAndNumber = component.short_name.split(' ');
-                destinationStreet.value = streetNameAndNumber[0];
-                destinationStreetNumber.value = streetNameAndNumber[1];
-                address = component.short_name + ', ';
-                break;
-            }
-
-            case "locality": {
-                city = component.long_name;
-                destinationCity.value = city;
-                address += city;
-                break;
-            }
-        }
-    }
+    if(typeof place.address_components === 'undefined')
+        address = customAddressFormatting(destination.value)
+    else
+        address = extractAddressComponents(place)
     
-    destination.value = address;
+    destination.value = address['formatted'];
+    destinationCity.value = address['city'];
+    destinationStreet.value = address['street'];
+    destinationStreetNumber.value = address['street_number'];
 }
 
 function fillInOrigin() {
-    const place = originAutocomplete.getPlace();
-    let address = "";
+    const place = destinationAutocomplete.getPlace();
+    let address = {};
+
+    if(typeof place.address_components === 'undefined')
+        address = customAddressFormatting(origin.value)
+    else
+        address = extractAddressComponents(place)
+    
+    origin.value = address['formatted'];
+    originCity.value = address['city'];
+    originStreet.value = address['street'];
+    originStreetNumber.value = address['street_number'];
+}
+
+function extractAddressComponents(place) {
+    let address = {};
+    let str = "";
 
     for (const component of place.address_components) {
         const componentType = component.types[0];
@@ -86,38 +75,60 @@ function fillInOrigin() {
         switch (componentType) {
             case "street_number": {
                 streetNumber = component.long_name;
-                originStreetNumber.value = streetNumber;
-                address = streetNumber;
+                address['street_number'] = streetNumber;
+                str = streetNumber;
                 break;
             }
 
             case "route": {
                 streetName = component.short_name;
-                originStreet.value = streetName;
-                address = streetName + ' ' + address + ', ';
-                break;
-            }
-
-            case "premise": {
-                streetNameAndNumber = component.short_name.split(' ');
-                originStreet.value = streetNameAndNumber[0];
-                originStreetNumber.value = streetNameAndNumber[1];
-                address = component.short_name;
+                address['street'] = streetName;
+                str = streetName + ' ' + str + ', ';
                 break;
             }
 
             case "locality": {
                 city = component.long_name;
-                originCity.value = city;
-                address += city;
+                address['city'] = city;
+                str += city;
               break;
             }
         }
     }
 
-    origin.value = address;
+    address['formatted'] = str;
+
+    if(typeof address['street_number'] === 'undefined')
+        address['street_number'] = 1;
+
+    return address;
 }
 
-// function customAddressFormatting() {
-//     return {}
-// }
+function customAddressFormatting(customInput) {
+    components = customInput.split(',');
+    address = {}
+
+    if(components.length === 1)
+        address['city'] = components[0];
+
+    else {
+        if(components[1].charAt(0) === ' ')
+            components[1] = components[1].substring(1);
+
+        address['city'] = components[1];
+        streetDetails = components[0].split(' ');
+    }
+
+    address['street'] = streetDetails[0];
+    address['street_number'] = streetDetails[1];
+
+    if(typeof address['street'] === 'undefined')
+        address['street'] = '<not provided>';
+
+    if(typeof address['street_number'] === 'undefined')
+        address['street_number'] = 1;
+    
+    address['formatted'] = customInput;
+
+    return address;
+}
