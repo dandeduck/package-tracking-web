@@ -33,7 +33,7 @@ function initAutocomplete() {
     destinationAutocomplete = new google.maps.places.Autocomplete(destination, options);
     destinationAutocomplete.addListener("place_changed", fillInDestination);
     originAutocomplete = new google.maps.places.Autocomplete(origin, options);
-    originAutocomplete.addListener("place_changed", fillInDestination);
+    originAutocomplete.addListener("place_changed", fillInOrigin);
 }
 
 function fillInDestination() {
@@ -52,14 +52,14 @@ function fillInDestination() {
 }
 
 function fillInOrigin() {
-    const place = destinationAutocomplete.getPlace();
+    const place = originAutocomplete.getPlace();
     let address = {};
 
     if(typeof place.address_components === 'undefined')
         address = customAddressFormatting(origin.value)
     else
         address = extractAddressComponents(place)
-    
+
     origin.value = address['formatted'];
     originCity.value = address['city'];
     originStreet.value = address['street'];
@@ -117,19 +117,43 @@ function customAddressFormatting(customInput) {
             components[1] = components[1].substring(1);
 
         address['city'] = components[1];
-        streetDetails = components[0].split(' ');
+        streetDetails = extractStreetDetails(components[0].split(' '));
     }
-
+    
     address['street'] = streetDetails[0];
     address['street_number'] = streetDetails[1];
 
     if(typeof address['street'] === 'undefined')
         address['street'] = '<not provided>';
 
-    if(typeof address['street_number'] === 'undefined')
+    if(typeof address['street_number'] === 'undefined' || isNaN(address['street_number']))
         address['street_number'] = 1;
     
     address['formatted'] = customInput;
 
     return address;
+}
+
+function extractStreetDetails(detailsStr) {
+    let word = "";
+    let streetName = "";
+    let streetNumber;
+
+    streetDetails = detailsStr;
+
+    for(i = 0; !isNumber(word); i++) {
+        word = streetDetails[i];
+        streetName += streetDetails + ' ';
+    }
+
+    streetName = streetName.slice(0, -1);
+    streetNumber = parseInt(word);
+
+    return [streetName, streetNumber];
+}
+
+function isNumber(str) {
+    num = parseInt(str);
+
+    return !isNaN(num);
 }

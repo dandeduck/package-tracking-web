@@ -93,9 +93,6 @@ def get_or_create_destination_address(request):
     city_name = request.POST.get('destination-city')
     street_name = request.POST.get('destination-street')
     street_number = request.POST.get('destination-street-number')
-    print('aaaaaaaaaaaaaa')
-    print(street_number)
-    print('aaaaaaaaaaaaaa')
 
     return Address.objects.get_or_create(city=city_name, street=street_name, street_number=street_number)[0]
 
