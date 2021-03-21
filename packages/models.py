@@ -118,6 +118,9 @@ class Package(models.Model):
     def as_query(self):
         return Package.objects.filter(id=self.id)
 
+    def __eq__(self, o: object) -> bool:
+        return self.id == Package(o).id
+
     def __str__(self):
         return f"{self.destination} {self.status}"
 

@@ -22,7 +22,12 @@ def order_edit_view(request, partner_name, order_id):
     if new_packages_cookie:
         packages += json_to_packages(new_packages_cookie)
     if updated_packages_cookie:
-        packages += json_to_packages(updated_packages_cookie)
+        updated_packages = json_to_packages(updated_packages_cookie)
+        updated_packages.reverse()
+
+        for package in updated_packages:
+            if package not in packages:
+                packages.append(package)
 
     existing = list(order.related_packages())
     existing.reverse()
