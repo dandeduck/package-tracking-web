@@ -4,3 +4,4 @@ __pycache__
 /build/
 venv/
 *.sqlite3
+/migrations/
