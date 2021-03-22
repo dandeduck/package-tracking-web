@@ -4,16 +4,12 @@
     תוצאות חיפוש
 {%endblock%}
 {% block content%}
-    <script>
-        window.onload = function() {
-            reveal_search();
-        }
-    </script>
     <div class="container-xxl">
         <form method="get" dir="ltr">
             <div class="row">
                 <div class="col">
                     <div class="input-group mb-3">
+                        <!-- This part is not designed for mobile really... So the formatting on the narrowest devices is bad -->
                         <span class="input-group-text">Origin</span>
                         <input id="origin-address" name="origin-address" class="col form-control" placeholder="Street 12, City" autocomplete="off"/>
                         <input id="origin-city" name="origin-city" type="hidden"/>
@@ -31,7 +27,7 @@
                             <option selected></option>
 
                             {%for order in orders%}
-                                <option>{{order.collection_date.date}} ({{order.collection_date.time.hour}}:00) {{order.overall_package_status.value}}</option>
+                                <option>{{order.collection_date.date}} ({{order.collection_date.time.hour}}:00) {{order.overall_package_status.value}} {{order.id}}</option>
                             {%endfor%}
                         </select>
                     </div>
@@ -49,7 +45,7 @@
                 </div>
 
                 <div class="col-auto">
-                    <a class="btn btn-outline-success h-100" href="/search/{{partner.name}}"><span class="bi-search" style="height: 75px; line-height: 75px; white-space: nowrap;"></span></a>
+                    <button class="btn btn-outline-success h-100" type="submit"><span class="bi-search" style="height: 75px; line-height: 75px; white-space: nowrap;"></span></button>
                 </div>
             </div>
         </form>

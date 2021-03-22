@@ -6,6 +6,7 @@ from guardian.decorators import permission_required_or_403
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def partner_search_view(request, partner_name):
     partner = Partner.objects.filter(name=partner_name).get()
+    print(request.GET)
 
     name_query = request.GET.get('name')
     street_name_query = request.GET.get('street_name')
