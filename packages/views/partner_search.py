@@ -43,10 +43,11 @@ def partner_search_view(request, partner_name):
             related_packages[orders.index(order)].append(package)
 
     order_packages = [(orders[i], related_packages[i]) for i in range(0, len(orders))]
+
     context = {
         'partner': partner,
         'order_packages': order_packages,
-        'is_staff': request.user.is_staff
+        'orders': partner.related_orders().order_by('-collection_date')
     }
 
     return render(request, 'packages/partner_search.html', context)

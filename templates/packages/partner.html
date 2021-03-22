@@ -6,7 +6,7 @@
 {% block content%}
     <div class="row justify-content-center mb-3">
         <div class="col text-start">
-            {% include "packages/parts/search.html" %}
+            <a class="btn btn-outline-success" href="/search/{{partner.name}}">חיפוש חבילה <span class="bi-search"></span></a>
         </div>
         <div class="col text-end">
             <form name="new-order" id="new-order" method="post"> {% csrf_token %}

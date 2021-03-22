@@ -10,11 +10,49 @@
         }
     </script>
     <div class="container">
-        <div class="row justify-content-center mb-3">
-            <div class="col text-center">
-                {% include "packages/parts/search.html" %}
+        <form method="get" dir="ltr">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Origin</span>
+                        <input id="origin-address" name="origin-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
+                        <input id="origin-city" name="origin-city" type="hidden"/>
+                        <input id="origin-street" name="origin-street" type="hidden"/>
+                        <input id="origin-street-number" name="origin-street-number" type="hidden"/>
+                        
+                        <span class="input-group-text">Destination</span>
+                        <input id="destination-address" name="destination-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
+                        <input id="destination-city" name="destination-city" type="hidden"/>
+                        <input id="destination-street" name="destination-street" type="hidden"/>
+                        <input id="destination-street-number" name="destination-street-number" type="hidden"/>
+        
+                        <span class="input-group-text">Order</span>
+                        <select id="rate" class="form-select" name="rate" required>
+                            <option selected></option>
+
+                            {%for order in orders%}
+                                <option>{{order.collection_date.date}} ({{order.collection_date.time.hour}}:00) {{order.overall_package_status.value}}</option>
+                            {%endfor%}
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text">Name</span>
+                        <input id="name" name="name" type="text" class="form-control"/>
+        
+                        <span class="input-group-text">Phone number</span>
+                        <input id="phone-number" name="phone-number" type="tel" class="form-control"/>
+        
+                        <span class="input-group-text">Notes</span>
+                        <input id="notes" name="notes" class="form-control"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-auto">
+                    <a class="btn btn-outline-success h-100" href="/search/{{partner.name}}"><span class="bi-search" style="height: 75px; line-height: 75px; white-space: nowrap;"></span></a>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
     <div class="row justify-content-center">
         {%if order_packages%}
