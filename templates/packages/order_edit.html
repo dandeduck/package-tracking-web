@@ -6,6 +6,8 @@
 
 {% block content %}
     {% load packages_extras %}
+    {% load static %}
+    <script src="{% static 'packages/autocomplete.js' %}"></script>
     <div class="row justify-content-center mb-3">
         <div class="col-auto order-2">
             <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" 
