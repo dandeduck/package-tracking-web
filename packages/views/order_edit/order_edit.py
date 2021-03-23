@@ -3,6 +3,7 @@ from packages.models import Address, Order, Package, Partner
 from django.shortcuts import render
 from guardian.decorators import permission_required_or_403
 
+
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def order_edit_view(request, partner_name, order_id):
     partner = Partner.objects.get(name=partner_name)
@@ -13,7 +14,7 @@ def order_edit_view(request, partner_name, order_id):
 
     if request.POST:
         cookies = changed_cookies(request, cookies, order)
-    
+
     new_packages_cookie = cookies.get(str(order_id)+'_new_packages')
     updated_packages_cookie = cookies.get(str(order_id)+'_updated_packages')
 
@@ -32,7 +33,7 @@ def order_edit_view(request, partner_name, order_id):
     existing = list(order.related_packages())
     existing.reverse()
     packages.reverse()
-    
+
     for package in existing:
         if package not in packages:
             packages.append(package)
@@ -47,14 +48,15 @@ def order_edit_view(request, partner_name, order_id):
     }
     response = render(request, 'packages/order_edit.html', context)
 
-    response.set_cookie(str(order.id)+'_updated_packages', updated_packages_cookie)
+    response.set_cookie(str(order.id)+'_updated_packages',
+                        updated_packages_cookie)
     response.set_cookie(str(order.id)+'_new_packages', new_packages_cookie)
 
     return response
 
 
 def make_cookies_make_sense(cookies):
-    #this caused a lot of confusion
+    # this caused a lot of confusion
     for key, value in cookies.items():
         if value == 'None':
             cookies[key] = None
@@ -67,7 +69,7 @@ def json_to_packages(json):
 def changed_cookies(request, cookies, order):
     new_packages_cookie = cookies.get(str(order.id)+'_new_packages')
     updated_packages_cookie = cookies.get(str(order.id)+'_updated_packages')
-    
+
     origin_address = get_or_create_origin_address(request)
     destination_address = get_or_create_destination_address(request)
 
@@ -78,7 +80,7 @@ def changed_cookies(request, cookies, order):
 
     package_id = request.POST.get('package-id')
 
-    package = Package(origin=origin_address, destination=destination_address,rate=rate, phone_number=phone_number,
+    package = Package(origin=origin_address, destination=destination_address, rate=rate, phone_number=phone_number,
                       full_name=full_name, order=order, notes=notes)
     if package_id:
         package.id = package_id

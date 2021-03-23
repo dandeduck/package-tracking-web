@@ -94,9 +94,12 @@ class Package(models.Model):
             return [(i.name, i.value) for i in cls]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    status = models.CharField(max_length=32, choices=Status.choices(), default=Status.choices()[0][1])
-    origin = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='origin')
-    destination = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='destination')
+    status = models.CharField(
+        max_length=32, choices=Status.choices(), default=Status.choices()[0][1])
+    origin = models.ForeignKey(
+        Address, on_delete=models.PROTECT, related_name='origin')
+    destination = models.ForeignKey(
+        Address, on_delete=models.PROTECT, related_name='destination')
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     rate = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     full_name = models.CharField(max_length=64, blank=True)

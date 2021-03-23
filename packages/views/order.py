@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from packages.models import Order
 
+
 def order_view(request, order_id):
     order = Order.objects.get(id=order_id)
 
