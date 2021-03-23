@@ -1,193 +1,199 @@
 {%extends 'base.html' %}
 
 {% block title%}
-     הזמנה {{order.collection_date.date}}
+הזמנה {{order.collection_date.date}}
 {%endblock%}
 
 {% block content %}
-    {% load packages_extras %}
-    {% load static %}
-    <script src="{% static 'packages/autocomplete.js' %}"></script>
-    <div class="row justify-content-center mb-3">
-        <div class="col-auto order-2">
-            <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal" 
-            data-bs-origin-address="{{partner.address.street|addstr:' '|addstr:partner.address.street_number|addstr:', '|addstr:partner.address.city}}" 
-            data-bs-origin-city="{{partner.address.city}}"
-            data-bs-origin-street="{{partner.address.street}}"
-            data-bs-origin-street-number="{{partner.address.street_number}}"
-            data-bs-rate="{{rates.0}}">חבילה חדשה +</a>
-        </div>
-        {%if is_staff%}
-            <div class="col-auto order-1">
-                <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
-                    <input type="hidden" name="update-type" value="increase-all"/>
-                    <button type="submit" class="btn btn-outline-success">Update All</button>
-                </form>
-            </div>
-            <div class="col-auto order-3">
-                <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
-                    <input type="hidden" name="update-type" value="revert-all"/>
-                    <button class="btn btn-outline-danger">Revert All</button>
-                </form>
-            </div>
-        {%endif%}
+{% load packages_extras %}
+{% load static %}
+<script src="{% static 'packages/autocomplete.js' %}"></script>
+<div class="row justify-content-center mb-3">
+    <div class="col-auto order-2">
+        <a class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#package-modal"
+            data-bs-origin-address="{{partner.address.street|addstr:' '|addstr:partner.address.street_number|addstr:', '|addstr:partner.address.city}}"
+            data-bs-origin-city="{{partner.address.city}}" data-bs-origin-street="{{partner.address.street}}"
+            data-bs-origin-street-number="{{partner.address.street_number}}" data-bs-rate="{{rates.0}}">חבילה חדשה +</a>
     </div>
-    {%if has_unsaved_progress%}
-        <div class="">
-            <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
-        </div>
+    {%if is_staff%}
+    <div class="col-auto order-1">
+        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
+            <input type="hidden" name="update-type" value="increase-all" />
+            <button type="submit" class="btn btn-outline-success">Update All</button>
+        </form>
+    </div>
+    <div class="col-auto order-3">
+        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
+            <input type="hidden" name="update-type" value="revert-all" />
+            <button class="btn btn-outline-danger">Revert All</button>
+        </form>
+    </div>
     {%endif%}
-    <div class="row justify-content-center">
-        {% for package in packages%}
-            <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-start">
-                        <div class="row">
-                            <div class="col-auto text-decoration-none">
-                                <a type="button" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="הערות: {{package.notes|default:'<אין>'}}"><h5 class="bi-three-dots"></h5></a>
-                            </div>
-                            <div class="col-auto">
-                                <h5 class="card-title">{{package.rate}} ₪</h5>
-                            </div>
-                            <div class="col">
-                                <h5 class="card-title">{{package.destination}}</h5>
-                            </div>
+</div>
+{%if has_unsaved_progress%}
+<div class="">
+    <h6 class="text-danger">*קיימים שינויים לא שמורים</h6>
+</div>
+{%endif%}
+<div class="row justify-content-center">
+    {% for package in packages%}
+    <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-start">
+                <div class="row">
+                    <div class="col-auto text-decoration-none">
+                        <a type="button" data-bs-toggle="popover" data-bs-placement="bottom"
+                            data-bs-content="הערות: {{package.notes|default:'<אין>'}}">
+                            <h5 class="bi-three-dots"></h5>
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <h5 class="card-title">{{package.rate}} ₪</h5>
+                    </div>
+                    <div class="col">
+                        <h5 class="card-title">{{package.destination}}</h5>
+                    </div>
+                </div>
+                <ul class="card-subtitle list-inline text-muted">
+                    <li class="list-inline-item">
+                        <h6>{{package.origin.city}}, {{package.origin.street}}</h6>
+                    </li>
+                    <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
+                </ul>
+                <p class="card-text">
+                    <a class="btn btn-outline-primary mb-1 ms-1" data-bs-toggle="modal" data-bs-target="#package-modal"
+                        data-bs-origin-address="{{package.origin.street|addstr:' '|addstr:package.origin.street_number|addstr:', '|addstr:package.origin.city}}"
+                        data-bs-origin-city="{{package.origin.city}}" data-bs-origin-street="{{package.origin.street}}"
+                        data-bs-origin-street-number="{{package.origin.street_number}}"
+                        data-bs-destination-address="{{package.destination.street|addstr:' '|addstr:package.destination.street_number|addstr:', '|addstr:package.destination.city}}"
+                        data-bs-destination-city="{{package.destination.city}}"
+                        data-bs-destination-street="{{package.destination.street}}"
+                        data-bs-destination-street-number="{{package.destination.street_number}}"
+                        data-bs-name="{{package.full_name}}" data-bs-phone-number="{{package.phone_number}}"
+                        data-bs-notes="{{package.notes}}" data-bs-package-id="{{package.id}}"
+                        data-bs-rate="{{rates.0}}">Edit</a>
+                    <span class="text-{{package.status_color}}">{{package.status}}</span>
+                    <span class="row justify-content-end ms-1 fw-light mb-2">{{package.full_name}}
+                        {{package.phone_number}}</span>
+                    {% if is_staff%}
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
+                            <input type="hidden" name="package" value="{{package.id}}" />
+                            <input type="hidden" name="update-type" value="increase" />
+                            <button type="submit" class="btn btn-outline-success">Update</button>
+                        </form>
+                    </li>
+                    <li class="list-inline-item me-4">
+                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
+                            <input type="hidden" name="package" value="{{package.id}}" />
+                            <input type="hidden" name="update-type" value="revert" />
+                            <button class="btn btn-outline-danger">Revert</button>
+                        </form>
+                    </li>
+                </ul>
+                {%endif%}
+                </p>
+            </div>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+<div class="modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+    role="dialog" aria-labelledby="package-modal-title" aria-hidden="true" dir="ltr">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" dir="rtl">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-auto">
+                            <h5 class="modal-title" id="package-modal-title">יצירה/עריכה של חבילה</h5>
                         </div>
-                        <ul class="card-subtitle list-inline text-muted">
-                            <li class="list-inline-item"><h6>{{package.origin.city}}, {{package.origin.street}}</h6></li>
-                            <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
-                        </ul>
-                        <p class="card-text">
-                            <a class="btn btn-outline-primary mb-1 ms-1" data-bs-toggle="modal" data-bs-target="#package-modal" 
-                            data-bs-origin-address="{{package.origin.street|addstr:' '|addstr:package.origin.street_number|addstr:', '|addstr:package.origin.city}}" 
-                            data-bs-origin-city="{{package.origin.city}}"
-                            data-bs-origin-street="{{package.origin.street}}"
-                            data-bs-origin-street-number="{{package.origin.street_number}}"
-                            data-bs-destination-address="{{package.destination.street|addstr:' '|addstr:package.destination.street_number|addstr:', '|addstr:package.destination.city}}" 
-                            data-bs-destination-city="{{package.destination.city}}"
-                            data-bs-destination-street="{{package.destination.street}}"
-                            data-bs-destination-street-number="{{package.destination.street_number}}"
-                            data-bs-name="{{package.full_name}}"
-                            data-bs-phone-number="{{package.phone_number}}"
-                            data-bs-notes="{{package.notes}}"
-                            data-bs-package-id="{{package.id}}"
-                            data-bs-rate="{{rates.0}}">Edit</a> 
-                            <span class="text-{{package.status_color}}">{{package.status}}</span>
-                            <span class="row justify-content-end ms-1 fw-light mb-2">{{package.full_name}} {{package.phone_number}}</span>
-                            {% if is_staff%}
-                                <ul class="list-inline">
-                                    <li class="list-inline-item">
-                                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
-                                            <input type="hidden" name="package" value="{{package.id}}"/>
-                                            <input type="hidden" name="update-type" value="increase"/>
-                                            <button type="submit" class="btn btn-outline-success">Update</button>
-                                        </form>
-                                    </li>
-                                    <li class="list-inline-item me-4">
-                                        <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
-                                            <input type="hidden" name="package" value="{{package.id}}" />
-                                            <input type="hidden" name="update-type" value="revert"/>
-                                            <button class="btn btn-outline-danger">Revert</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            {%endif%}
-                        </p>
+                        <div class="col">
+
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
                 </div>
             </div>
-        {%endfor%}
-    </div>
-    <div class="modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="package-modal-title" aria-hidden="true" dir="ltr">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" dir="rtl">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-auto">
-                                <h5 class="modal-title" id="package-modal-title">יצירה/עריכה של חבילה</h5>
-                            </div>
-                            <div class="col">
-
-                            </div>
-                            <div class="col-auto">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="package-form" method="post" autocomplete="off" onkeydown="return event.key != 'Enter';">
+                        {%csrf_token%}
+                        <input id="package-id" type="hidden" name="package-id" />
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Origin</span>
+                            <input id="origin-address" name="origin-address" class="col form-control"
+                                placeholder="Street 12, City" autocomplete="off" required />
+                            <input id="origin-city" name="origin-city" type="hidden" />
+                            <input id="origin-street" name="origin-street" type="hidden" />
+                            <input id="origin-street-number" name="origin-street-number" type="hidden" />
                         </div>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <form id="package-form" method="post" autocomplete="off" onkeydown="return event.key != 'Enter';"> {%csrf_token%}
-                            <input id="package-id" type="hidden" name="package-id"/>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text">Origin</span>
-                                <input id="origin-address" name="origin-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
-                                <input id="origin-city" name="origin-city" type="hidden"/>
-                                <input id="origin-street" name="origin-street" type="hidden"/>
-                                <input id="origin-street-number" name="origin-street-number" type="hidden"/>
-                            </div>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text">Destination</span>
-                                <input id="destination-address" name="destination-address" class="col form-control" placeholder="Street 12, City" autocomplete="off" required/>
-                                <input id="destination-city" name="destination-city" type="hidden"/>
-                                <input id="destination-street" name="destination-street" type="hidden"/>
-                                <input id="destination-street-number" name="destination-street-number" type="hidden"/>
-                            </div>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Rate</span>
-                                <select id="rate" class="form-select" name="rate" required>
-                                    {%for rate in rates%}
-                                            <option>{{rate}}</option>
-                                    {%endfor%}
-                                </select>
-                                <span class="input-group-text">₪</span>
-                            </div>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Destination</span>
+                            <input id="destination-address" name="destination-address" class="col form-control"
+                                placeholder="Street 12, City" autocomplete="off" required />
+                            <input id="destination-city" name="destination-city" type="hidden" />
+                            <input id="destination-street" name="destination-street" type="hidden" />
+                            <input id="destination-street-number" name="destination-street-number" type="hidden" />
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Rate</span>
+                            <select id="rate" class="form-select" name="rate" required>
+                                {%for rate in rates%}
+                                <option>{{rate}}</option>
+                                {%endfor%}
+                            </select>
+                            <span class="input-group-text">₪</span>
+                        </div>
 
-                            <label for="info" class="form-label text-start">Info</label>
-                            <div id="info" class="input-group mb-2">
-                                <span class="input-group-text">Name</span>
-                                <input id="name" name="name" type="text" class="form-control"/>
-                            </div>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text">Phone number</span>
-                                <input id="phone-number" name="phone-number" type="tel" class="form-control"/>
-                            </div>
-                        
-                            <div class="input-group">
-                                <span class="input-group-text">Notes</span>
-                                <textarea id="notes" name="notes" class="form-control"></textarea>
-                            </div>
-                            <div class="modal-footer" dir="rtl">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close">בטל</button>
-                                        </div>
-                                        <div class="col">
-            
-                                        </div>
-                                        <div class="col-auto">
-                                            <button type="submit" class="btn btn-outline-success">אשר</button>
-                                        </div>
+                        <label for="info" class="form-label text-start">Info</label>
+                        <div id="info" class="input-group mb-2">
+                            <span class="input-group-text">Name</span>
+                            <input id="name" name="name" type="text" class="form-control" />
+                        </div>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Phone number</span>
+                            <input id="phone-number" name="phone-number" type="tel" class="form-control" />
+                        </div>
+
+                        <div class="input-group">
+                            <span class="input-group-text">Notes</span>
+                            <textarea id="notes" name="notes" class="form-control"></textarea>
+                        </div>
+                        <div class="modal-footer" dir="rtl">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"
+                                            aria-label="Close">בטל</button>
+                                    </div>
+                                    <div class="col">
+
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-outline-success">אשר</button>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
-                
             </div>
+
         </div>
     </div>
-    {% load static %}
-    <script src="{% static 'packages/order-edit.js' %}"></script>
+</div>
+{% load static %}
+<script src="{% static 'packages/order-edit.js' %}"></script>
 {%endblock%}
 
 {%block bottom%}
-    {%if has_unsaved_progress%}
-        <form method="get" action="/partner/{{partner.name}}/{{order.id}}/save/"> {%csrf_token%}
-            <button class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></button>
-        </form>
-    {%endif%}
+{%if has_unsaved_progress%}
+<form method="get" action="/partner/{{partner.name}}/{{order.id}}/save/"> {%csrf_token%}
+    <button class="btn btn-outline-success" type="submit">שמור <span class="bi-save"></span></button>
+</form>
+{%endif%}
 {%endblock%}
