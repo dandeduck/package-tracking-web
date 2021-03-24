@@ -4,7 +4,7 @@
 תוצאות חיפוש
 {%endblock%}
 {% block content%}
-<div class="container-xxl">
+<div class="container-xxl mb-5">
     <form method="get" dir="ltr" onkeydown="return event.key != 'Enter';">
         <div class="row">
             <div class="col">
@@ -25,7 +25,7 @@
                     <input id="destination-street-number" name="destination-street-number" type="hidden" />
 
                     <span class="input-group-text">Order</span>
-                    <select id="rate" class="form-select" name="rate">
+                    <select id="order" class="form-select" name="order">
                         <option selected></option>
 
                         {%for order in orders%}
@@ -60,7 +60,10 @@
     <div class="col-auto mb-3">
         <div class="card h-100">
             <div class="card-body">
-                <h6 class="card-title">{{order.collection_date.date}}</h6>
+                <h6 class="ms-5 card-title">{{order.collection_date.date}}
+                    <a class="ms-5 text-decoration-none link-secondary"
+                        href="/partner/{{partner.name}}/{{order.id}}/">Edit</a>
+                </h6>
                 {% for package in packages%}
                 {% if forloop.counter0|divisibleby:5 and forloop.counter0 != 0%}
                 <div class="w-100"></div>
@@ -76,8 +79,8 @@
                                 <li class="list-inline-item"><span class="bi-arrow-return-right"></span></li>
                             </ul>
                             <p class="card-text">
-                                <a class="btn btn-outline-primary mb-1" href="/package/{{package.id}}/">Track</a> <span
-                                    class="text-{{package.status_color}}">{{package.status}}</span>
+                                <a class="btn btn-outline-primary mb-1 ms-1" href="/package/{{package.id}}/">Track</a>
+                                <span class="text-{{package.status_color}}">{{package.status}}</span>
                                 <span class="row justify-content-end ms-1 fw-light">{{package.full_name}}
                                     {{package.phone_number}}</span>
                             </p>
@@ -92,7 +95,7 @@
     </div>
     {%endfor%}
     {%else%}
-    <h6 class="display-6 mt-5">לא נמצאו תוצאות</h6>
+    <h6 class="display-6">לא נמצאו תוצאות</h6>
     {%endif%}
 </div>
 {% endblock %}

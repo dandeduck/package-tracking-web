@@ -19,8 +19,16 @@ def partner_search_view(request, partner_name):
     number = request.GET.get('phone-number')
     notes = request.GET.get('notes')
 
+    order_id = request.GET.get('order')
+
     packages = Package.objects.filter(order__partner__name=partner.name)
     filtered_packages = Package.objects.none()
+
+    if order_id:
+        order_id = order_id.split(' ')[-1]
+        print(order_id)
+        packages = packages.filter(order__id=order_id)
+        filtered_packages = packages
 
     if name:
         packages = packages.filter(full_name__icontains=name)
