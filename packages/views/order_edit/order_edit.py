@@ -85,9 +85,15 @@ def changed_cookies(request, cookies, order):
                       full_name=full_name, order=order, notes=notes)
     if package_id:
         package.id = package_id
-        json = add_package_to_json(package, updated_packages_cookie)
 
-        cookies[str(order.id)+'_updated_packages'] = json
+        if not Package.objects.filter(id=package_id):
+            json = edit_new_package(package, new_packages_cookie)
+
+            cookies[str(order.id)+'_new_packages'] = json
+        else:
+            json = add_package_to_json(package, updated_packages_cookie)
+
+            cookies[str(order.id)+'_updated_packages'] = json
 
     else:
         json = add_package_to_json(package, new_packages_cookie)
@@ -111,6 +117,19 @@ def get_or_create_origin_address(request):
     street_number = request.POST.get('origin-street-number')
 
     return Address.objects.get_or_create(city=city_name, street=street_name, street_number=street_number)[0]
+
+
+def edit_new_package(package, new_packages_cookie):
+    new_packages = json_to_packages(new_packages_cookie)
+    edited_packages = []
+
+    for new_package in new_packages:
+        if str(new_package.id) == str(package.id):
+            edited_packages.append(package)
+        else:
+            edited_packages.append(new_package)
+
+    return serializers.serialize('json', edited_packages)
 
 
 def add_package_to_json(package, json):
