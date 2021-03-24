@@ -81,14 +81,22 @@
                         <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                             <input type="hidden" name="package" value="{{package.id}}" />
                             <input type="hidden" name="update-type" value="increase" />
+                            {% if package in existing_packages%}
                             <button type="submit" class="btn btn-outline-success">Update</button>
+                            {% else %}
+                            <button type="submit" class="btn btn-outline-success" disabled>Update</button>
+                            {% endif %}
                         </form>
                     </li>
                     <li class="list-inline-item me-4">
                         <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                             <input type="hidden" name="package" value="{{package.id}}" />
                             <input type="hidden" name="update-type" value="revert" />
+                            {% if package in existing_packages%}
                             <button class="btn btn-outline-danger">Revert</button>
+                            {% else %}
+                            <button class="btn btn-outline-danger" disabled>Revert</button>
+                            {% endif %}
                         </form>
                     </li>
                 </ul>

@@ -40,6 +40,7 @@ def order_edit_view(request, partner_name, order_id):
 
     context = {
         'packages': packages,
+        'existing_packages': existing,
         'order': order,
         'partner': partner,
         'rates': partner.rates.split(','),
