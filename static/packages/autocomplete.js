@@ -11,7 +11,6 @@ class AutocompleteField {
         });
         this.autocomplete.addListener("place_changed", () => this.fillIn(this));
         this.input.onblur = () => this.fillIn(this);
-        // this.input.onfocusout = () => this.fillIn(this);
     }
 
     fillIn(self) {
