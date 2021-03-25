@@ -26,6 +26,7 @@ def update_saved_packages(updated_packages_cookie):
     packages = serializers.deserialize('json', updated_packages_cookie)
 
     for package in packages:
+        package = package.object
         actual_package = Package.objects.filter(id=package.id)
         actual_package.update(origin=package.origin, destination=package.destination, rate=package.rate,
                               full_name=package.full_name, phone_number=package.phone_number, notes=package.notes)

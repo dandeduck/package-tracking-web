@@ -1,4 +1,3 @@
-from packages.util import string_data_lists_context
 from django.shortcuts import render
 from packages.models import Package, Partner
 from guardian.decorators import permission_required_or_403
@@ -24,13 +23,16 @@ def partner_search_view(request, partner_name):
         packages = packages.filter(phone_number__icontains=number_query)
         filtered_packages = packages
     if street_name_query:
-        packages = packages.filter(destination__street__name__icontains=street_name_query)
+        packages = packages.filter(
+            destination__street__name__icontains=street_name_query)
         filtered_packages = packages
     if street_number_query:
-        packages = packages.filter(destination__street_number__contains=street_number_query)
+        packages = packages.filter(
+            destination__street_number__contains=street_number_query)
         filtered_packages = packages
     if city_query:
-        packages = packages.filter(destination__city__name__icontains=city_query)
+        packages = packages.filter(
+            destination__city__name__icontains=city_query)
         filtered_packages = packages
 
     orders = []
@@ -43,12 +45,12 @@ def partner_search_view(request, partner_name):
         else:
             related_packages[orders.index(order)].append(package)
 
-    order_packages = [(orders[i], related_packages[i]) for i in range(0, len(orders))]
+    order_packages = [(orders[i], related_packages[i])
+                      for i in range(0, len(orders))]
     context = {
         'partner': partner,
         'order_packages': order_packages,
         'is_staff': request.user.is_staff
     }
-    context.update(string_data_lists_context())
 
     return render(request, 'packages/partner_search.html', context)
