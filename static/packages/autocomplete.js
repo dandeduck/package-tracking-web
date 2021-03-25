@@ -10,6 +10,8 @@ class AutocompleteField {
             types: ['address']
         });
         this.autocomplete.addListener("place_changed", () => this.fillIn(this));
+        this.input.onblur = () => this.fillIn(this);
+        // this.input.onfocusout = () => this.fillIn(this);
     }
 
     fillIn(self) {
@@ -25,33 +27,31 @@ class AutocompleteField {
 
 class Address {
     constructor(place, input) {
-        if (typeof place.address_components === 'undefined')
+        if (typeof place === 'undefined' || typeof place.address_components === 'undefined')
             this.fields = this.customAddressFormatting(this, input);
         else
             this.fields = this.extractAddressComponents(place);
     }
 
     customAddressFormatting(self, customInput) {
-        components = customInput.split(',');
-        address = {}
+        let components = customInput.split(',');
+        let address = {}
 
         if (components.length === 1)
             address['city'] = components[0];
-
         else {
             if (components[1].charAt(0) === ' ')
                 components[1] = components[1].substring(1);
 
             address['city'] = components[1];
             streetDetails = self.extractStreetDetails(components[0].split(' '));
+
+            address['street'] = streetDetails[0];
+            address['street_number'] = streetDetails[1];
         }
 
-        address['street'] = streetDetails[0];
-        address['street_number'] = streetDetails[1];
-
         if (typeof address['street'] === 'undefined')
-            address['street'] = '<not provided>';
-
+            address['street'] = '<no street>';
         if (typeof address['street_number'] === 'undefined' || isNaN(address['street_number']))
             address['street_number'] = 1;
 
