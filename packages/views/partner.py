@@ -10,6 +10,7 @@ def partner_view(request, partner_name):
     if request.POST:
         new_order_id = str(Order.objects.create(partner=requested_partner).id)
         return redirect('/partner/'+requested_partner.name+'/'+new_order_id+'/')
+    
     orders = requested_partner.related_orders().order_by('-collection_date')
     package_amounts = []
     order_statuses = []
