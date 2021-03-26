@@ -26,7 +26,6 @@ def partner_search_view(request, partner_name):
 
     if order_id:
         order_id = order_id.split(' ')[-1]
-        print(order_id)
         packages = packages.filter(order__id=order_id)
         filtered_packages = packages
 

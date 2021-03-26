@@ -4,8 +4,10 @@
 תוצאות חיפוש
 {%endblock%}
 {% block content%}
+{% load static %}
+<script src="{% static 'packages/autocomplete.js' %}"></script>
 <div class="container-xxl mb-5">
-    <form method="get" dir="ltr" onkeydown="return event.key != 'Enter';">
+    <form method="get" dir="ltr" onkeydown="return event.key != 'Enter';" autocomplete="off">
         <div class="row">
             <div class="col">
                 <div class="input-group mb-3">
