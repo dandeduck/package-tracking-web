@@ -1,7 +1,7 @@
-from packages.models import Partner
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from util import user_partners
+
 
 @staff_member_required
 def partners_view(request):
