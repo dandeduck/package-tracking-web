@@ -43,10 +43,10 @@ class Address {
                 components[1] = components[1].substring(1);
 
             address['city'] = components[1];
-            streetDetails = self.extractStreetDetails(components[0].split(' '));
+            let [streetName, streetNumber] = self.extractStreetDetails(self, components[0].split(' '));
 
-            address['street'] = streetDetails[0];
-            address['street_number'] = streetDetails[1];
+            address['street'] = streetName;
+            address['street_number'] = streetNumber;
         }
 
         if (typeof address['street'] === 'undefined')
@@ -59,26 +59,22 @@ class Address {
         return address;
     }
 
-    extractStreetDetails(self, detailsStr) {
-        let word = "";
+    extractStreetDetails(self, streetDetails) {
         let streetName = "";
         let streetNumber;
+        let i;
 
-        streetDetails = detailsStr;
-
-        for (i = 0; !self.isNumber(word); i++) {
-            word = streetDetails[i];
-            streetName += streetDetails + ' ';
-        }
+        for (i = 0; !self.isNumber(streetDetails[i]); i++)
+            streetName += streetDetails[i] + ' ';
 
         streetName = streetName.slice(0, -1);
-        streetNumber = parseInt(word);
+        streetNumber = parseInt(streetDetails[i]);
 
         return [streetName, streetNumber];
     }
 
     isNumber(str) {
-        num = parseInt(str);
+        let num = parseInt(str);
 
         return !isNaN(num);
     }
