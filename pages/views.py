@@ -45,6 +45,28 @@ def contact_view(request):
     return render(request, 'pages/contact.html', {})
 
 
+def send_details_view(request):
+    personal_details = {}
+
+    personal_details['name'] = request.POST.get('name')
+    personal_details['number'] = request.POST.get('number')
+    personal_details['email'] = request.POST.get('email')
+    message = request.POST.get('message')
+
+    email_details(personal_details, message)
+
+    return redirect(request.POST.get('origin'))
+
+
+def email_details(personal_details, message):
+
+    for key in personal_details.keys():
+        if personal_details[key] is None:
+            personal_details[key] = '<not given>'
+    # TODO:
+    # implement email sending
+
+
 def financial_view(request):
     context = {}
     return render(request, 'pages/financials.html', context)
