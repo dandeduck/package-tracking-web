@@ -99,7 +99,29 @@
     </div>
     {%endfor%}
 </div>
-<div class="modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="container text-end mt-3">
+    <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update-notes/"> {%csrf_token%}
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <label for="order-notes" class="form-label">הערות להזמנה</label>
+                <textarea id="order-notes" name="order-notes" class="form-control"
+                    type="text">{{order.notes}}</textarea>
+            </div>
+            <div class="col-auto">
+                <button id="notes-sumbit" class="btn btn-outline-success mt-5" type="submit" disabled>עדכן</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    const input = document.getElementById('order-notes');
+    input.addEventListener('input', enableSubmit);
+
+    function enableSubmit() {
+        document.getElementById('notes-sumbit').disabled = false;
+    }
+</script>
+<div class=" modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
     role="dialog" aria-labelledby="package-modal-title" aria-hidden="true" dir="ltr">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
