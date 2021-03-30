@@ -9,9 +9,9 @@
                 <input id="name" type="text" class="form-control mb-3" name="name" />
                 <label for="number" class="form-label">Phone number</label>
                 <input id="number" type="tel" class="form-control mb-3" name="number" />
-                <label for="email" class="form-label">Email address <span class="text-danger">*</span></label>
+                <label for="email" class="form-label">Email address {% include 'required.html' %}</label>
                 <input id="email" type="email" class="form-control mb-3" name="email" required />
-                <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                <label for="message" class="form-label">Message {% include 'required.html' %}</label>
                 <textarea id="message" type="text" class="form-control mb-4" name="message" required></textarea>
                 <div class="text-center mb-5">
                     <button type="submit" class="btn btn-outline-success w-100">שלח</button>

@@ -124,7 +124,7 @@
                         {%csrf_token%}
                         <input id="package-id" type="hidden" name="package-id" />
                         <div class="input-group mb-2">
-                            <span class="input-group-text">Origin</span>
+                            <span class="input-group-text">Origin {% include 'required.html' %}</span>
                             <input id="origin-address" name="origin-address" class="col form-control"
                                 placeholder="Street 12, City" autocomplete="off" required />
                             <input id="origin-city" name="origin-city" type="hidden" />
@@ -132,7 +132,7 @@
                             <input id="origin-street-number" name="origin-street-number" type="hidden" />
                         </div>
                         <div class="input-group mb-2">
-                            <span class="input-group-text">Destination</span>
+                            <span class="input-group-text">Destination {% include 'required.html' %}</span>
                             <input id="destination-address" name="destination-address" class="col form-control"
                                 placeholder="Street 12, City" autocomplete="off" required />
                             <input id="destination-city" name="destination-city" type="hidden" />
