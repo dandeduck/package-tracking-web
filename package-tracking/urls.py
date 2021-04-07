@@ -5,6 +5,7 @@ from packages.views.partner import partner_view
 from packages.views.order_edit.order_edit import order_edit_view
 from packages.views.order_edit.package_update import package_update_view
 from packages.views.order_edit.save_changes import save_changes_view
+from packages.views.order_edit.update_notes import update_notes_view
 from packages.views.package import package_view
 from packages.views.order import order_view
 from packages.views.partners import partners_view
@@ -26,6 +27,7 @@ urlpatterns = [
     path('partner/<str:partner_name>/<str:order_id>/', order_edit_view),
     path('partner/<str:partner_name>/<str:order_id>/update/', package_update_view),
     path('partner/<str:partner_name>/<str:order_id>/save/', save_changes_view),
+    path('partner/<str:partner_name>/<str:order_id>/update-notes/', update_notes_view),
     path('partner/', partners_view),
     path('package/<str:package_id>/', package_view),
     path('order/<str:order_id>/', order_view),

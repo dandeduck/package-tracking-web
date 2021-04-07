@@ -3,10 +3,12 @@ from django.core import serializers
 from packages.models import Package, Partner
 from guardian.decorators import permission_required_or_403
 
+
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def save_changes_view(request, partner_name, order_id):
     new_packages_cookie = request.COOKIES.get(str(order_id)+'_new_packages')
-    updated_packages_cookie = request.COOKIES.get(str(order_id)+'_updated_packages')
+    updated_packages_cookie = request.COOKIES.get(
+        str(order_id)+'_updated_packages')
 
     if updated_packages_cookie and updated_packages_cookie != 'None':
         updated_packages = update_saved_packages(updated_packages_cookie)
@@ -15,7 +17,7 @@ def save_changes_view(request, partner_name, order_id):
         new_packages = create_saved_packages(new_packages_cookie)
         send_new_email(new_packages)
 
-    response = redirect(f"/partner/{partner_name}/{order_id}/", mod_request=request)
+    response = redirect(f"/partner/{partner_name}/{order_id}/")
     response.set_cookie(str(order_id)+'_new_packages', None)
     response.set_cookie(str(order_id)+'_updated_packages', None)
 
@@ -47,12 +49,12 @@ def create_saved_packages(new_packages_cookie):
 
 
 def send_update_email(packages):
-    #TODO:
+    # TODO:
     #
     pass
 
 
 def send_new_email(packages):
-    #TODO:
+    # TODO:
     #
     pass
