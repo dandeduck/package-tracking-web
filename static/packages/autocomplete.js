@@ -27,56 +27,50 @@ class AutocompleteField {
 class Address {
     constructor(place, input) {
         if (typeof place === 'undefined' || typeof place.address_components === 'undefined')
-            this.fields = this.customAddressFormatting(this, input);
+            this.fields = this.customAddressFormatting(input);
         else
             this.fields = this.extractAddressComponents(place);
     }
 
-    customAddressFormatting(self, customInput) {
+    customAddressFormatting(customInput) {
         let components = customInput.split(',');
-        let address = {}
+        let address = {};
+        let numRegex = /\d+/;
+        let wordRegex = /\w+/;
 
         if (components.length === 1)
             address['city'] = components[0];
         else {
+            let streetNumber = components[0].match(numRegex);
+            let street;
+            let city;
+
             if (components[1].charAt(0) === ' ')
                 components[1] = components[1].substring(1);
 
-            address['city'] = components[1];
-            let [streetName, streetNumber] = self.extractStreetDetails(self, components[0].split(' '));
+            if (streetNumber) {
+                street = components[0];
+                city = components[1];
+            }
+            else {
+                streetNumber = components[1].match(numRegex);
+                street = components[1];
+                city = components[0];
+            }
 
-            address['street'] = streetName;
             address['street_number'] = streetNumber;
+            address['street'] = street.match(wordRegex);
+            address['city'] = city;
         }
 
         if (typeof address['street'] === 'undefined')
             address['street'] = '<no street>';
-        if (typeof address['street_number'] === 'undefined' || isNaN(address['street_number']))
+        if (typeof address['street_number'] === 'undefined' || address['street_number'] == '')
             address['street_number'] = 1;
 
         address['formatted'] = customInput;
 
         return address;
-    }
-
-    extractStreetDetails(self, streetDetails) {
-        let streetName = "";
-        let streetNumber;
-        let i;
-
-        for (i = 0; !self.isNumber(streetDetails[i]); i++)
-            streetName += streetDetails[i] + ' ';
-
-        streetName = streetName.slice(0, -1);
-        streetNumber = parseInt(streetDetails[i]);
-
-        return [streetName, streetNumber];
-    }
-
-    isNumber(str) {
-        let num = parseInt(str);
-
-        return !isNaN(num);
     }
 
     extractAddressComponents(place) {
@@ -120,17 +114,17 @@ class Address {
 }
 
 function initAutocomplete() {
-    destination = document.querySelector("#destination-address");
-    destinationCity = document.querySelector('#destination-city');
-    destinationStreet = document.getElementById('destination-street');
-    destinationStreetNumber = document.querySelector('#destination-street-number');
+    let destination = document.querySelector("#destination-address");
+    let destinationCity = document.querySelector('#destination-city');
+    let destinationStreet = document.getElementById('destination-street');
+    let destinationStreetNumber = document.querySelector('#destination-street-number');
 
     new AutocompleteField(destination, destinationCity, destinationStreet, destinationStreetNumber);
 
-    origin = document.querySelector("#origin-address");
-    originCity = document.querySelector('#origin-city');
-    originStreet = document.querySelector('#origin-street');
-    originStreetNumber = document.querySelector('#origin-street-number');
+    let origin = document.querySelector("#origin-address");
+    let originCity = document.querySelector('#origin-city');
+    let originStreet = document.querySelector('#origin-street');
+    let originStreetNumber = document.querySelector('#origin-street-number');
 
     new AutocompleteField(origin, originCity, originStreet, originStreetNumber);
 }
