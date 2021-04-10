@@ -61,7 +61,7 @@ def send_details_view(request):
 def email_details(personal_details, message):
 
     for key in personal_details.keys():
-        if personal_details[key] is None:
+        if personal_details[key] in [None, ' ']:
             personal_details[key] = '<not given>'
     # TODO:
     # implement email sending
