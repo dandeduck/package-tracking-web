@@ -6,7 +6,7 @@ class AutocompleteField {
         this.streetNumber = streetNumber;
 
         this.autocomplete = new google.maps.places.Autocomplete(input, {
-            componentRestrictions: { country: "il" },
+            componentRestrictions: { country: 'il' },
             types: ['address']
         });
         this.autocomplete.addListener("place_changed", () => this.fillIn(this));
@@ -33,19 +33,20 @@ class Address {
     }
 
     customAddressFormatting(customInput) {
+        const numRegex = /\d+/;
+        const wordRegex = /\w+/;
+
         let components = customInput.split(',');
         let address = {};
-        let numRegex = /\d+/;
-        let wordRegex = /\w+/;
 
-        if (components.length === 1)
+        if (components.length == 1)
             address['city'] = components[0];
         else {
             let streetNumber = components[0].match(numRegex);
             let street;
             let city;
 
-            if (components[1].charAt(0) === ' ')
+            if (components[1].charAt(0) == ' ')
                 components[1] = components[1].substring(1);
 
             if (streetNumber) {
@@ -63,8 +64,8 @@ class Address {
             address['city'] = city;
         }
 
-        if (typeof address['street'] === 'undefined')
-            address['street'] = '<no street>';
+        address['street'] ??= '<no street>';
+
         if (typeof address['street_number'] === 'undefined' || address['street_number'] == '')
             address['street_number'] = 1;
 
@@ -75,7 +76,7 @@ class Address {
 
     extractAddressComponents(place) {
         let address = {};
-        let str = "";
+        let str = '';
 
         for (const component of place.address_components) {
             const componentType = component.types[0];
@@ -105,9 +106,7 @@ class Address {
         }
 
         address['formatted'] = str;
-
-        if (typeof address['street_number'] === 'undefined')
-            address['street_number'] = 1;
+        address['street_number'] ??= 1;
 
         return address;
     }
