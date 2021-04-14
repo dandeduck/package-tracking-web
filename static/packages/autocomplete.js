@@ -17,98 +17,82 @@ class AutocompleteField {
         const place = self.autocomplete.getPlace();
         let address = new Address(place, self.input.value);
 
-        self.input.value = address.fields['formatted'];
-        self.city.value = address.fields['city'];
-        self.street.value = address.fields['street'];
-        self.streetNumber.value = address.fields['street_number'];
+        self.input.value = address.formatted;
+        self.city.value = address.city;
+        self.street.value = address.street;
+        self.streetNumber.value = address.street_number;
     }
 }
 
 class Address {
     constructor(place, input) {
         if (typeof place === 'undefined' || typeof place.address_components === 'undefined')
-            this.fields = this.customAddressFormatting(input);
+            this.customAddressFormatting(this, input);
         else
-            this.fields = this.extractAddressComponents(place);
+            this.extractAddressComponents(this, place);
     }
 
-    customAddressFormatting(customInput) {
+    customAddressFormatting(self, customInput) {
         const numRegex = /\d+/;
-        const wordRegex = /\w+/;
 
         let components = customInput.split(',');
-        let address = {};
+        let streetNumber;
+        let street;
+        let city;
 
         if (components.length == 1)
-            address['city'] = components[0];
+            city = components[0];
         else {
-            let streetNumber = components[0].match(numRegex);
-            let street;
-            let city;
-
-            if (components[1].charAt(0) == ' ')
+            if (components[1].charAt(0) === ' ')
                 components[1] = components[1].substring(1);
 
-            if (streetNumber) {
+            if (streetNumber = + components[0].match(numRegex)) {
                 street = components[0];
                 city = components[1];
             }
             else {
-                streetNumber = components[1].match(numRegex);
+                streetNumber = +components[1].match(numRegex);
                 street = components[1];
                 city = components[0];
             }
 
-            address['street_number'] = streetNumber;
-            address['street'] = street.match(wordRegex);
-            address['city'] = city;
+            street = street.replace(/[0-9]/g, '').slice(0, -1);
+            alert("'" + String(street) + "'");
         }
 
-        address['street'] ??= '<no street>';
+        street ??= '<no street>';
 
-        if (typeof address['street_number'] === 'undefined' || address['street_number'] == '')
-            address['street_number'] = 1;
+        if (typeof streetNumber === 'undefined' || streetNumber == '')
+            streetNumber = 1;
 
-        address['formatted'] = customInput;
-
-        return address;
+        self.formatted = customInput;
+        self.city = city;
+        self.street = street;
+        self.street_number = streetNumber;
     }
 
-    extractAddressComponents(place) {
-        let address = {};
-        let str = '';
+    extractAddressComponents(self, place) {
 
         for (const component of place.address_components) {
             const componentType = component.types[0];
 
             switch (componentType) {
-                case "street_number": {
-                    let streetNumber = component.long_name;
-                    address['street_number'] = streetNumber;
-                    str = streetNumber;
+                case "street_number":
+                    self.streetNumber = component.long_name;
                     break;
-                }
 
-                case "route": {
-                    let streetName = component.short_name;
-                    address['street'] = streetName;
-                    str = streetName + ' ' + str + ', ';
+                case "route":
+                    self.streetName = component.short_name;
                     break;
-                }
 
-                case "locality": {
-                    let city = component.long_name;
-                    address['city'] = city;
-                    str += city;
+                case "locality":
+                    self.city = component.long_name;
                     break;
-                }
             }
         }
 
-        address['formatted'] = str;
-        address['street_number'] ??= 1;
-
-        return address;
+        self.formatted = `${self.streetName} ${self.streetNumber ?? 1}, ${self.city}`;
+        self.streetNumber ??= 1;
     }
 }
 
