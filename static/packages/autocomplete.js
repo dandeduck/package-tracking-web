@@ -20,7 +20,7 @@ class AutocompleteField {
         self.input.value = address.formatted;
         self.city.value = address.city;
         self.street.value = address.street;
-        self.streetNumber.value = address.street_number;
+        self.streetNumber.value = address.streetNumber;
     }
 }
 
@@ -57,7 +57,6 @@ class Address {
             }
 
             street = street.replace(/[0-9]/g, '').slice(0, -1);
-            alert("'" + String(street) + "'");
         }
 
         street ??= '<no street>';
@@ -68,7 +67,7 @@ class Address {
         self.formatted = customInput;
         self.city = city;
         self.street = street;
-        self.street_number = streetNumber;
+        self.streetNumber = streetNumber;
     }
 
     extractAddressComponents(self, place) {
@@ -85,7 +84,7 @@ class Address {
                     self.streetName = component.short_name;
                     break;
 
-                case "locality":
+                case "locity":
                     self.city = component.long_name;
                     break;
             }
