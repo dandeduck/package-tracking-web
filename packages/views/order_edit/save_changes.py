@@ -1,12 +1,11 @@
 from django.shortcuts import redirect
-from django.core import serializers
-from django.core.mail import send_mail
 from django.template import loader
 from packages.models import Package, Partner, Order
 from guardian.decorators import permission_required_or_403
 
-from package_tracking.settings import EMAIL_HOST_USER
-from package_tracking.settings import STAFF_EMAILS
+
+from util import json_to_packages
+from util import send_email
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -57,31 +56,26 @@ def create_saved_packages(new_packages_cookie):
     return packages
 
 
-def json_to_packages(json):
-    return [des.object for des in serializers.deserialize('json', json)]
-
-
 def send_update_email(order, old_packages, new_packages):
     subject = f"{str(order)} עדכון הזמנה מ"
     context = {
         'old_packages': old_packages,
-        'new_packages': new_packages
+        'new_packages': new_packages,
+        'partner': order.partner,
+        'order': order
     }
     html = loader.render_to_string('emailing/package_update.html', context)
 
-    send_hebrew_email(subject, html)
+    send_email(subject, html)
 
 
 def send_new_email(order, packages):
     subject = f"{str(order)} הוספה להזמנה"
     context = {
-        'packages': packages
+        'packages': packages,
+        'partner': order.partner,
+        'order': order
     }
     html = loader.render_to_string('emailing/new_packages.html', context)
 
-    send_hebrew_email(subject, html)
-
-
-def send_hebrew_email(subject, message):
-    send_mail(subject, '', EMAIL_HOST_USER, STAFF_EMAILS,
-              fail_silently=True, html_message=message)
+    send_email(subject, html)
