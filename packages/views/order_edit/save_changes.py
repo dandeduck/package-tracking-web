@@ -38,13 +38,8 @@ def update_saved_packages(updated_packages_cookie):
     old_packages = []
 
     for package in packages:
-        package = package.object
         actual_package = Package.objects.filter(id=package.id)
         old_packages.append(actual_package.get())
-        print('\n 12414124124124141=- \n' +
-              package.notes)
-        print('\n 12414124124124141=- \n' +
-              actual_package.notes)
         actual_package.update(origin=package.origin, destination=package.destination, rate=package.rate,
                               full_name=package.full_name, phone_number=package.phone_number, notes=package.notes)
 
@@ -55,7 +50,6 @@ def create_saved_packages(new_packages_cookie):
     packages = json_to_packages(new_packages_cookie)
 
     for package in packages:
-        package = package.object
         Package.objects.create(order=package.order, origin=package.origin, destination=package.destination,
                                rate=package.rate, full_name=package.full_name, phone_number=package.phone_number,
                                notes=package.notes)

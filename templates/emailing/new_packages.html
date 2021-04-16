@@ -1,6 +1,6 @@
-<body>
-    <div dir="rtl">
-        <h3>חבילות חדשות:</h3>
-        {% include 'emailing/show_packages.html' with packages=packages%}
-    </div>
-</body>
+{% extends 'emailing/email_base.html' %}
+
+{% block content%}
+<h3>חבילות חדשות:</h3>
+{% include 'emailing/show_packages.html'%}
+{% endblock %}
