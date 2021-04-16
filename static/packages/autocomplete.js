@@ -33,7 +33,7 @@ class Address {
     }
 
     customAddressFormatting(self, customInput) {
-        let match = customInput.match(/^(\w+\s?\w*)\s*(?:(\d*)\s*)?(?:,\s*(\w+\s?\w*)?\s*)?$/);
+        let match = customInput.match(/^(\w+[\sa-zA-Z\-]*)\s*(?:(\d*)\s*)?(?:,\s*(\w+\s?\w*)?\s*)?$/);
         let city = '';
         let street = '';
         let streetNumber = '';
