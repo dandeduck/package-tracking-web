@@ -6,7 +6,7 @@ class AutocompleteField {
         this.streetNumber = streetNumber;
 
         this.autocomplete = new google.maps.places.Autocomplete(input, {
-            componentRestrictions: { country: "il" },
+            componentRestrictions: { country: 'il' },
             types: ['address']
         });
         this.autocomplete.addListener("place_changed", () => this.fillIn(this));
@@ -17,124 +17,89 @@ class AutocompleteField {
         const place = self.autocomplete.getPlace();
         let address = new Address(place, self.input.value);
 
-        self.input.value = address.fields['formatted'];
-        self.city.value = address.fields['city'];
-        self.street.value = address.fields['street'];
-        self.streetNumber.value = address.fields['street_number'];
+        self.input.value = address.formatted;
+        self.city.value = address.city;
+        self.street.value = address.street;
+        self.streetNumber.value = address.streetNumber;
     }
 }
 
 class Address {
     constructor(place, input) {
         if (typeof place === 'undefined' || typeof place.address_components === 'undefined')
-            this.fields = this.customAddressFormatting(this, input);
+            this.customAddressFormatting(this, input);
         else
-            this.fields = this.extractAddressComponents(place);
+            this.extractAddressComponents(this, place);
     }
 
     customAddressFormatting(self, customInput) {
-        let components = customInput.split(',');
-        let address = {}
+        let match = customInput.match(/^(\w+[\sa-zA-Z\-]*)\s*(?:(\d*)\s*)?(?:,\s*(\w+\s?\w*)?\s*)?$/);
+        let city = '';
+        let street = '';
+        let streetNumber = '';
 
-        if (components.length === 1)
-            address['city'] = components[0];
-        else {
-            if (components[1].charAt(0) === ' ')
-                components[1] = components[1].substring(1);
-
-            address['city'] = components[1];
-            streetDetails = self.extractStreetDetails(components[0].split(' '));
-
-            address['street'] = streetDetails[0];
-            address['street_number'] = streetDetails[1];
+        if (match == null) {
+            return;
         }
 
-        if (typeof address['street'] === 'undefined')
-            address['street'] = '<no street>';
-        if (typeof address['street_number'] === 'undefined' || isNaN(address['street_number']))
-            address['street_number'] = 1;
-
-        address['formatted'] = customInput;
-
-        return address;
-    }
-
-    extractStreetDetails(self, detailsStr) {
-        let word = "";
-        let streetName = "";
-        let streetNumber;
-
-        streetDetails = detailsStr;
-
-        for (i = 0; !self.isNumber(word); i++) {
-            word = streetDetails[i];
-            streetName += streetDetails + ' ';
+        if (match[2] == null && match[3] == null) {
+            city = match[1];
+        }
+        else if (match[3] == null) {
+            street = match[1];
+            streetNumber = match[2];
+        }
+        else if (match[2] == null) {
+            street = match[1];
+            city = match[3];
+        } else {
+            street = match[1];
+            number = match[2];
+            city = match[3];
         }
 
-        streetName = streetName.slice(0, -1);
-        streetNumber = parseInt(word);
-
-        return [streetName, streetNumber];
+        self.formatted = customInput;
+        self.city = city;
+        self.street = street;
+        self.streetNumber = streetNumber;
     }
 
-    isNumber(str) {
-        num = parseInt(str);
-
-        return !isNaN(num);
-    }
-
-    extractAddressComponents(place) {
-        let address = {};
-        let str = "";
-
+    extractAddressComponents(self, place) {
         for (const component of place.address_components) {
             const componentType = component.types[0];
 
             switch (componentType) {
-                case "street_number": {
-                    let streetNumber = component.long_name;
-                    address['street_number'] = streetNumber;
-                    str = streetNumber;
+                case "street_number":
+                    self.streetNumber = component.long_name;
                     break;
-                }
 
-                case "route": {
-                    let streetName = component.short_name;
-                    address['street'] = streetName;
-                    str = streetName + ' ' + str + ', ';
+                case "route":
+                    self.street = component.short_name;
                     break;
-                }
 
-                case "locality": {
-                    let city = component.long_name;
-                    address['city'] = city;
-                    str += city;
+                case "locality":
+                    self.city = component.long_name;
                     break;
-                }
             }
         }
 
-        address['formatted'] = str;
-
-        if (typeof address['street_number'] === 'undefined')
-            address['street_number'] = 1;
-
-        return address;
+        self.streetNumber ??= '';
+        self.formatted = `${self.street} ${self.streetNumber}, ${self.city}`;
     }
 }
 
 function initAutocomplete() {
-    destination = document.querySelector("#destination-address");
-    destinationCity = document.querySelector('#destination-city');
-    destinationStreet = document.getElementById('destination-street');
-    destinationStreetNumber = document.querySelector('#destination-street-number');
+    let destination = document.querySelector("#destination-address");
+    let destinationCity = document.querySelector('#destination-city');
+    let destinationStreet = document.getElementById('destination-street');
+    let destinationStreetNumber = document.querySelector('#destination-street-number');
 
     new AutocompleteField(destination, destinationCity, destinationStreet, destinationStreetNumber);
 
-    origin = document.querySelector("#origin-address");
-    originCity = document.querySelector('#origin-city');
-    originStreet = document.querySelector('#origin-street');
-    originStreetNumber = document.querySelector('#origin-street-number');
+    let origin = document.querySelector("#origin-address");
+    let originCity = document.querySelector('#origin-city');
+    let originStreet = document.querySelector('#origin-street');
+    let originStreetNumber = document.querySelector('#origin-street-number');
 
     new AutocompleteField(origin, originCity, originStreet, originStreetNumber);
 }

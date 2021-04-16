@@ -108,6 +108,8 @@ def get_or_create_destination_address(request):
     street_name = request.POST.get('destination-street')
     street_number = request.POST.get('destination-street-number')
 
+    street_number = street_number if street_number.isnumeric() else 0
+
     return Address.objects.get_or_create(city=city_name, street=street_name, street_number=street_number)[0]
 
 
@@ -115,6 +117,8 @@ def get_or_create_origin_address(request):
     city_name = request.POST.get('origin-city')
     street_name = request.POST.get('origin-street')
     street_number = request.POST.get('origin-street-number')
+
+    street_number = street_number if street_number.isnumeric() else 0
 
     return Address.objects.get_or_create(city=city_name, street=street_name, street_number=street_number)[0]
 
