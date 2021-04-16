@@ -74,16 +74,17 @@ class Address {
                     break;
 
                 case "route":
-                    self.streetName = component.short_name;
+                    self.street = component.short_name;
                     break;
 
-                case "locity":
+                case "locality":
                     self.city = component.long_name;
                     break;
             }
         }
 
-        self.formatted = `${self.streetName} ${self.streetNumber}, ${self.city}`;
+        self.streetNumber ??= '';
+        self.formatted = `${self.street} ${self.streetNumber}, ${self.city}`;
     }
 }
 
