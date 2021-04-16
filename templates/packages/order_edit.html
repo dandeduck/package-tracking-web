@@ -81,14 +81,22 @@
                         <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                             <input type="hidden" name="package" value="{{package.id}}" />
                             <input type="hidden" name="update-type" value="increase" />
+                            {% if package in existing_packages%}
                             <button type="submit" class="btn btn-outline-success">Update</button>
+                            {% else %}
+                            <button type="submit" class="btn btn-outline-success" disabled>Update</button>
+                            {% endif %}
                         </form>
                     </li>
                     <li class="list-inline-item me-4">
                         <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update/"> {% csrf_token %}
                             <input type="hidden" name="package" value="{{package.id}}" />
                             <input type="hidden" name="update-type" value="revert" />
+                            {% if package in existing_packages%}
                             <button class="btn btn-outline-danger">Revert</button>
+                            {% else %}
+                            <button class="btn btn-outline-danger" disabled>Revert</button>
+                            {% endif %}
                         </form>
                     </li>
                 </ul>
@@ -99,7 +107,29 @@
     </div>
     {%endfor%}
 </div>
-<div class="modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="container text-end mt-3">
+    <form method="post" action="/partner/{{partner.name}}/{{order.id}}/update-notes/"> {%csrf_token%}
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <label for="order-notes" class="form-label">הערות להזמנה</label>
+                <textarea id="order-notes" name="order-notes" class="form-control"
+                    type="text">{{order.notes}}</textarea>
+            </div>
+            <div class="col-auto">
+                <button id="notes-sumbit" class="btn btn-outline-success mt-5" type="submit" disabled>עדכן</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    const input = document.getElementById('order-notes');
+    input.addEventListener('input', enableSubmit);
+
+    function enableSubmit() {
+        document.getElementById('notes-sumbit').disabled = false;
+    }
+</script>
+<div class=" modal fade" id="package-modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
     role="dialog" aria-labelledby="package-modal-title" aria-hidden="true" dir="ltr">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -124,7 +154,7 @@
                         {%csrf_token%}
                         <input id="package-id" type="hidden" name="package-id" />
                         <div class="input-group mb-2">
-                            <span class="input-group-text">Origin</span>
+                            <span class="input-group-text">Origin {% include 'required.html' %}</span>
                             <input id="origin-address" name="origin-address" class="col form-control"
                                 placeholder="Street 12, City" autocomplete="off" required />
                             <input id="origin-city" name="origin-city" type="hidden" />
@@ -132,7 +162,7 @@
                             <input id="origin-street-number" name="origin-street-number" type="hidden" />
                         </div>
                         <div class="input-group mb-2">
-                            <span class="input-group-text">Destination</span>
+                            <span class="input-group-text">Destination {% include 'required.html' %}</span>
                             <input id="destination-address" name="destination-address" class="col form-control"
                                 placeholder="Street 12, City" autocomplete="off" required />
                             <input id="destination-city" name="destination-city" type="hidden" />
@@ -199,5 +229,5 @@
 {%endblock%}
 
 {% block end%}
-<script src="{% static 'enable-popovers.js' %}"></script>
+<script src="{% static 'packages/enable-popovers.js' %}"></script>
 {% endblock %}

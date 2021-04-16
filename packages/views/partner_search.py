@@ -7,32 +7,59 @@ from guardian.decorators import permission_required_or_403
 def partner_search_view(request, partner_name):
     partner = Partner.objects.filter(name=partner_name).get()
 
-    name_query = request.GET.get('name')
-    street_name_query = request.GET.get('street_name')
-    street_number_query = request.GET.get('street_number')
-    city_query = request.GET.get('city')
-    number_query = request.GET.get('number')
+    destination_city = request.GET.get('destination-city')
+    destination_street = request.GET.get('destination-street')
+    destination_street_number = request.GET.get('destination-street-number')
+
+    origin_city = request.GET.get('origin-city')
+    origin_street = request.GET.get('origin-street')
+    origin_street_number = request.GET.get('origin-street-number')
+
+    name = request.GET.get('name')
+    number = request.GET.get('phone-number')
+    notes = request.GET.get('notes')
+
+    order_id = request.GET.get('order')
 
     packages = Package.objects.filter(order__partner__name=partner.name)
     filtered_packages = Package.objects.none()
 
-    if name_query:
-        packages = packages.filter(full_name__icontains=name_query)
+    if order_id:
+        order_id = order_id.split(' ')[-1]
+        packages = packages.filter(order__id=order_id)
         filtered_packages = packages
-    if number_query:
-        packages = packages.filter(phone_number__icontains=number_query)
+
+    if name:
+        packages = packages.filter(full_name__icontains=name)
         filtered_packages = packages
-    if street_name_query:
+    if number:
+        packages = packages.filter(phone_number__icontains=number)
+        filtered_packages = packages
+    if notes:
+        packages = packages.filter(notes__icontains=notes)
+        filtered_packages = packages
+
+    if destination_city:
         packages = packages.filter(
-            destination__street__name__icontains=street_name_query)
+            destination__city__icontains=destination_city)
         filtered_packages = packages
-    if street_number_query:
+    if destination_street:
         packages = packages.filter(
-            destination__street_number__contains=street_number_query)
+            destination__street__icontains=destination_street)
         filtered_packages = packages
-    if city_query:
+    if destination_street_number:
         packages = packages.filter(
-            destination__city__name__icontains=city_query)
+            destination__street_number=destination_street_number)
+        filtered_packages = packages
+
+    if origin_city:
+        packages = packages.filter(origin__city__icontains=origin_city)
+        filtered_packages = packages
+    if destination_street:
+        packages = packages.filter(origin__street__icontains=origin_street)
+        filtered_packages = packages
+    if origin_street_number:
+        packages = packages.filter(origin__street_number=origin_street_number)
         filtered_packages = packages
 
     orders = []
@@ -47,10 +74,11 @@ def partner_search_view(request, partner_name):
 
     order_packages = [(orders[i], related_packages[i])
                       for i in range(0, len(orders))]
+
     context = {
         'partner': partner,
         'order_packages': order_packages,
-        'is_staff': request.user.is_staff
+        'orders': partner.related_orders().order_by('-collection_date')
     }
 
     return render(request, 'packages/partner_search.html', context)

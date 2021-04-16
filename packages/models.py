@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Address(models.Model):
-    street_number = models.PositiveSmallIntegerField()
+    street_number = models.PositiveSmallIntegerField(blank=True)
     street = models.CharField(max_length=64)
     city = models.CharField(max_length=64)
 
