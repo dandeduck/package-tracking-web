@@ -1,0 +1,8 @@
+<ul>
+    {% for package in old_packages%}
+    <li>
+        מאת {{package.origin}} אל {{package.destination}}<br> פרטים: {{package.full_name}} {{package.phone_number}} [<a
+            href="/{{package.id}}/"></a>]<br>
+    </li>
+    {% endfor %}
+</ul>

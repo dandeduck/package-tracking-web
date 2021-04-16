@@ -52,7 +52,7 @@ class Order(models.Model):
         return Package.Status(self.overall_package_status()).color()
 
     def __str__(self):
-        return f"{self.partner} {self.collection_date}"
+        return f"{self.partner} {self.collection_date.date()}"
 
     def __lt__(self, other):
         return self.collection_date > other.collection_date

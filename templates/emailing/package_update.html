@@ -1,0 +1,8 @@
+<body>
+    <div dir="rtl">
+        <h3>חבילות שעברו שינוי:</h3>
+        {% include 'emailing/show_packages.html' with packages=old_packages%}
+        <h3>חבילות לאחר שינוי:</h3>
+        {% include 'emailing/show_packages.html' with packages=new_packages%}
+    </div>
+</body>
