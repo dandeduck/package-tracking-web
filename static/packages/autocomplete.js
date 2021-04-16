@@ -33,36 +33,30 @@ class Address {
     }
 
     customAddressFormatting(self, customInput) {
-        const numRegex = /\d+/;
+        let match = customInput.match(/^(\w+\s?\w*)\s*(?:(\d*)\s*)?(?:,\s*(\w+\s?\w*)?\s*)?$/);
+        let city = '';
+        let street = '';
+        let streetNumber = '';
 
-        let components = customInput.split(',');
-        let streetNumber;
-        let street;
-        let city;
-
-        if (components.length == 1)
-            city = components[0];
-        else {
-            if (components[1].charAt(0) === ' ')
-                components[1] = components[1].substring(1);
-
-            if (streetNumber = + components[0].match(numRegex)) {
-                street = components[0];
-                city = components[1];
-            }
-            else {
-                streetNumber = +components[1].match(numRegex);
-                street = components[1];
-                city = components[0];
-            }
-
-            street = street.replace(/[0-9]/g, '').slice(0, -1);
+        if (match == null) {
+            return;
         }
 
-        street ??= '<no street>';
-
-        if (typeof streetNumber === 'undefined' || streetNumber == '')
-            streetNumber = 1;
+        if (match[2] == null && match[3] == null) {
+            city = match[1];
+        }
+        else if (match[3] == null) {
+            street = match[1];
+            streetNumber = match[2];
+        }
+        else if (match[2] == null) {
+            street = match[1];
+            city = match[3];
+        } else {
+            street = match[1];
+            number = match[2];
+            city = match[3];
+        }
 
         self.formatted = customInput;
         self.city = city;
@@ -71,7 +65,6 @@ class Address {
     }
 
     extractAddressComponents(self, place) {
-
         for (const component of place.address_components) {
             const componentType = component.types[0];
 
@@ -90,8 +83,7 @@ class Address {
             }
         }
 
-        self.formatted = `${self.streetName} ${self.streetNumber ?? 1}, ${self.city}`;
-        self.streetNumber ??= 1;
+        self.formatted = `${self.streetName} ${self.streetNumber}, ${self.city}`;
     }
 }
 
