@@ -1,7 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.template import loader
 
 from util import user_partners
+from util import send_staff_email
+from util import contact_email
 
 
 def logout_view(request):
@@ -63,8 +66,17 @@ def email_details(personal_details, message):
     for key in personal_details.keys():
         if personal_details[key] in [None, '']:
             personal_details[key] = '<not given>'
-    # TODO:
-    # implement email sending
+
+    subject = f"בקשה ליצירת קשר מאת {personal_details['email']}"
+    context = {
+        'personal_details': personal_details,
+        'message': message
+    }
+
+    html = loader.render_to_string('emailing/contact.html', context)
+
+    send_staff_email(subject, html)
+    contact_email(personal_details['email'])
 
 
 def financial_view(request):

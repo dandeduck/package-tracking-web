@@ -5,7 +5,7 @@ from guardian.decorators import permission_required_or_403
 
 
 from util import json_to_packages
-from util import send_email
+from util import send_staff_email
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -57,7 +57,7 @@ def create_saved_packages(new_packages_cookie):
 
 
 def send_update_email(order, old_packages, new_packages):
-    subject = f"{str(order)} עדכון הזמנה מ"
+    subject = f"עדכון הזמנה מ {str(order)}"
     context = {
         'old_packages': old_packages,
         'new_packages': new_packages,
@@ -66,11 +66,11 @@ def send_update_email(order, old_packages, new_packages):
     }
     html = loader.render_to_string('emailing/package_update.html', context)
 
-    send_email(subject, html)
+    send_staff_email(subject, html)
 
 
 def send_new_email(order, packages):
-    subject = f"{str(order)} הוספה להזמנה"
+    subject = f"הוספה להזמנה {str(order)}"
     context = {
         'packages': packages,
         'partner': order.partner,
@@ -78,4 +78,4 @@ def send_new_email(order, packages):
     }
     html = loader.render_to_string('emailing/new_packages.html', context)
 
-    send_email(subject, html)
+    send_staff_email(subject, html)

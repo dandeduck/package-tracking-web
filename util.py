@@ -20,6 +20,14 @@ def json_to_packages(json):
     return [des.object for des in serializers.deserialize('json', json)]
 
 
-def send_email(subject, html):
+def send_staff_email(subject, html):
     send_mail(subject, '', EMAIL_HOST_USER, STAFF_EMAILS,
               fail_silently=True, html_message=html)
+
+
+def contact_email(email):
+    subject = 'תודה שהתעניינתם!'
+    message = '.קיבלנו את פרטיכם, ניצור קשר בהקדם האפשרי'
+    # TODO:
+    # Add 'do not respons' 'automatic msg' etc. at the end on this html
+    send_mail(subject, message, EMAIL_HOST_USER, [email], fail_silently=True)
