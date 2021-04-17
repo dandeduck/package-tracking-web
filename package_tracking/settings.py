@@ -148,3 +148,4 @@ EMAIL_SUBJECT_PREFIX = '[Staff] '
 EMAIL_HOST_PASSWORD = '23uD8KSFXdanMfn'
 
 ROOT_URL = 'https://www.something.com'
+EMAIL_LIST_GROUP_NAME = 'staff'
