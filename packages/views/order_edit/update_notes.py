@@ -5,6 +5,7 @@ from django.template import loader
 
 
 from util import email_staff
+from package_tracking.settings import ROOT_URL
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -23,7 +24,8 @@ def notify_about_changes(order, old_notes):
     context = {
         'order': order,
         'partner': order.partner,
-        'old_notes': old_notes
+        'old_notes': old_notes,
+        'ROOT_URL': ROOT_URL
     }
 
     html = loader.render_to_string('emailing/updated_notes.html', context)

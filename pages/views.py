@@ -6,6 +6,8 @@ from util import user_partners
 from util import email_staff
 from util import contact_email
 
+from package_tracking.settings import ROOT_URL
+
 
 def logout_view(request):
     logout(request)
@@ -69,7 +71,8 @@ def email_details(personal_details, message):
     subject = f"בקשה ליצירת קשר מאת {personal_details['email']}"
     context = {
         'personal_details': personal_details,
-        'message': message
+        'message': message,
+        'ROOT_URL': ROOT_URL
     }
 
     html = loader.render_to_string('emailing/contact.html', context)

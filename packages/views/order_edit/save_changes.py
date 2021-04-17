@@ -6,6 +6,7 @@ from guardian.decorators import permission_required_or_403
 
 from util import json_to_packages
 from util import email_staff
+from package_tracking.settings import ROOT_URL
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -62,7 +63,8 @@ def send_update_email(order, old_packages, new_packages):
         'old_packages': old_packages,
         'new_packages': new_packages,
         'partner': order.partner,
-        'order': order
+        'order': order,
+        'ROOT_URL': ROOT_URL
     }
     html = loader.render_to_string('emailing/package_update.html', context)
 
@@ -74,7 +76,8 @@ def send_new_email(order, packages):
     context = {
         'packages': packages,
         'partner': order.partner,
-        'order': order
+        'order': order,
+        'ROOT_URL': ROOT_URL
     }
     html = loader.render_to_string('emailing/new_packages.html', context)
 

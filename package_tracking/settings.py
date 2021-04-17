@@ -143,7 +143,8 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'testingmonke@gmail.com'
 EMAIL_HOST_USER = DEFAULT_FROM_EMAIL
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_SUBJECT_PREFIX = '[Staff] '
 
 EMAIL_HOST_PASSWORD = '23uD8KSFXdanMfn'
 
-ROOT_URL = 'https://www.something.com/'
+ROOT_URL = 'https://www.something.com'
