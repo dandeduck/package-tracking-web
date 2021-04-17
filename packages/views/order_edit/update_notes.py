@@ -4,7 +4,7 @@ from guardian.decorators import permission_required_or_403
 from django.template import loader
 
 
-from util import send_staff_email
+from util import email_staff
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -28,4 +28,4 @@ def notify_about_changes(order, old_notes):
 
     html = loader.render_to_string('emailing/updated_notes.html', context)
 
-    send_staff_email(subject, html)
+    email_staff(subject, html)

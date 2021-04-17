@@ -5,7 +5,7 @@ from guardian.decorators import permission_required_or_403
 
 
 from util import json_to_packages
-from util import send_staff_email
+from util import email_staff
 
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
@@ -66,7 +66,7 @@ def send_update_email(order, old_packages, new_packages):
     }
     html = loader.render_to_string('emailing/package_update.html', context)
 
-    send_staff_email(subject, html)
+    email_staff(subject, html)
 
 
 def send_new_email(order, packages):
@@ -78,4 +78,4 @@ def send_new_email(order, packages):
     }
     html = loader.render_to_string('emailing/new_packages.html', context)
 
-    send_staff_email(subject, html)
+    email_staff(subject, html)

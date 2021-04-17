@@ -18,7 +18,7 @@ def json_to_packages(json):
     return [des.object for des in serializers.deserialize('json', json)]
 
 
-def send_staff_email(subject, html):
+def email_staff(subject, html):
     mail_managers(subject, '',
                   fail_silently=True, html_message=html)
 
