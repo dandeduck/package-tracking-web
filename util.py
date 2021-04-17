@@ -1,7 +1,8 @@
 from django.core import serializers
-from django.core.mail import send_mass_mail
-from django.core.mail import mail_managers
+from django.core.mail import send_mail
+
 from packages.models import Partner
+from pages.models import Staff
 
 
 def user_partners(user):
@@ -18,9 +19,10 @@ def json_to_packages(json):
     return [des.object for des in serializers.deserialize('json', json)]
 
 
-def email_staff(subject, html):
-    mail_managers(subject, '',
-                  fail_silently=True, html_message=html)
+def email_staff(subject, html, plain_text=''):
+
+    send_mail(subject, plain_text, from_email=None, recipient_list=map(lambda staff: staff.user.email, Staff.objects.all()),
+              fail_silently=True, html_message=html)
 
 
 def contact_email(email):
@@ -28,5 +30,5 @@ def contact_email(email):
     message = '.קיבלנו את פרטיכם, ניצור קשר בהקדם האפשרי'
     # TODO:
     # Add 'do not respond' 'automatic msg' etc. at the end on this html
-    send_mass_mail(subject, message, recipient_list=[
-                   email], fail_silently=True)
+    send_mail(subject, message, from_email=None, recipient_list=[
+        email], fail_silently=True)
