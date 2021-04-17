@@ -72,7 +72,8 @@ def send_update_email(order, old_packages, new_packages):
 
 
 def send_new_email(order, packages):
-    subject = f"הוספה להזמנה {str(order)}"
+    subject = f"הוספה להזמנה {str(order)}" if len(order.related_packages(
+    )) > len(packages) else f"הזמנה חדשה {str(order)}"
     context = {
         'packages': packages,
         'partner': order.partner,
