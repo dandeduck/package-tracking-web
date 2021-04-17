@@ -38,24 +38,22 @@ class Address {
         let street = '';
         let streetNumber = '';
 
-        if (match == null) {
-            return;
-        }
-
-        if (match[2] == null && match[3] == null) {
-            city = match[1];
-        }
-        else if (match[3] == null) {
-            street = match[1];
-            streetNumber = match[2];
-        }
-        else if (match[2] == null) {
-            street = match[1];
-            city = match[3];
-        } else {
-            street = match[1];
-            number = match[2];
-            city = match[3];
+        if (match != null) {
+            if (match[2] == null && match[3] == null) {
+                city = match[1];
+            }
+            else if (match[3] == null) {
+                street = match[1];
+                streetNumber = match[2];
+            }
+            else if (match[2] == null) {
+                street = match[1];
+                city = match[3];
+            } else {
+                street = match[1];
+                number = match[2];
+                city = match[3];
+            }
         }
 
         self.formatted = customInput;

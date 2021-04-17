@@ -1,0 +1,7 @@
+{% extends 'emailing/staff_email_base.html' %}
+{% block content%}
+<h3>הערות ישנות:</h3>
+{{old_notes}}
+<h3>הערות חדשות:</h3>
+{{order.notes}}
+{%endblock%}

@@ -3,6 +3,8 @@ from packages.models import Address, Order, Package, Partner
 from django.shortcuts import render
 from guardian.decorators import permission_required_or_403
 
+from util import json_to_packages
+
 
 @permission_required_or_403('view_partner', (Partner, 'name', 'partner_name'))
 def order_edit_view(request, partner_name, order_id):
@@ -61,10 +63,6 @@ def make_cookies_make_sense(cookies):
     for key, value in cookies.items():
         if value == 'None':
             cookies[key] = None
-
-
-def json_to_packages(json):
-    return [des.object for des in serializers.deserialize('json', json)]
 
 
 def changed_cookies(request, cookies, order):

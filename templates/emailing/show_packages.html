@@ -1,0 +1,9 @@
+<ul>
+    {% for package in packages%}
+    <li>
+        מקור {{package.origin}} יעד {{package.destination}}<br> פרטים: {{package.full_name}} {{package.phone_number}}
+        הערות: {{package.notes}}
+        [<a href="{{ROOT_URL}}/package/{{package.id}}/">קישור</a>]<br>
+    </li>
+    {% endfor %}
+</ul>
