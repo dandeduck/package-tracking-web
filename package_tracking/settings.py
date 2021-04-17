@@ -130,11 +130,18 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-# DataFlair
+MANAGERS = [
+    ('duck', 'danielmkhlv@gmail.com'),
+    ('duck3', 'israelibit@gmail.com')
+]
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'testingmonke@gmail.com'
-STAFF_EMAILS = ['danielmkhlv@gmail.com']
+
+DEFAULT_FROM_EMAIL = 'testingmonke@gmail.com'
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 EMAIL_HOST_PASSWORD = '23uD8KSFXdanMfn'
