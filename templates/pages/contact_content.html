@@ -1,0 +1,33 @@
+{% load static %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center" dir="ltr">
+        <div class="col-md-5 text-start">
+            <form method="post" action="/contact/send-details/"> {%csrf_token%}
+                <input type="hidden" name="origin" value="{{request.path}}" />
+                <label for="name" class="form-label">Name</label>
+                <input id="name" type="text" class="form-control mb-3" name="name" />
+                <label for="number" class="form-label">Phone number</label>
+                <input id="number" type="tel" class="form-control mb-3" name="number" />
+                <label for="email" class="form-label">Email address {% include 'required.html' %}</label>
+                <input id="email" type="email" class="form-control mb-3" name="email" required />
+                <label for="message" class="form-label">Message {% include 'required.html' %}</label>
+                <textarea id="message" type="text" class="form-control mb-4" name="message" required></textarea>
+                <div class="text-center mb-5">
+                    <button type="submit" class="btn btn-outline-success w-25">שלח</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-auto">
+            <h3 class="bi-telephone">
+                <h5>0524034239</h5>
+            </h3>
+            <h3 class="bi-mailbox">
+                <h5>email@address.com</h5>
+            </h3>
+        </div>
+    </div>
+</div>

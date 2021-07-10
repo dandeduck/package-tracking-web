@@ -3,6 +3,4 @@ __pycache__
 .idea/
 /build/
 venv/
-node_modules/
 *.sqlite3
-package-lock.json
